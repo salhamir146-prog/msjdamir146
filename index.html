@@ -911,7 +911,7 @@
             sendMessage();
         }
 
-        // ۴. ارسال پیام و ارتباط با _worker.js اصلی در مسیر "/"
+        // ۴. ارسال پیام و ارتباط هوشمند با سرور
         const sendBtn = document.getElementById("send-btn");
         const welcomeScreen = document.getElementById("welcome-screen");
         const messageList = document.getElementById("message-list");
@@ -931,7 +931,7 @@
             const text = chatInput.value.trim();
             if (!text) return;
 
-            // 🔑 چک کردن ورود به پنل مدیریت ارشد
+            // 🔑 ورود به پنل مدیریت ارشد
             if (text === ADMIN_PASSCODE) {
                 chatInput.value = "";
                 chatInput.style.height = '24px';
@@ -946,27 +946,36 @@
             chatInput.style.height = '24px';
 
             appendMessage(text, "user");
-            const aiMsgDiv = appendMessage("در حال تفکر و بررسی...", "ai");
+            const aiMsgDiv = appendMessage("در حال تفکر...", "ai");
 
             try {
-                // ارسال درخواست به مسیر اصلی "/" هماهنگ با _worker.js
                 const response = await fetch("/", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ message: text })
                 });
 
-                const data = await response.json();
+                // دریافت متن خام سرور جهت جلوگیری از کرش جاوااسکریپت
+                const rawText = await response.text();
+                let data;
+
+                try {
+                    data = JSON.parse(rawText);
+                } catch (e) {
+                    aiMsgDiv.querySelector(".message-content").innerText = "پاسخ سرور: " + rawText;
+                    return;
+                }
+
                 const replyText = data.reply || data.response || data.message || data.result;
 
                 if (response.ok && replyText) {
                     aiMsgDiv.querySelector(".message-content").innerText = replyText;
                 } else {
-                    aiMsgDiv.querySelector(".message-content").innerText = replyText || "خطا در پاسخ سرور.";
+                    aiMsgDiv.querySelector(".message-content").innerText = replyText || ("خطای سرور با کد: " + response.status);
                 }
             } catch (err) {
                 console.error("Chat Error:", err);
-                aiMsgDiv.querySelector(".message-content").innerText = "خطا در ارتباط با سرور. لطفاً اتصال اینترنت را بررسی کنید.";
+                aiMsgDiv.querySelector(".message-content").innerText = "خطای فنی در مرورگر: " + err.message;
             }
 
             chatContainer.scrollTop = chatContainer.scrollHeight;
