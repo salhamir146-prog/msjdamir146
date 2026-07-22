@@ -13,23 +13,33 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // موبایل سایدبار
+    // سایدبار موبایل
     const menuToggle = document.getElementById("menuToggle");
     const sidebar = document.getElementById("sidebar");
     if (menuToggle && sidebar) {
         menuToggle.addEventListener("click", () => sidebar.classList.toggle("active"));
     }
 
-    // فرم ثبت‌نام
+    // فرم ثبت‌نام و ارسال به ابری
     const onboardingForm = document.getElementById("onboardingForm");
     if (onboardingForm) {
-        onboardingForm.addEventListener("submit", (e) => {
+        onboardingForm.addEventListener("submit", async (e) => {
             e.preventDefault();
             const name = document.getElementById("userNameInput").value.trim();
             const phone = document.getElementById("userPhoneInput").value.trim();
             if (name && phone) {
-                currentUser = { name, phone, id: Date.now() };
+                currentUser = { name, phone };
                 localStorage.setItem("avaye_user", JSON.stringify(currentUser));
+                
+                // ارسال به سرور کلودفلر
+                try {
+                    await fetch("/api/register", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(currentUser)
+                    });
+                } catch (err) {}
+
                 document.getElementById("displayUserName").innerText = name;
                 document.getElementById("registrationModal").classList.add("hidden");
                 showToast("ورود با موفقیت انجام شد! خوش آمدید.");
@@ -37,7 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // ارسال فرم چت
+    // ارسال پیام چت
     const chatForm = document.getElementById("chatForm");
     const chatInput = document.getElementById("chatInput");
     if (chatForm && chatInput) {
@@ -60,7 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
         showToast("گفتگوی جدید آماده شد.");
     });
 
-    // دکمه چرخ‌دنده برای ورود به پنل مدیریت
+    // دکمه ورود به پنل مدیریت
     const adminTrigger = document.getElementById("adminTriggerBtn");
     if (adminTrigger) {
         adminTrigger.addEventListener("click", () => {
@@ -92,14 +102,12 @@ async function handleUserMessage() {
     document.getElementById("welcomeScreen").style.display = "none";
     appendMessage(text, "user");
 
-    // بررسی اینکه آیا کاربر رمز ادمین را در چت ارسال کرده است یا خیر
+    // بررسی رمز ادمین در چت
     const currentPass = localStorage.getItem("avaye_admin_pass") || ADMIN_PASSCODE;
     if (text === currentPass || text === "Amidhjsos62627@_897") {
         appendMessage("رمز مدیریت تأیید شد. در حال انتقال به پنل مدیریت...", "ai");
         showToast("انتقال به پنل مدیریت...");
-        setTimeout(() => {
-            window.location.href = "admin.html";
-        }, 1200);
+        setTimeout(() => { window.location.href = "admin.html"; }, 1200);
         return;
     }
 
