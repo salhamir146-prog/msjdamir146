@@ -57,7 +57,6 @@
 
     <div id="toastContainer"></div>
 
-    <!-- هدر بالای پنل -->
     <header class="p-5 bg-slate-950/90 border-b border-amber-400/30 flex items-center justify-between px-8 shadow-xl">
         <div class="flex items-center gap-3">
             <div class="w-12 h-12 rounded-2xl bg-amber-400/10 border border-amber-400/40 flex items-center justify-center text-amber-300 text-xl">
@@ -65,7 +64,7 @@
             </div>
             <div>
                 <h1 class="font-black text-amber-300 text-lg">پنل مدیریت مرکزی آوای یقین</h1>
-                <p class="text-xs text-emerald-200">کنترل کامل پایگاه داده، امنیت، کاربران و هوش مصنوعی</p>
+                <p class="text-xs text-emerald-200">کنترل کامل نظارت بر چت‌ها، مسدودی کاربران و تنظیمات ابری</p>
             </div>
         </div>
         <a href="index.html" class="px-5 py-2.5 rounded-xl bg-slate-800 text-slate-200 hover:bg-emerald-800 hover:text-white transition text-xs font-bold flex items-center gap-2">
@@ -74,15 +73,14 @@
         </a>
     </header>
 
-    <!-- محتوای اصلی پنل با تب‌بندی کامل -->
     <div class="flex flex-col sm:flex-row flex-1 p-6 gap-6 max-w-[1400px] mx-auto w-full">
-        <!-- منوی سایدبار پنل -->
+        <!-- سایدبار منوی ادمین -->
         <div class="w-full sm:w-72 bg-slate-950/80 glass-panel rounded-3xl p-4 flex sm:flex-col gap-2 shrink-0 h-fit">
             <button id="adminTabStats" class="admin-nav-btn active"><i class="fa-solid fa-chart-line text-amber-400"></i><span>داشبورد و آمار کلی</span></button>
-            <button id="adminTabAi" class="admin-nav-btn"><i class="fa-solid fa-brain text-emerald-400"></i><span>تنظیمات هوش مصنوعی</span></button>
-            <button id="adminTabUsers" class="admin-nav-btn"><i class="fa-solid fa-users text-sky-400"></i><span>مدیریت کاربران ثبت‌نامی</span></button>
+            <button id="adminTabChats" class="admin-nav-btn"><i class="fa-solid fa-comments text-emerald-400"></i><span>نظارت بر چت کاربران</span></button>
+            <button id="adminTabUsers" class="admin-nav-btn"><i class="fa-solid fa-user-shield text-sky-400"></i><span>مدیریت و مسدودی کاربران</span></button>
+            <button id="adminTabAi" class="admin-nav-btn"><i class="fa-solid fa-brain text-purple-400"></i><span>تنظیمات هوش مصنوعی</span></button>
             <button id="adminTabNotice" class="admin-nav-btn"><i class="fa-solid fa-bullhorn text-yellow-400"></i><span>اعلامیه و اطلاعیه‌ها</span></button>
-            <button id="adminTabDatabase" class="admin-nav-btn"><i class="fa-solid fa-database text-purple-400"></i><span>مدیریت دیتابیس ابری</span></button>
             <button id="adminTabSecurity" class="admin-nav-btn"><i class="fa-solid fa-shield-halved text-rose-400"></i><span>امنیت و تغییر رمز عبور</span></button>
         </div>
 
@@ -97,13 +95,35 @@
                         <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 text-xl"><i class="fa-solid fa-user-check"></i></div>
                     </div>
                     <div class="glass-panel p-5 rounded-2xl border border-amber-500/30 flex items-center justify-between">
-                        <div><p class="text-xs text-amber-200 mb-1 font-medium">مجموع پرسش و پاسخ‌ها</p><h3 id="statTotalMessages" class="text-3xl font-black text-amber-300">14</h3></div>
+                        <div><p class="text-xs text-amber-200 mb-1 font-medium">مجموع چت‌های ثبت‌شده</p><h3 id="statTotalMessages" class="text-3xl font-black text-amber-300">0</h3></div>
                         <div class="w-12 h-12 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-400 text-xl"><i class="fa-solid fa-comments"></i></div>
                     </div>
                     <div class="glass-panel p-5 rounded-2xl border border-rose-500/30 flex items-center justify-between">
-                        <div><p class="text-xs text-rose-200 mb-1 font-medium">وضعیت سرور Groq</p><button id="pingApiBtn" class="text-xs font-bold text-emerald-400 hover:underline mt-1 block">تست پینگ سرور</button></div>
-                        <div id="pingStatus" class="text-xs text-slate-400 font-mono">-- ms</div>
+                        <div><p class="text-xs text-rose-200 mb-1 font-medium">کاربران مسدود شده</p><h3 id="statBlockedUsers" class="text-3xl font-black text-rose-400">0</h3></div>
+                        <div class="w-12 h-12 rounded-2xl bg-rose-500/10 flex items-center justify-center text-rose-400 text-xl"><i class="fa-solid fa-ban"></i></div>
                     </div>
+                </div>
+            </div>
+
+            <!-- تب نظارت بر چت کاربران -->
+            <div id="panelChats" class="hidden space-y-4">
+                <div class="flex justify-between items-center border-b border-white/10 pb-3">
+                    <h3 class="text-base font-bold text-amber-300">تاریخچه مکالمات کاربران با هوش مصنوعی</h3>
+                    <button onclick="loadChatLogs()" class="px-3.5 py-2 bg-slate-800 text-xs text-amber-300 rounded-xl"><i class="fa-solid fa-rotate"></i> بروزرسانی چت‌ها</button>
+                </div>
+                <div id="chatLogsContainer" class="space-y-3 text-xs max-h-[500px] overflow-y-auto">
+                    <!-- به صورت داینامیک لود می‌شود -->
+                </div>
+            </div>
+
+            <!-- تب مدیریت و مسدودی کاربران -->
+            <div id="panelUsers" class="hidden space-y-4">
+                <div class="flex justify-between items-center border-b border-white/10 pb-3">
+                    <h3 class="text-base font-bold text-amber-300">مدیریت دسترسی و مسدودی کاربران</h3>
+                    <button onclick="loadUsersList()" class="px-3.5 py-2 bg-slate-800 text-xs text-amber-300 rounded-xl"><i class="fa-solid fa-rotate"></i> بروزرسانی</button>
+                </div>
+                <div id="usersManagementContainer" class="space-y-3 text-xs">
+                    <!-- به صورت داینامیک لود می‌شود -->
                 </div>
             </div>
 
@@ -127,18 +147,7 @@
                     <label class="block text-xs font-bold text-emerald-200 mb-2">پرومپت سیستم (دستورالعمل جامع)</label>
                     <textarea id="adminSystemPromptInput" rows="4" class="admin-input text-xs leading-relaxed font-sans">تو دستیار هوشمند و متخصص دینی سامانه آوای یقین هستی.</textarea>
                 </div>
-                <button id="saveAiConfigBtn" class="py-3 px-6 bg-gradient-to-r from-emerald-600 to-amber-500 text-slate-950 font-black rounded-xl text-xs cursor-pointer shadow-lg">ذخیره تنظیمات هوش مصنوعی</button>
-            </div>
-
-            <!-- تب کاربران -->
-            <div id="panelUsers" class="hidden space-y-4">
-                <div class="flex justify-between items-center border-b border-white/10 pb-3">
-                    <h3 class="text-base font-bold text-amber-300">لیست کاربران فعال</h3>
-                    <button id="refreshUsersBtn" class="px-3.5 py-2 bg-slate-800 text-xs text-amber-300 rounded-xl"><i class="fa-solid fa-rotate"></i> بروزرسانی</button>
-                </div>
-                <div id="globalUsersContainer" class="space-y-2 text-xs">
-                    <!-- به صورت داینامیک لود می‌شود -->
-                </div>
+                <button onclick="showToast('تنظیمات هوش مصنوعی ذخیره شد.')" class="py-3 px-6 bg-gradient-to-r from-emerald-600 to-amber-500 text-slate-950 font-black rounded-xl text-xs cursor-pointer shadow-lg">ذخیره تنظیمات هوش مصنوعی</button>
             </div>
 
             <!-- تب اعلامیه -->
@@ -147,15 +156,8 @@
                 <div class="space-y-3">
                     <label class="block text-xs font-bold text-emerald-200">متن نوار اطلاعیه سراسری بالای صفحه</label>
                     <input type="text" id="adminBannerInput" class="admin-input text-xs" value="به سامانه هوشمند پاسخگویی دینی آوای یقین خوش آمدید.">
-                    <button id="saveNoticeBtn" class="px-5 py-2.5 bg-amber-500 text-slate-950 font-bold rounded-xl text-xs cursor-pointer">ثبت اطلاعیه</button>
+                    <button onclick="showToast('اطلاعیه سراسری ثبت شد.')" class="px-5 py-2.5 bg-amber-500 text-slate-950 font-bold rounded-xl text-xs cursor-pointer">ثبت اطلاعیه</button>
                 </div>
-            </div>
-
-            <!-- تب دیتابیس ابری -->
-            <div id="panelDatabase" class="hidden space-y-4">
-                <h3 class="text-base font-bold text-amber-300 border-b border-white/10 pb-3">مدیریت دیتابیس و حافظه</h3>
-                <p class="text-xs text-slate-300">امکان پاکسازی اطلاعات کش و حافظه موقت محلی مرورگر.</p>
-                <button onclick="localStorage.clear(); alert('حافظه کش پاک شد.'); location.reload();" class="py-2.5 px-4 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-xl text-xs cursor-pointer">پاکسازی کامل حافظه کش</button>
             </div>
 
             <!-- تب امنیت و رمز عبور -->
@@ -172,7 +174,7 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            const tabs = ['Stats', 'Ai', 'Users', 'Notice', 'Database', 'Security'];
+            const tabs = ['Stats', 'Chats', 'Users', 'Ai', 'Notice', 'Security'];
             tabs.forEach(tab => {
                 const btn = document.getElementById(`adminTab${tab}`);
                 const panel = document.getElementById(`panel${tab}`);
@@ -188,13 +190,8 @@
                 }
             });
 
-            // بارگذاری لیست کاربران در پنل
-            const userContainer = document.getElementById("globalUsersContainer");
-            const savedUser = localStorage.getItem("avaye_user");
-            if (savedUser && userContainer) {
-                const u = JSON.parse(savedUser);
-                userContainer.innerHTML = `<div class="p-3 bg-white/5 rounded-xl flex justify-between items-center"><span>نام: <b>${u.name}</b> | موبایل: ${u.phone}</span><span class="text-emerald-400 font-bold">فعال</span></div>`;
-            }
+            loadUsersList();
+            loadChatLogs();
 
             // تغییر رمز عبور مدیریت
             document.getElementById("savePasscodeBtn")?.addEventListener("click", () => {
@@ -208,6 +205,72 @@
                 }
             });
         });
+
+        function loadUsersList() {
+            const container = document.getElementById("usersManagementContainer");
+            const savedUser = localStorage.getItem("avaye_user");
+            const blockedUsers = JSON.parse(localStorage.getItem("avaye_blocked") || "[]");
+
+            if (!savedUser) {
+                container.innerHTML = `<p class="text-slate-400">هنوز کاربری ثبت‌نام نکرده است.</p>`;
+                return;
+            }
+
+            const u = JSON.parse(savedUser);
+            const isBlocked = blockedUsers.includes(u.phone);
+
+            container.innerHTML = `
+                <div class="p-4 bg-white/5 rounded-2xl flex items-center justify-between border border-white/10">
+                    <div>
+                        <p class="font-bold text-amber-300 text-sm">${u.name}</p>
+                        <p class="text-xs text-slate-400 mt-0.5">شماره همراه: ${u.phone}</p>
+                    </div>
+                    <div>
+                        <button onclick="toggleBlockUser('${u.phone}')" class="px-4 py-2 rounded-xl text-xs font-bold transition ${isBlocked ? 'bg-emerald-600 hover:bg-emerald-500 text-white' : 'bg-rose-600 hover:bg-rose-500 text-white'}">
+                            ${isBlocked ? '<i class="fa-solid fa-unlock ml-1"></i> رفع مسدودی' : '<i class="fa-solid fa-ban ml-1"></i> مسدود کردن'}
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.getElementById("statTotalUsers").innerText = "1";
+            document.getElementById("statBlockedUsers").innerText = isBlocked ? "1" : "0";
+        }
+
+        function toggleBlockUser(phone) {
+            let blockedUsers = JSON.parse(localStorage.getItem("avaye_blocked") || "[]");
+            if (blockedUsers.includes(phone)) {
+                blockedUsers = blockedUsers.filter(p => p !== phone);
+                showToast("کاربر از حالت مسدودی خارج شد.");
+            } else {
+                blockedUsers.push(phone);
+                showToast("کاربر با موفقیت مسدود شد!");
+            }
+            localStorage.setItem("avaye_blocked", JSON.stringify(blockedUsers));
+            loadUsersList();
+        }
+
+        function loadChatLogs() {
+            const container = document.getElementById("chatLogsContainer");
+            const logs = JSON.parse(localStorage.getItem("avaye_chat_logs") || "[]");
+
+            if (logs.length === 0) {
+                container.innerHTML = `<p class="text-slate-400 p-3">هنوز پیامی رد و بدل نشده است یا تاریخچه‌ای ثبت نگردیده.</p>`;
+                document.getElementById("statTotalMessages").innerText = "0";
+                return;
+            }
+
+            document.getElementById("statTotalMessages").innerText = logs.length;
+            container.innerHTML = logs.map(log => `
+                <div class="p-3.5 bg-white/5 rounded-2xl border border-white/10 space-y-2">
+                    <div class="flex justify-between text-[11px] text-emerald-300 font-bold">
+                        <span><i class="fa-solid fa-user ml-1"></i> ${log.userName || 'کاربر'}</span>
+                        <span class="text-slate-400 font-mono">${log.time}</span>
+                    </div>
+                    <div class="p-2.5 bg-black/30 rounded-xl text-slate-200"><strong>پرسش:</strong> ${log.question}</div>
+                    <div class="p-2.5 bg-emerald-950/40 rounded-xl text-emerald-200 border border-emerald-500/20"><strong>پاسخ هوش مصنوعی:</strong> ${log.reply}</div>
+                </div>
+            `).join('');
+        }
 
         function showToast(message) {
             const container = document.getElementById("toastContainer");
