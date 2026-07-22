@@ -112,7 +112,7 @@ async function handleUserMessage() {
         return;
     }
 
-    const aiBubble = appendMessage("در حال پردازش و استعلام پاسخ معتبر...", "ai");
+    const aiBubble = appendMessage("درحال تفکر....", "ai");
 
     try {
         const res = await fetch("/api/chat", {
