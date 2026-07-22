@@ -3,27 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>آوای یقین | سامانه هوشمند معارف اسلامی</title>
-    
-    <!-- Fonts & Icons -->
+    <title>آوای یقین | دستیار هوشمند مسجد حضرت ابوالفضل (ع)</title>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
+    <!-- فونت‌آسام برای آیکون‌های حرفه‌ای‌تر -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
     <style>
-        /* ========== ROOT VARIABLES ========== */
         :root {
             --gold: #d4af37;
             --gold-light: #f5df91;
             --green: #0b3d2e;
             --green-light: #145c43;
-            --glass: rgba(255,255,255,.08);
-            --border: rgba(255,255,255,.15);
+            --glass: rgba(255, 255, 255, 0.08);
+            --border: rgba(255, 255, 255, 0.15);
             --text: #f5f5f5;
         }
 
-        /* ========== RESET & BASE ========== */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -33,27 +32,25 @@
         body {
             font-family: "Vazirmatn", sans-serif;
             background: radial-gradient(circle at top, #174d39, #06140f 55%);
-            color: white;
-            min-height: 100vh;
-            overflow-x: hidden;
-            display: flex;
-            flex-direction: column;
+            color: var(--text);
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
         }
 
-        /* ========== BACKGROUND EFFECTS ========== */
+        /* پس‌زمینه شیشه‌ای و نورهای محیطی */
         body::before {
             content: "";
             position: fixed;
             width: 500px;
             height: 500px;
-            background: #d4af37;
+            background: var(--gold);
             opacity: .08;
-            filter: blur(120px);
+            filter: blur(140px);
             top: -200px;
             right: -150px;
             border-radius: 50%;
             pointer-events: none;
-            z-index: 0;
         }
 
         body::after {
@@ -63,172 +60,100 @@
             height: 400px;
             background: #00a86b;
             opacity: .08;
-            filter: blur(120px);
+            filter: blur(140px);
             bottom: -150px;
             left: -100px;
             border-radius: 50%;
             pointer-events: none;
-            z-index: 0;
         }
 
-        /* ========== TOAST ========== */
-        #toastContainer {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            pointer-events: none;
-        }
-
-        .toast {
-            background: rgba(255,255,255,.1);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 14px 24px;
-            color: #fff;
-            font-size: 14px;
-            box-shadow: 0 10px 40px rgba(0,0,0,.5);
-            pointer-events: auto;
-            animation: slideIn .4s ease;
-        }
-
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(-40px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
-        /* ========== BANNER ========== */
-        #globalBanner {
-            position: relative;
-            z-index: 20;
-            background: rgba(11, 61, 46, 0.85);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
-            padding: 10px 16px;
-            text-align: center;
-            font-size: 13px;
-            color: #f5df91;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            box-shadow: 0 4px 30px rgba(0,0,0,.4);
-        }
-
-        #globalBanner i {
-            color: var(--gold);
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: .5; }
-        }
-
-        /* ========== ONBOARDING MODAL ========== */
-        #onboardingModal {
+        /* ثبت نام / مدال ورود */
+        .registration-overlay {
             position: fixed;
             inset: 0;
             display: flex;
-            align-items: center;
             justify-content: center;
-            background: rgba(0,0,0,.7);
+            align-items: center;
+            background: rgba(0, 0, 0, 0.75);
             backdrop-filter: blur(25px);
-            z-index: 9998;
-            padding: 20px;
+            z-index: 9999;
         }
 
-        #onboardingModal.hidden {
-            display: none;
-        }
-
-        .onboarding-box {
-            width: 440px;
-            max-width: 100%;
+        .registration-box {
+            width: 420px;
+            max-width: 90%;
             padding: 45px 35px;
             border-radius: 30px;
-            background: linear-gradient(145deg, rgba(255,255,255,.12), rgba(255,255,255,.04));
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04));
             border: 1px solid var(--border);
-            box-shadow: 0 25px 70px rgba(0,0,0,.6), inset 0 0 30px rgba(255,255,255,.05);
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.6), inset 0 0 30px rgba(255, 255, 255, 0.05);
             text-align: center;
-            animation: modalIn .6s ease;
+            animation: show .7s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        @keyframes modalIn {
+        @keyframes show {
             from { opacity: 0; transform: translateY(40px) scale(.9); }
             to { opacity: 1; transform: none; }
         }
 
-        .onboarding-icon {
+        .registration-icon {
             width: 90px;
             height: 90px;
-            margin: 0 auto 20px;
+            margin: auto;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 45px;
+            font-size: 40px;
             border-radius: 30px;
-            background: linear-gradient(135deg, #145c43, #d4af37);
-            box-shadow: 0 0 40px rgba(212,175,55,.4);
+            background: linear-gradient(135deg, var(--green-light), var(--gold));
+            box-shadow: 0 0 40px rgba(212, 175, 55, 0.4);
+            color: white;
         }
 
-        .onboarding-title {
-            font-size: 28px;
+        .registration-title {
+            margin-top: 20px;
+            font-size: 26px;
             font-weight: 900;
-            background: linear-gradient(90deg, #fff, #d4af37);
+            background: linear-gradient(90deg, #fff, var(--gold-light));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .onboarding-sub {
-            color: #ddd;
-            font-size: 14px;
-            margin-top: 6px;
-        }
-
-        .onboarding-desc {
-            color: #aaa;
+        .registration-subtitle, .registration-desc {
+            margin-top: 8px;
+            color: #ccc;
             font-size: 13px;
-            margin: 18px 0 24px;
         }
 
         .reg-group {
             text-align: right;
             margin-bottom: 18px;
+            margin-top: 15px;
         }
 
         .reg-group label {
             display: block;
-            margin-bottom: 6px;
+            margin-bottom: 7px;
             font-size: 13px;
             color: #ddd;
         }
 
-        .reg-input {
+        .reg-input, .chat-input {
             width: 100%;
-            padding: 14px 18px;
+            padding: 15px 18px;
             border-radius: 15px;
-            background: rgba(255,255,255,.08);
-            border: 1px solid rgba(255,255,255,.15);
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--border);
             color: white;
             font-family: inherit;
-            font-size: 15px;
             outline: none;
-            transition: .3s;
+            transition: all 0.3s ease;
         }
 
-        .reg-input:focus {
+        .reg-input:focus, .chat-input:focus {
             border-color: var(--gold);
-            box-shadow: 0 0 20px rgba(212,175,55,.25);
-        }
-
-        .reg-input::placeholder {
-            color: #888;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.25);
+            background: rgba(255, 255, 255, 0.12);
         }
 
         .reg-btn {
@@ -236,113 +161,93 @@
             padding: 15px;
             border: none;
             border-radius: 18px;
-            background: linear-gradient(135deg, #145c43, #d4af37);
+            background: linear-gradient(135deg, var(--green-light), var(--gold));
             color: white;
             font-family: inherit;
             font-weight: 800;
             font-size: 16px;
             cursor: pointer;
-            transition: .3s;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
         }
 
         .reg-btn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 15px 30px rgba(212,175,55,.3);
+            box-shadow: 0 15px 30px rgba(212, 175, 55, 0.35);
         }
 
-        .reg-footer {
-            margin-top: 18px;
-            font-size: 12px;
-            color: #aaa;
+        .hidden {
+            display: none !important;
         }
 
-        /* ========== MAIN APP ========== */
-        #mainApp {
-            position: relative;
-            z-index: 10;
-            display: none;
-            flex: 1;
-            padding: 16px;
-            gap: 16px;
-            max-width: 1400px;
-            margin: 0 auto;
-            width: 100%;
-            height: calc(100vh - 60px);
-        }
-
-        #mainApp.active {
+        /* ساختار اصلی اپلیکیشن */
+        .app-container {
             display: flex;
+            height: 100vh;
+            padding: 18px;
+            gap: 18px;
         }
 
-        /* ========== CHAT LAYOUT ========== */
-        .app-layout {
-            display: flex;
-            gap: 16px;
-            width: 100%;
-            height: 100%;
-        }
-
-        /* ========== SIDEBAR ========== */
+        /* سایدبار */
         .sidebar {
-            width: 300px;
-            min-width: 260px;
-            background: rgba(255,255,255,.07);
+            width: 310px;
+            background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(25px);
             border: 1px solid var(--border);
             border-radius: 30px;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 20px 50px rgba(0,0,0,.3);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
             overflow: hidden;
-            transition: transform .4s ease;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .sidebar-header {
-            padding: 28px 20px;
+            padding: 25px 20px;
             text-align: center;
-            border-bottom: 1px solid rgba(255,255,255,.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         }
 
-        .sidebar-logo {
-            width: 70px;
-            height: 70px;
-            margin: 0 auto;
+        .logo-icon {
+            width: 65px;
+            height: 65px;
+            margin: auto;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 36px;
-            border-radius: 25px;
-            background: linear-gradient(135deg, #145c43, #d4af37);
-            box-shadow: 0 0 30px rgba(212,175,55,.3);
+            font-size: 30px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, var(--green-light), var(--gold));
+            box-shadow: 0 0 25px rgba(212, 175, 55, 0.3);
+            color: white;
         }
 
-        .sidebar-title {
-            font-size: 26px;
+        .logo-text {
+            font-size: 24px;
             font-weight: 900;
-            margin-top: 14px;
-            background: linear-gradient(90deg, #fff, #d4af37);
+            margin-top: 12px;
+            background: linear-gradient(90deg, #fff, var(--gold-light));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .sidebar-sub {
-            font-size: 12px;
-            color: #bbb;
-            margin-top: 4px;
+        .logo-subtitle {
+            font-size: 11px;
+            color: #aaa;
+            margin-top: 5px;
         }
 
         .new-chat-btn {
-            margin: 16px 20px;
+            margin: 20px;
             padding: 14px;
-            border-radius: 18px;
-            border: 1px solid rgba(255,255,255,.15);
-            background: rgba(255,255,255,.08);
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.08);
             color: white;
             font-family: inherit;
             font-weight: 700;
-            font-size: 15px;
             cursor: pointer;
-            transition: .3s;
+            transition: all 0.3s;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -350,184 +255,96 @@
         }
 
         .new-chat-btn:hover {
-            background: rgba(212,175,55,.2);
+            background: rgba(212, 175, 55, 0.2);
+            border-color: var(--gold);
             transform: translateY(-2px);
         }
 
         .chat-history {
             flex: 1;
-            padding: 16px 20px;
+            padding: 15px 20px;
             overflow-y: auto;
         }
 
         .history-title {
-            color: #aaa;
-            font-size: 13px;
+            color: #888;
+            font-size: 12px;
             margin-bottom: 12px;
-        }
-
-        .history-item {
-            padding: 10px 14px;
-            border-radius: 14px;
-            margin-bottom: 6px;
-            font-size: 13px;
-            color: #ddd;
-            cursor: pointer;
-            transition: .3s;
-            border: 1px solid transparent;
-        }
-
-        .history-item:hover {
-            background: rgba(255,255,255,.06);
-            border-color: rgba(255,255,255,.1);
-        }
-
-        .history-item.active {
-            background: rgba(212,175,55,.15);
-            border-color: rgba(212,175,55,.3);
-            color: var(--gold);
+            font-weight: 600;
         }
 
         .sidebar-footer {
-            padding: 16px 20px;
-            font-size: 12px;
-            color: #aaa;
+            padding: 15px 20px;
+            font-size: 11px;
+            color: #999;
             text-align: center;
-            background: rgba(0,0,0,.15);
-            border-top: 1px solid rgba(255,255,255,.05);
+            background: rgba(0, 0, 0, 0.2);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        .sidebar-footer .user-name {
-            color: var(--gold);
-            font-weight: 700;
-        }
-
-        /* ========== MAIN CHAT AREA ========== */
-        .chat-main {
+        /* ناحیه اصلی چت */
+        .main-area {
             flex: 1;
             display: flex;
             flex-direction: column;
-            background: rgba(255,255,255,.06);
-            border: 1px solid rgba(255,255,255,.15);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
             border-radius: 30px;
             backdrop-filter: blur(25px);
             overflow: hidden;
-            box-shadow: 0 20px 60px rgba(0,0,0,.35);
-            min-width: 0;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
         }
 
-        /* ========== TOP BAR ========== */
         .top-bar {
-            height: 72px;
+            height: 75px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 24px;
-            border-bottom: 1px solid rgba(255,255,255,.12);
-            background: rgba(255,255,255,.04);
-            flex-shrink: 0;
-        }
-
-        .top-bar-left {
-            display: flex;
-            align-items: center;
-            gap: 14px;
+            padding: 0 25px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.02);
         }
 
         .menu-toggle {
-            width: 44px;
-            height: 44px;
-            border-radius: 15px;
-            border: 1px solid rgba(255,255,255,.15);
-            background: rgba(255,255,255,.08);
+            width: 45px;
+            height: 45px;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.08);
             color: white;
             cursor: pointer;
-            display: none;
+            display: none; /* پیش‌فرض در دسکتاپ مخفی */
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            transition: 0.3s;
         }
 
-        .top-bar-info {
-            display: flex;
-            flex-direction: column;
+        .menu-toggle:hover {
+            background: rgba(255, 255, 255, 0.15);
         }
 
-        .top-bar-info .bot-name {
-            font-weight: 800;
-            font-size: 18px;
-            color: #fff;
-        }
-
-        .top-bar-info .bot-status {
-            font-size: 12px;
-            color: #aaa;
+        .model-selector {
             display: flex;
             align-items: center;
-            gap: 6px;
-        }
-
-        .top-bar-info .bot-status .dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #4ade80;
-            animation: pulse 2s infinite;
-            display: inline-block;
-        }
-
-        .top-bar-right {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .top-bar-right .admin-btn {
-            padding: 10px 18px;
+            gap: 10px;
+            padding: 10px 16px;
             border-radius: 16px;
-            border: 1px solid rgba(212,175,55,.3);
-            background: rgba(212,175,55,.12);
-            color: var(--gold);
+            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--gold-light);
             font-family: inherit;
             font-weight: 700;
             font-size: 13px;
-            cursor: pointer;
-            transition: .3s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
 
-        .top-bar-right .admin-btn:hover {
-            background: rgba(212,175,55,.25);
-            transform: translateY(-2px);
-        }
-
-        .top-bar-right .user-badge {
-            padding: 8px 16px;
-            border-radius: 16px;
-            background: rgba(255,255,255,.08);
-            border: 1px solid rgba(255,255,255,.1);
-            font-size: 13px;
-            color: #ddd;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .top-bar-right .user-badge i {
-            color: var(--gold);
-        }
-
-        /* ========== CHAT CONTAINER ========== */
+        /* بدنه مکالمه */
         .chat-container {
             flex: 1;
             overflow-y: auto;
-            padding: 30px 35px;
+            padding: 35px;
             scroll-behavior: smooth;
         }
 
-        /* ========== WELCOME SCREEN ========== */
         .welcome-screen {
             height: 100%;
             display: flex;
@@ -543,127 +360,90 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 56px;
+            font-size: 55px;
             border-radius: 35px;
-            background: linear-gradient(135deg, #145c43, #d4af37);
-            box-shadow: 0 0 60px rgba(212,175,55,.35);
+            background: linear-gradient(135deg, var(--green-light), var(--gold));
+            box-shadow: 0 0 50px rgba(212, 175, 55, 0.3);
             animation: float 4s infinite ease-in-out;
+            color: white;
         }
 
         @keyframes float {
+            0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-12px); }
         }
 
         .welcome-title {
-            font-size: 42px;
+            font-size: 38px;
             font-weight: 900;
-            margin-top: 22px;
-            background: linear-gradient(90deg, #fff, #d4af37);
+            margin-top: 20px;
+            background: linear-gradient(90deg, #fff, var(--gold-light));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .welcome-sub {
-            font-size: 17px;
+        .welcome-subtitle {
+            font-size: 16px;
             color: #ccc;
             margin-top: 8px;
         }
 
-        /* ========== SUGGESTION CARDS ========== */
+        /* کارت‌های پیشنهاد */
         .suggestion-cards {
             display: grid;
             grid-template-columns: repeat(2, 240px);
-            gap: 16px;
-            margin-top: 40px;
+            gap: 15px;
+            margin-top: 35px;
         }
 
         .suggestion-card {
-            padding: 20px 22px;
-            border-radius: 22px;
-            background: rgba(255,255,255,.07);
-            border: 1px solid rgba(255,255,255,.12);
+            padding: 18px 20px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
             cursor: pointer;
-            transition: .35s;
+            transition: all 0.3s ease;
             text-align: right;
         }
 
         .suggestion-card:hover {
-            transform: translateY(-6px);
-            background: rgba(212,175,55,.15);
-            border-color: rgba(212,175,55,.4);
+            transform: translateY(-5px);
+            background: rgba(212, 175, 55, 0.1);
+            border-color: var(--gold);
         }
 
-        .suggestion-card .card-title {
+        .suggestion-card-title {
             font-weight: 800;
-            font-size: 15px;
+            font-size: 14px;
             margin-bottom: 6px;
-            color: #fff;
+            color: var(--gold-light);
         }
 
-        .suggestion-card .card-desc {
-            font-size: 12px;
+        .suggestion-card-desc {
+            font-size: 11px;
             color: #aaa;
+            line-height: 1.5;
         }
 
-        /* ========== MESSAGES ========== */
-        .message {
-            display: flex;
-            margin-bottom: 20px;
-            animation: msgIn .4s ease;
-        }
-
-        @keyframes msgIn {
-            from { opacity: 0; transform: translateY(16px); }
-            to { opacity: 1; transform: none; }
-        }
-
-        .message.user {
-            justify-content: flex-start;
-        }
-
-        .message.ai {
-            justify-content: flex-end;
-        }
-
-        .message .msg-bubble {
-            max-width: 78%;
-            padding: 16px 22px;
-            border-radius: 22px;
-            line-height: 2;
-            font-size: 15px;
-            word-wrap: break-word;
-        }
-
-        .message.user .msg-bubble {
-            background: linear-gradient(135deg, #145c43, #0b2d22);
-            border-bottom-left-radius: 5px;
-        }
-
-        .message.ai .msg-bubble {
-            background: rgba(255,255,255,.09);
-            border: 1px solid rgba(255,255,255,.12);
-            border-bottom-right-radius: 5px;
-        }
-
-        /* ========== INPUT AREA ========== */
-        .input-area {
-            padding: 16px 24px 20px;
-            background: rgba(0,0,0,.15);
-            flex-shrink: 0;
+        /* کادر ارسال پیام */
+        .input-container {
+            padding: 20px 30px;
+            background: rgba(0, 0, 0, 0.15);
+            border-top: 1px solid rgba(255,255,255,0.05);
         }
 
         .input-wrapper {
             display: flex;
             align-items: center;
-            gap: 14px;
-            padding: 6px 8px 6px 6px;
+            gap: 12px;
+            padding: 8px 15px;
             border-radius: 22px;
-            background: rgba(255,255,255,.09);
-            border: 1px solid rgba(255,255,255,.18);
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid var(--border);
             backdrop-filter: blur(20px);
         }
 
-        .input-wrapper textarea {
+        .chat-input {
             flex: 1;
             resize: none;
             max-height: 120px;
@@ -672,1331 +452,197 @@
             outline: none;
             color: white;
             font-family: inherit;
-            font-size: 15px;
-            padding: 12px 16px;
-            min-height: 50px;
+            font-size: 14px;
+            padding: 10px;
         }
 
-        .input-wrapper textarea::placeholder {
-            color: #999;
+        .chat-input::placeholder {
+            color: #888;
         }
 
-        .input-wrapper .send-btn {
-            width: 52px;
-            height: 52px;
+        .send-btn {
+            width: 48px;
+            height: 48px;
             border: none;
             border-radius: 50%;
-            background: linear-gradient(135deg, #145c43, #d4af37);
+            background: linear-gradient(135deg, var(--green-light), var(--gold));
             color: white;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 22px;
-            transition: .3s;
-            flex-shrink: 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
 
-        .input-wrapper .send-btn:hover {
-            transform: rotate(-10deg) scale(1.08);
-            box-shadow: 0 0 25px rgba(212,175,55,.4);
+        .send-btn:hover {
+            transform: scale(1.08);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
         }
 
-        .input-footer {
-            text-align: center;
-            font-size: 11px;
-            color: #777;
-            margin-top: 10px;
-        }
-
-        /* ========== SCROLLBAR ========== */
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: rgba(212,175,55,.4);
-            border-radius: 20px;
-        }
-
-        /* ========== ADMIN MODAL ========== */
-        #adminModal {
-            position: fixed;
-            inset: 0;
-            z-index: 9997;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            background: rgba(0,0,0,.85);
-            backdrop-filter: blur(30px);
-            padding: 20px;
-        }
-
-        #adminModal.active {
+        /* پیام‌های چت */
+        .message {
             display: flex;
-        }
-
-        .admin-panel {
-            width: 100%;
-            max-width: 1100px;
-            max-height: 94vh;
-            background: linear-gradient(145deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
-            border: 1px solid rgba(212,175,55,.3);
-            border-radius: 30px;
-            overflow: hidden;
-            box-shadow: 0 30px 80px rgba(0,0,0,.7);
-            display: flex;
-            flex-direction: column;
-        }
-
-        .admin-header {
-            padding: 18px 28px;
-            background: rgba(0,0,0,.4);
-            border-bottom: 1px solid rgba(212,175,55,.2);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-shrink: 0;
-        }
-
-        .admin-header h2 {
-            font-size: 20px;
-            font-weight: 900;
-            color: var(--gold);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .admin-header h2 i {
-            font-size: 26px;
-        }
-
-        .admin-close {
-            width: 44px;
-            height: 44px;
-            border-radius: 14px;
-            border: 1px solid rgba(255,255,255,.15);
-            background: rgba(255,255,255,.08);
-            color: white;
-            cursor: pointer;
-            font-size: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: .3s;
-        }
-
-        .admin-close:hover {
-            background: rgba(255,0,0,.2);
-            border-color: rgba(255,0,0,.3);
-        }
-
-        .admin-body {
-            display: flex;
-            flex: 1;
-            overflow: hidden;
-        }
-
-        .admin-sidebar {
-            width: 200px;
-            min-width: 180px;
-            padding: 16px 12px;
-            background: rgba(0,0,0,.25);
-            border-left: 1px solid rgba(255,255,255,.06);
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            overflow-y: auto;
-        }
-
-        .admin-sidebar button {
-            padding: 12px 16px;
-            border-radius: 14px;
-            border: none;
-            background: transparent;
-            color: #aaa;
-            font-family: inherit;
-            font-weight: 600;
-            font-size: 13px;
-            cursor: pointer;
-            transition: .3s;
-            text-align: right;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .admin-sidebar button:hover {
-            background: rgba(255,255,255,.06);
-            color: #fff;
-        }
-
-        .admin-sidebar button.active {
-            background: rgba(212,175,55,.15);
-            color: var(--gold);
-            border: 1px solid rgba(212,175,55,.2);
-        }
-
-        .admin-content {
-            flex: 1;
-            padding: 24px 28px;
-            overflow-y: auto;
-        }
-
-        .admin-tab {
-            display: none;
-        }
-
-        .admin-tab.active {
-            display: block;
-        }
-
-        .admin-tab h3 {
-            font-size: 18px;
-            font-weight: 800;
-            color: var(--gold);
-            margin-bottom: 16px;
-        }
-
-        .admin-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 14px;
             margin-bottom: 20px;
+            animation: messageIn 0.3s ease;
         }
 
-        .stat-card {
-            padding: 18px 20px;
-            border-radius: 18px;
-            background: rgba(255,255,255,.06);
-            border: 1px solid rgba(255,255,255,.08);
+        @keyframes messageIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: none; }
         }
 
-        .stat-card .num {
-            font-size: 28px;
-            font-weight: 900;
-            color: var(--gold);
-        }
+        .message.user { justify-content: flex-start; }
+        .message.ai { justify-content: flex-end; }
 
-        .stat-card .label {
-            font-size: 12px;
-            color: #aaa;
-            margin-top: 4px;
-        }
-
-        .admin-input {
-            width: 100%;
-            padding: 12px 16px;
-            border-radius: 14px;
-            background: rgba(255,255,255,.07);
-            border: 1px solid rgba(255,255,255,.1);
-            color: white;
-            font-family: inherit;
+        .message-content {
+            max-width: 75%;
+            padding: 16px 20px;
+            border-radius: 20px;
+            line-height: 1.8;
             font-size: 14px;
-            outline: none;
-            transition: .3s;
-            margin-bottom: 12px;
         }
 
-        .admin-input:focus {
-            border-color: var(--gold);
-            box-shadow: 0 0 20px rgba(212,175,55,.15);
+        .message.user .message-content {
+            background: linear-gradient(135deg, var(--green-light), #0b2d22);
+            border-bottom-left-radius: 4px;
+            border: 1px solid rgba(255,255,255,0.1);
         }
 
-        .admin-input::placeholder {
-            color: #666;
+        .message.ai .message-content {
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid var(--border);
+            border-bottom-right-radius: 4px;
         }
 
-        .admin-textarea {
-            min-height: 80px;
-            resize: vertical;
-        }
+        /* اسکرول‌بار زیبا */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(212, 175, 55, 0.3); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(212, 175, 55, 0.6); }
 
-        .admin-btn {
-            padding: 12px 24px;
-            border-radius: 16px;
-            border: none;
-            background: linear-gradient(135deg, #145c43, #d4af37);
-            color: white;
-            font-family: inherit;
-            font-weight: 700;
-            font-size: 14px;
-            cursor: pointer;
-            transition: .3s;
-        }
-
-        .admin-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(212,175,55,.25);
-        }
-
-        .admin-btn-danger {
-            background: linear-gradient(135deg, #8b1a1a, #d43f37);
-        }
-
-        /* ========== RESPONSIVE ========== */
-        @media (max-width: 1024px) {
-            .sidebar {
-                width: 260px;
-                min-width: 220px;
-            }
-            .suggestion-cards {
-                grid-template-columns: 1fr 1fr;
-            }
-        }
-
-        @media (max-width: 820px) {
-            #mainApp {
-                padding: 10px;
-                height: calc(100vh - 56px);
-            }
-
-            .app-layout {
-                flex-direction: column;
-            }
-
+        /* واکنش‌گرا (موبایل و تبلت) */
+        @media(max-width: 900px) {
+            .app-container { padding: 8px; gap: 0; }
             .sidebar {
                 position: fixed;
-                right: 10px;
-                top: 10px;
-                bottom: 10px;
-                width: 290px;
-                transform: translateX(120%);
-                z-index: 100;
-                border-radius: 24px;
+                right: 12px;
+                top: 12px;
+                bottom: 12px;
+                transform: translateX(110%);
+                z-index: 1000;
+                background: rgba(10, 25, 18, 0.95);
             }
-
-            .sidebar.open {
-                transform: translateX(0);
-            }
-
-            .menu-toggle {
-                display: flex !important;
-            }
-
-            .chat-main {
-                border-radius: 20px;
-            }
-
-            .top-bar {
-                height: 62px;
-                padding: 0 16px;
-            }
-
-            .chat-container {
-                padding: 16px 18px;
-            }
-
-            .suggestion-cards {
-                grid-template-columns: 1fr;
-                width: 100%;
-            }
-
-            .welcome-title {
-                font-size: 30px;
-            }
-
-            .message .msg-bubble {
-                max-width: 92%;
-                font-size: 14px;
-                padding: 14px 18px;
-            }
-
-            .input-area {
-                padding: 12px 16px 16px;
-            }
-
-            .admin-sidebar {
-                width: 140px;
-                min-width: 120px;
-                padding: 10px 8px;
-            }
-
-            .admin-sidebar button {
-                font-size: 12px;
-                padding: 10px 12px;
-            }
-
-            .admin-content {
-                padding: 16px 18px;
-            }
-
-            .admin-stats {
-                grid-template-columns: 1fr 1fr;
-            }
-
-            .top-bar-right .user-badge span {
-                display: none;
-            }
-
-            .top-bar-right .admin-btn span {
-                display: none;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .onboarding-box {
-                padding: 30px 20px;
-            }
-
-            .onboarding-title {
-                font-size: 22px;
-            }
-
-            .admin-stats {
-                grid-template-columns: 1fr;
-            }
-
-            .admin-sidebar {
-                width: 110px;
-                min-width: 90px;
-            }
-
-            .admin-sidebar button {
-                font-size: 11px;
-                padding: 8px 10px;
-                gap: 6px;
-            }
-
-            .admin-header h2 {
-                font-size: 16px;
-            }
-
-            .admin-header h2 i {
-                font-size: 20px;
-            }
+            .sidebar.active { transform: translateX(0); }
+            .menu-toggle { display: flex; }
+            .main-area { border-radius: 20px; }
+            .suggestion-cards { grid-template-columns: 1fr; width: 100%; }
+            .welcome-title { font-size: 28px; }
+            .chat-container { padding: 15px; }
+            .message-content { max-width: 90%; }
         }
     </style>
 </head>
 <body>
 
-    <!-- ===== TOAST CONTAINER ===== -->
-    <div id="toastContainer"></div>
-
-    <!-- ===== GLOBAL BANNER ===== -->
-    <div id="globalBanner">
-        <i class="fa-solid fa-bullhorn"></i>
-        <span id="bannerText">به سامانه هوشمند پاسخگویی دینی آوای یقین خوش آمدید.</span>
-    </div>
-
-    <!-- ===== ONBOARDING MODAL ===== -->
-    <div id="onboardingModal">
-        <div class="onboarding-box">
-            <div class="onboarding-icon">
+    <!-- فرم ثبت‌نام / ورود اولیه -->
+    <div id="registrationOverlay" class="registration-overlay">
+        <div class="registration-box">
+            <div class="registration-icon">
                 <i class="fa-solid fa-mosque"></i>
             </div>
-            <h1 class="onboarding-title">ورود به آوای یقین</h1>
-            <p class="onboarding-sub">دستیار هوشمند پاسخگویی به سوالات دینی و معارفی</p>
-            <p class="onboarding-desc">لطفاً اطلاعات خود را وارد کنید تا به سامانه متصل شوید.</p>
+            <h2 class="registration-title">آوای یقین</h2>
+            <p class="registration-subtitle">سامانه هوشمند پاسخگویی دینی و معارفی</p>
+            <p class="registration-desc">برای ورود به سامانه، لطفاً اطلاعات زیر را وارد کنید:</p>
 
-            <form id="onboardingForm">
+            <form id="registrationForm">
                 <div class="reg-group">
-                    <label>نام و نام خانوادگی</label>
-                    <input type="text" id="userName" placeholder="مثال: امیر صالح" class="reg-input" required>
+                    <label for="userNameInput">نام و نام خانوادگی</label>
+                    <input type="text" id="userNameInput" class="reg-input" placeholder="مثال: امیر صالح" required>
                 </div>
                 <div class="reg-group">
-                    <label>شماره همراه</label>
-                    <input type="tel" id="userPhone" placeholder="09123456789" class="reg-input" dir="ltr" required>
+                    <label for="userPhoneInput">شماره همراه</label>
+                    <input type="tel" id="userPhoneInput" class="reg-input" placeholder="09123456789" dir="ltr" required>
                 </div>
-                <button type="submit" class="reg-btn">
-                    <i class="fa-solid fa-arrow-left"></i> ورود به سامانه
-                </button>
-                <p class="reg-footer">همه اطلاعات شما نزد ما محفوظ است.</p>
+                <button type="submit" class="reg-btn" style="margin-top: 10px;">ورود به سامانه</button>
             </form>
         </div>
     </div>
 
-    <!-- ===== MAIN APP ===== -->
-    <div id="mainApp">
-        <div class="app-layout">
-
-            <!-- ===== SIDEBAR ===== -->
-            <aside class="sidebar" id="sidebar">
-                <div class="sidebar-header">
-                    <div class="sidebar-logo">
-                        <i class="fa-solid fa-kaaba"></i>
-                    </div>
-                    <div class="sidebar-title">آوای یقین</div>
-                    <div class="sidebar-sub">پاسخگوی هوشمند دینی</div>
+    <!-- ساختار اصلی اپلیکیشن -->
+    <div class="app-container">
+        
+        <!-- سایدبار -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon">
+                    <i class="fa-solid fa-kaaba"></i>
                 </div>
-
-                <button class="new-chat-btn" id="newChatBtn">
-                    <i class="fa-solid fa-plus"></i> گفتگوی جدید
-                </button>
-
-                <div class="chat-history" id="chatHistory">
-                    <div class="history-title">گفتگوهای اخیر</div>
-                    <div id="historyList"></div>
-                </div>
-
-                <div class="sidebar-footer">
-                    <span class="user-name" id="displayUserName">کاربر</span>
-                    <span style="display:block;font-size:11px;color:#777;margin-top:4px;">متصل به سامانه</span>
-                </div>
-            </aside>
-
-            <!-- ===== CHAT MAIN ===== -->
-            <main class="chat-main">
-
-                <!-- Top Bar -->
-                <div class="top-bar">
-                    <div class="top-bar-left">
-                        <button class="menu-toggle" id="menuToggle">
-                            <i class="fa-solid fa-bars"></i>
-                        </button>
-                        <div class="top-bar-info">
-                            <span class="bot-name" id="headerBotName">آوای یقین</span>
-                            <span class="bot-status">
-                                <span class="dot"></span>
-                                پاسخگوی آنلاین
-                            </span>
-                        </div>
-                    </div>
-                    <div class="top-bar-right">
-                        <button class="admin-btn" id="adminOpenBtn">
-                            <i class="fa-solid fa-sliders"></i>
-                            <span>مدیریت</span>
-                        </button>
-                        <div class="user-badge">
-                            <i class="fa-regular fa-circle-user"></i>
-                            <span id="displayUserNameTop">کاربر</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Chat Container -->
-                <div class="chat-container" id="chatContainer">
-                    <div id="welcomeScreen" class="welcome-screen">
-                        <div class="welcome-logo">
-                            <i class="fa-solid fa-mosque"></i>
-                        </div>
-                        <h1 class="welcome-title">آوای یقین</h1>
-                        <p class="welcome-sub">پاسخگوی هوشمند شما در مسائل دینی و معارفی</p>
-                        <div class="suggestion-cards" id="suggestionCards">
-                            <!-- Cards will be injected by JS -->
-                        </div>
-                    </div>
-                    <div id="messagesContainer"></div>
-                </div>
-
-                <!-- Input Area -->
-                <div class="input-area">
-                    <form id="chatForm" class="input-wrapper">
-                        <textarea id="chatInput" rows="1" placeholder="سوال دینی یا معارفی خود را بنویسید..." class="chat-input"></textarea>
-                        <button type="submit" class="send-btn" id="sendBtn">
-                            <i class="fa-solid fa-paper-plane"></i>
-                        </button>
-                    </form>
-                    <div class="input-footer">طراحی‌شده برای پاسخگویی مستند و معتبر به پرسش‌های دینی و معارفی</div>
-                </div>
-
-            </main>
-        </div>
-    </div>
-
-    <!-- ===== ADMIN MODAL ===== -->
-    <div id="adminModal">
-        <div class="admin-panel">
-            <div class="admin-header">
-                <h2><i class="fa-solid fa-sliders"></i> پنل مدیریت مرکزی</h2>
-                <button class="admin-close" id="closeAdminBtn"><i class="fa-solid fa-xmark"></i></button>
+                <h1 class="logo-text">آوای یقین</h1>
+                <p class="logo-subtitle">مسجد حضرت ابوالفضل (ع)</p>
             </div>
-            <div class="admin-body">
-                <nav class="admin-sidebar">
-                    <button class="active" data-tab="stats"><i class="fa-solid fa-chart-line"></i> داشبورد</button>
-                    <button data-tab="ai"><i class="fa-solid fa-brain"></i> هوش مصنوعی</button>
-                    <button data-tab="users"><i class="fa-solid fa-users"></i> کاربران</button>
-                    <button data-tab="prompts"><i class="fa-solid fa-list-check"></i> کارت‌ها</button>
-                    <button data-tab="notice"><i class="fa-solid fa-bullhorn"></i> اعلان</button>
-                    <button data-tab="security"><i class="fa-solid fa-shield-halved"></i> امنیت</button>
-                </nav>
-                <div class="admin-content">
 
-                    <!-- TAB: Stats -->
-                    <div class="admin-tab active" id="tabStats">
-                        <h3>داشبورد و آمار</h3>
-                        <div class="admin-stats">
-                            <div class="stat-card">
-                                <div class="num" id="statTotalUsers">0</div>
-                                <div class="label">کل کاربران</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="num" id="statTotalMessages">0</div>
-                                <div class="label">کل پیام‌ها</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="num" id="statTotalBanned">0</div>
-                                <div class="label">مسدود شده</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="num" id="pingStatus">-- ms</div>
-                                <div class="label">پینگ Groq</div>
-                            </div>
-                        </div>
-                        <button class="admin-btn" id="exportDatabaseBtn" style="margin-top:10px;">
-                            <i class="fa-solid fa-file-export"></i> دانلود خروجی JSON
-                        </button>
-                        <button class="admin-btn admin-btn-danger" id="pingApiBtn" style="margin-top:10px;margin-right:10px;">
-                            <i class="fa-solid fa-bolt"></i> تست پینگ
-                        </button>
+            <button class="new-chat-btn" id="newChatBtn">
+                <i class="fa-solid fa-plus"></i> گفتگو‌ی جدید
+            </button>
+
+            <div class="chat-history">
+                <div class="history-title">تاریخچه گفتگوها</div>
+                <!-- اینجا گفتگوهای قبلی لود می‌شود -->
+            </div>
+
+            <div class="sidebar-footer">
+                <div class="footer-info">نسخه هوشمند ۲.۵</div>
+                <div>طراحی اختصاصی برای پاسخگویی معارفی</div>
+            </div>
+        </aside>
+
+        <!-- پنل اصلی چت -->
+        <main class="main-area">
+            <header class="top-bar">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <button class="menu-toggle" id="menuToggle">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <div class="model-selector">
+                        <i class="fa-solid fa-bolt" style="color: var(--gold);"></i>
+                        <span>مدل هوش مصنوعی Groq</span>
                     </div>
+                </div>
+                <div id="userProfileDisplay" style="font-size: 13px; color: var(--gold-light); font-weight: 600;"></div>
+            </header>
 
-                    <!-- TAB: AI -->
-                    <div class="admin-tab" id="tabAi">
-                        <h3>تنظیمات هوش مصنوعی</h3>
-                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-                            <div>
-                                <label style="font-size:13px;color:#aaa;display:block;margin-bottom:4px;">نام ربات</label>
-                                <input type="text" id="adminBotNameInput" class="admin-input" value="آوای یقین">
-                            </div>
-                            <div>
-                                <label style="font-size:13px;color:#aaa;display:block;margin-bottom:4px;">مدل پردازشی</label>
-                                <select id="adminAiModelInput" class="admin-input">
-                                    <option value="llama-3.3-70b-versatile">Llama 3.3 70B</option>
-                                    <option value="llama3-8b-8192">Llama 3 8B</option>
-                                    <option value="mixtral-8x7b-32768">Mixtral 8x7B</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px;">
-                            <div>
-                                <label style="font-size:13px;color:#aaa;display:block;margin-bottom:4px;">خلاقیت: <span id="tempValueDisplay">0.6</span></label>
-                                <input type="range" id="adminTempInput" min="0.1" max="1" step="0.1" value="0.6" style="width:100%;accent-color:var(--gold);">
-                            </div>
-                            <div>
-                                <label style="font-size:13px;color:#aaa;display:block;margin-bottom:4px;">حداکثر توکن: <span id="tokensValueDisplay">2048</span></label>
-                                <input type="range" id="adminTokensInput" min="512" max="4096" step="256" value="2048" style="width:100%;accent-color:var(--gold);">
-                            </div>
-                        </div>
-                        <div style="margin-top:10px;">
-                            <label style="font-size:13px;color:#aaa;display:block;margin-bottom:4px;">پرامپت سیستم</label>
-                            <textarea id="adminSystemPromptInput" class="admin-input admin-textarea" rows="4">شما یک دستیار هوشمند دینی هستید که به سوالات شرعی، اخلاقی و معارفی پاسخ می‌دهید.</textarea>
-                        </div>
-                        <div style="margin-top:6px;">
-                            <label style="font-size:13px;color:#aaa;display:block;margin-bottom:4px;">پیام خوش‌آمدگویی</label>
-                            <textarea id="adminWelcomeMsgInput" class="admin-input admin-textarea" rows="2">سلام! من آوای یقین هستم، پاسخگوی شما در مسائل دینی و معارفی. چه سوالی دارید؟</textarea>
-                        </div>
-                        <button class="admin-btn" id="saveAiConfigBtn" style="margin-top:12px;width:100%;">
-                            <i class="fa-solid fa-save"></i> ذخیره تنظیمات
-                        </button>
+            <div class="chat-container" id="chatContainer">
+                <div class="welcome-screen" id="welcomeScreen">
+                    <div class="welcome-logo">
+                        <i class="fa-solid fa-book-quran"></i>
                     </div>
+                    <h2 class="welcome-title">چه کمکی از دست من ساخته است؟</h2>
+                    <p class="welcome-subtitle">سوالات دینی، احکام، یا معارف اهل‌بیت (ع) خود را بپرسید.</p>
 
-                    <!-- TAB: Users -->
-                    <div class="admin-tab" id="tabUsers">
-                        <h3>مدیریت کاربران</h3>
-                        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;">
-                            <input type="text" id="userSearchInput" placeholder="جستجوی کاربر..." class="admin-input" style="flex:1;min-width:150px;margin:0;">
-                            <button class="admin-btn" id="refreshLogsBtn"><i class="fa-solid fa-rotate"></i> بروزرسانی</button>
-                            <button class="admin-btn admin-btn-danger" id="clearLogsBtn"><i class="fa-solid fa-trash"></i> پاکسازی</button>
+                    <div class="suggestion-cards">
+                        <div class="suggestion-card" onclick="setPrompt('شرایط و واجبات نماز مسافر چیست؟')">
+                            <div class="suggestion-card-title">📿 احکام شرعی</div>
+                            <div class="suggestion-card-desc">شرایط و واجبات نماز مسافر چیست؟</div>
                         </div>
-                        <div id="globalUsersContainer"></div>
-                    </div>
-
-                    <!-- TAB: Prompts -->
-                    <div class="admin-tab" id="tabPrompts">
-                        <h3>مدیریت کارت‌های پیشنهادی</h3>
-                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-                            <input type="text" id="newPromptTitle" placeholder="عنوان کارت" class="admin-input" style="margin:0;">
-                            <input type="text" id="newPromptDesc" placeholder="متن پرسش" class="admin-input" style="margin:0;">
-                        </div>
-                        <button class="admin-btn" id="addPromptCardBtn" style="margin-top:10px;width:100%;">
-                            <i class="fa-solid fa-plus"></i> افزودن کارت جدید
-                        </button>
-                        <div id="adminPromptsList" style="margin-top:16px;"></div>
-                    </div>
-
-                    <!-- TAB: Notice -->
-                    <div class="admin-tab" id="tabNotice">
-                        <h3>اعلان و بنر</h3>
-                        <label style="font-size:13px;color:#aaa;display:block;margin-bottom:4px;">متن بنر سراسری</label>
-                        <input type="text" id="adminBannerInput" class="admin-input" placeholder="متن اعلان..." value="به سامانه هوشمند پاسخگویی دینی آوای یقین خوش آمدید.">
-                        <button class="admin-btn" id="saveNoticeBtn" style="width:100%;"><i class="fa-solid fa-bullhorn"></i> ثبت اعلان</button>
-
-                        <div style="margin-top:20px;padding:18px;border-radius:16px;border:1px solid rgba(212,175,55,.2);background:rgba(212,175,55,.05);">
-                            <div style="display:flex;justify-content:space-between;align-items:center;">
-                                <div>
-                                    <h4 style="font-size:14px;font-weight:700;color:#f5df91;">حالت تعمیرات</h4>
-                                    <p style="font-size:12px;color:#aaa;">دسترسی کاربران به هوش مصنوعی قطع می‌شود.</p>
-                                </div>
-                                <label style="position:relative;display:inline-block;width:50px;height:28px;">
-                                    <input type="checkbox" id="maintenanceToggle" style="opacity:0;width:0;height:0;">
-                                    <span style="position:absolute;cursor:pointer;inset:0;background:#333;border-radius:28px;transition:.3s;"></span>
-                                    <span style="position:absolute;content:'';height:22px;width:22px;left:3px;bottom:3px;background:white;border-radius:50%;transition:.3s;"></span>
-                                </label>
-                            </div>
+                        <div class="suggestion-card" onclick="setPrompt('تفسیر کوتاه و روان آیه الکرسی را بیان کنید.')">
+                            <div class="suggestion-card-title">📖 تفسیر قرآن</div>
+                            <div class="suggestion-card-desc">تفسیر کوتاه و روان آیه الکرسی</div>
                         </div>
                     </div>
-
-                    <!-- TAB: Security -->
-                    <div class="admin-tab" id="tabSecurity">
-                        <h3>امنیت و رمز عبور</h3>
-                        <div style="padding:18px;border-radius:16px;border:1px solid rgba(212,175,55,.2);background:rgba(212,175,55,.05);">
-                            <label style="font-size:13px;color:#aaa;display:block;margin-bottom:4px;">رمز عبور جدید مدیریت</label>
-                            <input type="text" id="adminNewPasscode" class="admin-input" placeholder="رمز جدید را وارد کنید...">
-                            <button class="admin-btn admin-btn-danger" id="savePasscodeBtn" style="width:100%;">
-                                <i class="fa-solid fa-key"></i> تغییر رمز عبور
-                            </button>
-                        </div>
-                    </div>
-
                 </div>
             </div>
-        </div>
-    </div>
 
-    <script>
-        // ============================================================
-        //  JAVASCRIPT - FULL APPLICATION
-        // ============================================================
-
-        // ---------- State ----------
-        let state = {
-            user: { name: '', phone: '' },
-            messages: [],
-            chats: [],
-            currentChatId: null,
-            suggestions: [
-                { title: '📿 احکام شرعی', desc: 'حکم وضو و نماز مسافر چیست؟' },
-                { title: '🌱 اخلاق و عرفان', desc: 'چگونه صبر را در خود تقویت کنیم؟' },
-                { title: '📖 تفسیر قرآن', desc: 'تفسیر سوره حمد چیست؟' },
-                { title: '💡 مشاوره جوانان', desc: 'چگونه با استرس امتحان مقابله کنم؟' }
-            ],
-            bannedUsers: [],
-            adminPasscode: 'admin123',
-            aiConfig: {
-                botName: 'آوای یقین',
-                model: 'llama-3.3-70b-versatile',
-                systemPrompt: 'شما یک دستیار هوشمند دینی هستید که به سوالات شرعی، اخلاقی و معارفی پاسخ می‌دهید. پاسخ‌ها باید مستند، دقیق و با لحنی محترمانه باشد.',
-                welcomeMsg: 'سلام! من آوای یقین هستم، پاسخگوی شما در مسائل دینی و معارفی. چه سوالی دارید؟',
-                temperature: 0.6,
-                maxTokens: 2048
-            },
-            bannerText: 'به سامانه هوشمند پاسخگویی دینی آوای یقین خوش آمدید.',
-            maintenanceMode: false
-        };
-
-        // ---------- DOM Refs ----------
-        const $ = id => document.getElementById(id);
-        const onboardingModal = $('onboardingModal');
-        const mainApp = $('mainApp');
-        const chatContainer = $('chatContainer');
-        const messagesContainer = $('messagesContainer');
-        const welcomeScreen = $('welcomeScreen');
-        const chatForm = $('chatForm');
-        const chatInput = $('chatInput');
-        const sendBtn = $('sendBtn');
-        const userName = $('userName');
-        const userPhone = $('userPhone');
-        const displayUserName = $('displayUserName');
-        const displayUserNameTop = $('displayUserNameTop');
-        const headerBotName = $('headerBotName');
-        const bannerText = $('bannerText');
-        const suggestionCards = $('suggestionCards');
-        const historyList = $('historyList');
-        const toastContainer = $('toastContainer');
-        const adminModal = $('adminModal');
-        const closeAdminBtn = $('closeAdminBtn');
-        const adminOpenBtn = $('adminOpenBtn');
-        const menuToggle = $('menuToggle');
-        const sidebar = $('sidebar');
-
-        // ---------- Toast ----------
-        function showToast(msg, type = 'info') {
-            const div = document.createElement('div');
-            div.className = 'toast';
-            div.textContent = msg;
-            toastContainer.appendChild(div);
-            setTimeout(() => div.remove(), 3500);
-        }
-
-        // ---------- Onboarding ----------
-        document.getElementById('onboardingForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const name = userName.value.trim();
-            const phone = userPhone.value.trim();
-            if (!name || !phone) {
-                showToast('لطفاً نام و شماره همراه را وارد کنید.');
-                return;
-            }
-            state.user.name = name;
-            state.user.phone = phone;
-            displayUserName.textContent = name;
-            displayUserNameTop.textContent = name;
-            onboardingModal.classList.add('hidden');
-            mainApp.classList.add('active');
-            showToast(`خوش آمدید ${name}!`);
-            loadChats();
-            renderSuggestions();
-            renderHistory();
-            updateStats();
-        });
-
-        // ---------- Render Suggestions ----------
-        function renderSuggestions() {
-            suggestionCards.innerHTML = state.suggestions.map((s, i) => `
-                <div class="suggestion-card" data-index="${i}">
-                    <div class="card-title">${s.title}</div>
-                    <div class="card-desc">${s.desc}</div>
-                </div>
-            `).join('');
-            document.querySelectorAll('.suggestion-card').forEach(el => {
-                el.addEventListener('click', () => {
-                    const idx = parseInt(el.dataset.index);
-                    const s = state.suggestions[idx];
-                    if (s) sendMessage(s.desc);
-                });
-            });
-        }
-
-        // ---------- Send Message ----------
-        async function sendMessage(text) {
-            if (!text || !text.trim()) return;
-            const msg = text.trim();
-            chatInput.value = '';
-
-            // Hide welcome
-            welcomeScreen.style.display = 'none';
-
-            // Add user message
-            addMessage('user', msg);
-            state.messages.push({ role: 'user', content: msg });
-
-            // Show typing
-            const typingId = addTyping();
-
-            try {
-                const response = await callAI(msg);
-                removeTyping(typingId);
-                addMessage('ai', response);
-                state.messages.push({ role: 'assistant', content: response });
-                saveChats();
-                updateStats();
-            } catch (err) {
-                removeTyping(typingId);
-                addMessage('ai', '⚠️ خطا در ارتباط با سرور. لطفاً دوباره تلاش کنید.');
-                showToast('خطا در ارتباط با هوش مصنوعی');
-                console.error(err);
-            }
-        }
-
-        function addMessage(role, content) {
-            const div = document.createElement('div');
-            div.className = `message ${role}`;
-            const bubble = document.createElement('div');
-            bubble.className = 'msg-bubble';
-            bubble.innerHTML = content.replace(/\n/g, '<br>');
-            div.appendChild(bubble);
-            messagesContainer.appendChild(div);
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        }
-
-        function addTyping() {
-            const id = 'typing-' + Date.now();
-            const div = document.createElement('div');
-            div.id = id;
-            div.className = 'message ai';
-            div.innerHTML = `<div class="msg-bubble">⏳ در حال تفکر...</div>`;
-            messagesContainer.appendChild(div);
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-            return id;
-        }
-
-        function removeTyping(id) {
-            const el = document.getElementById(id);
-            if (el) el.remove();
-        }
-
-        // ---------- AI Call (Mock + Groq) ----------
-        async function callAI(text) {
-            // If maintenance mode, return a friendly message
-            if (state.maintenanceMode) {
-                return '🔧 سامانه در حال به‌روزرسانی است. لطفاً چند دقیقه دیگر مراجعه فرمایید.';
-            }
-
-            // Check if user is banned
-            if (state.bannedUsers.includes(state.user.phone)) {
-                return '🚫 شما توسط مدیر مسدود شده‌اید. برای اطلاعات بیشتر با پشتیبانی تماس بگیرید.';
-            }
-
-            // Try Groq API
-            const apiKey = localStorage.getItem('groq_api_key') || '';
-            if (apiKey) {
-                try {
-                    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${apiKey}`
-                        },
-                        body: JSON.stringify({
-                            model: state.aiConfig.model,
-                            messages: [
-                                { role: 'system', content: state.aiConfig.systemPrompt },
-                                ...state.messages.map(m => ({ role: m.role, content: m.content }))
-                            ],
-                            temperature: state.aiConfig.temperature,
-                            max_tokens: state.aiConfig.maxTokens
-                        })
-                    });
-                    if (res.ok) {
-                        const data = await res.json();
-                        return data.choices[0].message.content;
-                    }
-                } catch (e) {
-                    console.warn('Groq API failed, falling back to mock', e);
-                }
-            }
-
-            // Fallback: Mock responses
-            const mockResponses = [
-                'با توجه به منابع معتبر، پاسخ شما این است که...',
-                'در قرآن کریم به این موضوع اشاره شده که...',
-                'از نظر فقهی، این مسئله دارای احکام زیر است...',
-                'بر اساس روایات اهل بیت (ع)، بهترین راه این است که...',
-                'برای پاسخ به این سوال، باید به چند نکته توجه کرد...'
-            ];
-            return mockResponses[Math.floor(Math.random() * mockResponses.length)] + '\n\n(پاسخ آزمایشی - برای اتصال به هوش مصنوعی واقعی، کلید API خود را در کد تنظیم کنید)';
-        }
-
-        // ---------- Chat History ----------
-        function saveChats() {
-            const chats = JSON.parse(localStorage.getItem('avaye_yaqin_chats') || '[]');
-            const current = {
-                id: Date.now(),
-                title: state.messages[0]?.content?.slice(0, 30) || 'گفتگوی جدید',
-                messages: state.messages,
-                user: state.user,
-                timestamp: new Date().toISOString()
-            };
-            // Find if we have a current chat to update
-            const existingIdx = chats.findIndex(c => c.id === state.currentChatId);
-            if (existingIdx >= 0) {
-                chats[existingIdx] = current;
-            } else {
-                chats.unshift(current);
-                state.currentChatId = current.id;
-            }
-            localStorage.setItem('avaye_yaqin_chats', JSON.stringify(chats));
-            renderHistory();
-        }
-
-        function loadChats() {
-            const chats = JSON.parse(localStorage.getItem('avaye_yaqin_chats') || '[]');
-            if (chats.length > 0) {
-                const last = chats[0];
-                state.currentChatId = last.id;
-                state.messages = last.messages || [];
-                renderMessages();
-                welcomeScreen.style.display = 'none';
-            }
-            renderHistory();
-        }
-
-        function renderMessages() {
-            messagesContainer.innerHTML = '';
-            state.messages.forEach(m => {
-                const div = document.createElement('div');
-                div.className = `message ${m.role === 'user' ? 'user' : 'ai'}`;
-                const bubble = document.createElement('div');
-                bubble.className = 'msg-bubble';
-                bubble.innerHTML = m.content.replace(/\n/g, '<br>');
-                div.appendChild(bubble);
-                messagesContainer.appendChild(div);
-            });
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        }
-
-        function renderHistory() {
-            const chats = JSON.parse(localStorage.getItem('avaye_yaqin_chats') || '[]');
-            historyList.innerHTML = chats.map(c => `
-                <div class="history-item ${c.id === state.currentChatId ? 'active' : ''}" data-id="${c.id}">
-                    ${c.title || 'گفتگو'}
-                    <span style="display:block;font-size:10px;color:#666;">${new Date(c.timestamp).toLocaleDateString('fa')}</span>
-                </div>
-            `).join('');
-            document.querySelectorAll('.history-item').forEach(el => {
-                el.addEventListener('click', () => {
-                    const id = parseInt(el.dataset.id);
-                    loadChat(id);
-                });
-            });
-        }
-
-        function loadChat(id) {
-            const chats = JSON.parse(localStorage.getItem('avaye_yaqin_chats') || '[]');
-            const chat = chats.find(c => c.id === id);
-            if (chat) {
-                state.currentChatId = id;
-                state.messages = chat.messages || [];
-                renderMessages();
-                welcomeScreen.style.display = 'none';
-                renderHistory();
-            }
-        }
-
-        // ---------- New Chat ----------
-        function newChat() {
-            state.messages = [];
-            state.currentChatId = null;
-            messagesContainer.innerHTML = '';
-            welcomeScreen.style.display = 'flex';
-            chatInput.value = '';
-            renderHistory();
-            showToast('گفتگوی جدید شروع شد.');
-        }
-
-        // ---------- Events ----------
-        chatForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const text = chatInput.value.trim();
-            if (text) sendMessage(text);
-        });
-
-        document.getElementById('newChatBtn').addEventListener('click', newChat);
-        document.getElementById('newChatBtn')?.addEventListener('click', newChat);
-
-        // ---------- Admin ----------
-        adminOpenBtn.addEventListener('click', () => {
-            // Simple passcode check
-            const code = prompt('رمز عبور مدیریت را وارد کنید:');
-            if (code === state.adminPasscode) {
-                adminModal.classList.add('active');
-                updateStats();
-                renderAdminPrompts();
-            } else if (code !== null) {
-                showToast('رمز عبور نادرست است!');
-            }
-        });
-
-        closeAdminBtn.addEventListener('click', () => adminModal.classList.remove('active'));
-
-        // Admin tabs
-        document.querySelectorAll('.admin-sidebar button').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.admin-sidebar button').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                const tab = btn.dataset.tab;
-                document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
-                document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1))?.classList.add('active');
-            });
-        });
-
-        // ---------- Admin: Stats ----------
-        function updateStats() {
-            const chats = JSON.parse(localStorage.getItem('avaye_yaqin_chats') || '[]');
-            const users = new Set(chats.map(c => c.user?.phone).filter(Boolean));
-            const msgs = chats.reduce((acc, c) => acc + (c.messages?.length || 0), 0);
-            document.getElementById('statTotalUsers').textContent = users.size;
-            document.getElementById('statTotalMessages').textContent = msgs;
-            document.getElementById('statTotalBanned').textContent = state.bannedUsers.length;
-        }
-
-        // ---------- Admin: Ping ----------
-        document.getElementById('pingApiBtn').addEventListener('click', async () => {
-            const apiKey = localStorage.getItem('groq_api_key') || '';
-            if (!apiKey) {
-                document.getElementById('pingStatus').textContent = '❌ کلید API تنظیم نشده';
-                showToast('لطفاً کلید API Groq را تنظیم کنید.');
-                return;
-            }
-            const start = Date.now();
-            try {
-                const res = await fetch('https://api.groq.com/openai/v1/models', {
-                    headers: { 'Authorization': `Bearer ${apiKey}` }
-                });
-                if (res.ok) {
-                    const ping = Date.now() - start;
-                    document.getElementById('pingStatus').textContent = `✅ ${ping} ms`;
-                    showToast(`پینگ موفق: ${ping}ms`);
-                } else {
-                    document.getElementById('pingStatus').textContent = '❌ خطا';
-                }
-            } catch {
-                document.getElementById('pingStatus').textContent = '❌ قطع';
-            }
-        });
-
-        // ---------- Admin: Export ----------
-        document.getElementById('exportDatabaseBtn').addEventListener('click', () => {
-            const data = {
-                chats: JSON.parse(localStorage.getItem('avaye_yaqin_chats') || '[]'),
-                banned: state.bannedUsers,
-                config: state.aiConfig,
-                exportedAt: new Date().toISOString()
-            };
-            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `avaye_yaqin_backup_${Date.now()}.json`;
-            a.click();
-            URL.revokeObjectURL(url);
-            showToast('خروجی با موفقیت دانلود شد.');
-        });
-
-        // ---------- Admin: AI Config ----------
-        document.getElementById('saveAiConfigBtn').addEventListener('click', () => {
-            state.aiConfig.botName = document.getElementById('adminBotNameInput').value;
-            state.aiConfig.model = document.getElementById('adminAiModelInput').value;
-            state.aiConfig.systemPrompt = document.getElementById('adminSystemPromptInput').value;
-            state.aiConfig.welcomeMsg = document.getElementById('adminWelcomeMsgInput').value;
-            state.aiConfig.temperature = parseFloat(document.getElementById('adminTempInput').value);
-            state.aiConfig.maxTokens = parseInt(document.getElementById('adminTokensInput').value);
-            headerBotName.textContent = state.aiConfig.botName;
-            localStorage.setItem('avaye_yaqin_config', JSON.stringify(state.aiConfig));
-            showToast('تنظیمات هوش مصنوعی ذخیره شد.');
-        });
-
-        // ---------- Admin: Users ----------
-        document.getElementById('refreshLogsBtn').addEventListener('click', () => {
-            renderUsersList();
-            showToast('لیست بروزرسانی شد.');
-        });
-
-        document.getElementById('clearLogsBtn').addEventListener('click', () => {
-            if (confirm('آیا از پاکسازی تمام چت‌ها مطمئن هستید؟')) {
-                localStorage.removeItem('avaye_yaqin_chats');
-                state.messages = [];
-                state.currentChatId = null;
-                messagesContainer.innerHTML = '';
-                welcomeScreen.style.display = 'flex';
-                renderHistory();
-                updateStats();
-                renderUsersList();
-                showToast('همه چت‌ها پاک شدند.');
-            }
-        });
-
-        function renderUsersList() {
-            const chats = JSON.parse(localStorage.getItem('avaye_yaqin_chats') || '[]');
-            const container = document.getElementById('globalUsersContainer');
-            const search = document.getElementById('userSearchInput').value.toLowerCase();
-            const users = {};
-            chats.forEach(c => {
-                if (c.user?.phone) {
-                    if (!users[c.user.phone]) {
-                        users[c.user.phone] = { ...c.user, chats: [] };
-                    }
-                    users[c.user.phone].chats.push(c);
-                }
-            });
-            const filtered = Object.values(users).filter(u =>
-                u.name?.toLowerCase().includes(search) || u.phone?.includes(search)
-            );
-            container.innerHTML = filtered.map(u => `
-                <div style="padding:14px 18px;border-radius:16px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.06);margin-bottom:8px;">
-                    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;">
-                        <div>
-                            <strong style="color:#fff;">${u.name}</strong>
-                            <span style="color:#aaa;font-size:12px;margin-right:12px;">${u.phone}</span>
-                            <span style="color:#666;font-size:11px;margin-right:12px;">${u.chats.length} گفتگو</span>
-                        </div>
-                        <div style="display:flex;gap:6px;">
-                            <button class="admin-btn" style="padding:6px 14px;font-size:12px;" onclick="viewUserChats('${u.phone}')">مشاهده</button>
-                            <button class="admin-btn admin-btn-danger" style="padding:6px 14px;font-size:12px;" onclick="toggleBan('${u.phone}')">
-                                ${state.bannedUsers.includes(u.phone) ? 'رفع مسدودی' : 'مسدود'}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        // Expose for onclick
-        window.viewUserChats = function(phone) {
-            const chats = JSON.parse(localStorage.getItem('avaye_yaqin_chats') || '[]');
-            const userChats = chats.filter(c => c.user?.phone === phone);
-            let msg = `📋 گفتگوهای ${phone}:\n\n`;
-            userChats.forEach((c, i) => {
-                msg += `${i+1}. ${c.title || 'بدون عنوان'} (${new Date(c.timestamp).toLocaleDateString('fa')})\n`;
-                msg += `   ${c.messages?.length || 0} پیام\n`;
-            });
-            alert(msg || 'گفتگویی یافت نشد.');
-        };
-
-        window.toggleBan = function(phone) {
-            const idx = state.bannedUsers.indexOf(phone);
-            if (idx >= 0) {
-                state.bannedUsers.splice(idx, 1);
-                showToast(`مسدودی ${phone} برداشته شد.`);
-            } else {
-                state.bannedUsers.push(phone);
-                showToast(`کاربر ${phone} مسدود شد.`);
-            }
-            renderUsersList();
-            updateStats();
-        };
-
-        // ---------- Admin: Prompts ----------
-        document.getElementById('addPromptCardBtn').addEventListener('click', () => {
-            const title = document.getElementById('newPromptTitle').value.trim();
-            const desc = document.getElementById('newPromptDesc').value.trim();
-            if (!title || !desc) {
-                showToast('لطفاً عنوان و متن را کامل وارد کنید.');
-                return;
-            }
-            state.suggestions.push({ title, desc });
-            localStorage.setItem('avaye_yaqin_suggestions', JSON.stringify(state.suggestions));
-            renderSuggestions();
-            renderAdminPrompts();
-            showToast('کارت پیشنهادی افزوده شد.');
-        });
-
-        function renderAdminPrompts() {
-            const container = document.getElementById('adminPromptsList');
-            container.innerHTML = state.suggestions.map((s, i) => `
-                <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);margin-bottom:6px;">
-                    <div>
-                        <strong style="color:#fff;">${s.title}</strong>
-                        <span style="color:#aaa;font-size:12px;margin-right:10px;">${s.desc}</span>
-                    </div>
-                    <button class="admin-btn admin-btn-danger" style="padding:4px 12px;font-size:11px;" onclick="removeSuggestion(${i})">
-                        <i class="fa-solid fa-trash"></i>
+            <div class="input-container">
+                <div class="input-wrapper">
+                    <textarea class="chat-input" id="chatInput" rows="1" placeholder="سوال دینی یا معارفی خود را بنویسید..."></textarea>
+                    <button class="send-btn" id="sendBtn">
+                        <i class="fa-solid fa-paper-plane"></i>
                     </button>
                 </div>
-            `).join('');
-        }
+            </div>
+        </main>
+    </div>
 
-        window.removeSuggestion = function(index) {
-            state.suggestions.splice(index, 1);
-            localStorage.setItem('avaye_yaqin_suggestions', JSON.stringify(state.suggestions));
-            renderSuggestions();
-            renderAdminPrompts();
-            showToast('کارت حذف شد.');
-        };
-
-        // ---------- Admin: Notice ----------
-        document.getElementById('saveNoticeBtn').addEventListener('click', () => {
-            const text = document.getElementById('adminBannerInput').value.trim();
-            if (text) {
-                state.bannerText = text;
-                bannerText.textContent = text;
-                localStorage.setItem('avaye_yaqin_banner', text);
-                showToast('اعلان سراسری ثبت شد.');
-            }
-        });
-
-        // ---------- Admin: Maintenance ----------
-        document.getElementById('maintenanceToggle').addEventListener('change', function() {
-            state.maintenanceMode = this.checked;
-            localStorage.setItem('avaye_yaqin_maintenance', this.checked ? 'true' : 'false');
-            showToast(this.checked ? 'حالت تعمیرات فعال شد.' : 'حالت تعمیرات غیرفعال شد.');
-        });
-
-        // ---------- Admin: Security ----------
-        document.getElementById('savePasscodeBtn').addEventListener('click', () => {
-            const newCode = document.getElementById('adminNewPasscode').value.trim();
-            if (newCode.length < 4) {
-                showToast('رمز عبور باید حداقل ۴ کاراکتر باشد.');
-                return;
-            }
-            state.adminPasscode = newCode;
-            localStorage.setItem('avaye_yaqin_admin_pass', newCode);
-            showToast('رمز عبور مدیریت با موفقیت تغییر کرد.');
-            document.getElementById('adminNewPasscode').value = '';
-        });
-
-        // ---------- Menu Toggle (Mobile) ----------
-        menuToggle.addEventListener('click', () => {
-            sidebar.classList.toggle('open');
-        });
-
-        // ---------- Load Saved Data ----------
-        function loadSavedData() {
-            // Suggestions
-            const savedSuggestions = localStorage.getItem('avaye_yaqin_suggestions');
-            if (savedSuggestions) {
-                try { state.suggestions = JSON.parse(savedSuggestions); } catch {}
-            }
-            // Banner
-            const savedBanner = localStorage.getItem('avaye_yaqin_banner');
-            if (savedBanner) {
-                state.bannerText = savedBanner;
-                bannerText.textContent = savedBanner;
-                document.getElementById('adminBannerInput').value = savedBanner;
-            }
-            // Config
-            const savedConfig = localStorage.getItem('avaye_yaqin_config');
-            if (savedConfig) {
-                try {
-                    state.aiConfig = { ...state.aiConfig, ...JSON.parse(savedConfig) };
-                    document.getElementById('adminBotNameInput').value = state.aiConfig.botName;
-                    document.getElementById('adminAiModelInput').value = state.aiConfig.model;
-                    document.getElementById('adminSystemPromptInput').value = state.aiConfig.systemPrompt;
-                    document.getElementById('adminWelcomeMsgInput').value = state.aiConfig.welcomeMsg;
-                    document.getElementById('adminTempInput').value = state.aiConfig.temperature;
-                    document.getElementById('tempValueDisplay').textContent = state.aiConfig.temperature;
-                    document.getElementById('adminTokensInput').value = state.aiConfig.maxTokens;
-                    document.getElementById('tokensValueDisplay').textContent = state.aiConfig.maxTokens;
-                    headerBotName.textContent = state.aiConfig.botName;
-                } catch {}
-            }
-            // Maintenance
-            const maint = localStorage.getItem('avaye_yaqin_maintenance');
-            if (maint === 'true') {
-                state.maintenanceMode = true;
-                document.getElementById('maintenanceToggle').checked = true;
-            }
-            // Admin pass
-            const savedPass = localStorage.getItem('avaye_yaqin_admin_pass');
-            if (savedPass) state.adminPasscode = savedPass;
-            // Banned users
-            const banned = localStorage.getItem('avaye_yaqin_banned');
-            if (banned) {
-                try { state.bannedUsers = JSON.parse(banned); } catch {}
-            }
-        }
-
-        // Save banned users on change
-        function saveBanned() {
-            localStorage.setItem('avaye_yaqin_banned', JSON.stringify(state.bannedUsers));
-        }
-        // Override toggleBan to save
-        const origToggle = window.toggleBan;
-        window.toggleBan = function(phone) {
-            const idx = state.bannedUsers.indexOf(phone);
-            if (idx >= 0) {
-                state.bannedUsers.splice(idx, 1);
-                showToast(`مسدودی ${phone} برداشته شد.`);
-            } else {
-                state.bannedUsers.push(phone);
-                showToast(`کاربر ${phone} مسدود شد.`);
-            }
-            saveBanned();
-            renderUsersList();
-            updateStats();
-        };
-
-        // ---------- Init ----------
-        loadSavedData();
-        renderSuggestions();
-        renderHistory();
-
-        // Close admin on outside click
-        adminModal.addEventListener('click', (e) => {
-            if (e.target === adminModal) adminModal.classList.remove('active');
-        });
-
-        // Auto-resize textarea
-        chatInput.addEventListener('input', function() {
-            this.style.height = 'auto';
-            this.style.height = Math.min(this.scrollHeight, 120) + 'px';
-        });
-
-        // Keyboard shortcut: Ctrl+Enter to send
-        chatInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                chatForm.dispatchEvent(new Event('submit'));
-            }
-        });
-
-        console.log('🕌 آوای یقین | سامانه هوشمند پاسخگویی دینی');
-        console.log('📋 برای دسترسی به پنل مدیریت، روی دکمه مدیریت کلیک کنید.');
-        console.log('🔑 رمز پیش‌فرض: admin123');
-    </script>
 </body>
 </html>
