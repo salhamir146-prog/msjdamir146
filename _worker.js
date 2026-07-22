@@ -3,7 +3,6 @@ export default {
     const url = new URL(request.url);
     const path = url.pathname;
 
-    // CORS Headers برای ارتباط راحت بین فرانت‌اند و بک‌اند
     const corsHeaders = {
       "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
@@ -20,10 +19,10 @@ export default {
         const { name, phone } = await request.json();
         if (!name || !phone) return new Response(JSON.stringify({ error: "اطلاعات ناقص است" }), { status: 400, headers: corsHeaders });
         
-        let users = JSON.parse(await env.AVAYE_KV.get("users") || "[]");
+        let users = JSON.parse(await env.AVAYE_YAGHIN_KV.get("users") || "[]");
         if (!users.some(u => u.phone === phone)) {
           users.push({ name, phone, time: new Date().toLocaleString("fa-IR") });
-          await env.AVAYE_KV.put("users", JSON.stringify(users));
+          await env.AVAYE_YAGHIN_KV.put("users", JSON.stringify(users));
         }
         return new Response(JSON.stringify({ success: true }), { headers: corsHeaders });
       }
@@ -33,7 +32,7 @@ export default {
         const { message, user } = await request.json();
         
         // بررسی مسدود بودن کاربر
-        const blocked = JSON.parse(await env.AVAYE_KV.get("blocked") || "[]");
+        const blocked = JSON.parse(await env.AVAYE_YAGHIN_KV.get("blocked") || "[]");
         if (user && blocked.includes(user.phone)) {
           return new Response(JSON.stringify({ reply: "حساب کاربری شما توسط مدیریت مسدود شده است." }), { headers: corsHeaders });
         }
@@ -58,7 +57,7 @@ export default {
         const reply = groqData.choices?.[0]?.message?.content || "پاسخی از سرور دریافت نشد.";
 
         // ذخیره لاگ چت در KV ابری
-        let logs = JSON.parse(await env.AVAYE_KV.get("chat_logs") || "[]");
+        let logs = JSON.parse(await env.AVAYE_YAGHIN_KV.get("chat_logs") || "[]");
         logs.unshift({
           userName: user?.name || "مهمان",
           userPhone: user?.phone || "نامشخص",
@@ -66,30 +65,30 @@ export default {
           reply: reply,
           time: new Date().toLocaleString("fa-IR")
         });
-        if (logs.length > 100) logs = logs.slice(0, 100); // نگهداری ۱۰۰ پیام آخر
-        await env.AVAYE_KV.put("chat_logs", JSON.stringify(logs));
+        if (logs.length > 100) logs = logs.slice(0, 100);
+        await env.AVAYE_YAGHIN_KV.put("chat_logs", JSON.stringify(logs));
 
         return new Response(JSON.stringify({ reply }), { headers: corsHeaders });
       }
 
-      // ۳. دریافت اطلاعات پنل ادمین (کاربران، لاگ‌ها، مسدودی‌ها)
+      // ۳. دریافت اطلاعات پنل ادمین
       if (path === "/api/admin/data" && request.method === "GET") {
-        const users = JSON.parse(await env.AVAYE_KV.get("users") || "[]");
-        const logs = JSON.parse(await env.AVAYE_KV.get("chat_logs") || "[]");
-        const blocked = JSON.parse(await env.AVAYE_KV.get("blocked") || "[]");
+        const users = JSON.parse(await env.AVAYE_YAGHIN_KV.get("users") || "[]");
+        const logs = JSON.parse(await env.AVAYE_YAGHIN_KV.get("chat_logs") || "[]");
+        const blocked = JSON.parse(await env.AVAYE_YAGHIN_KV.get("blocked") || "[]");
         return new Response(JSON.stringify({ users, logs, blocked }), { headers: corsHeaders });
       }
 
-      // ۴. مسدود یا آزاد کردن کاربر توسط ادمین
+      // ۴. مسدود یا آزاد کردن کاربر
       if (path === "/api/admin/block" && request.method === "POST") {
         const { phone } = await request.json();
-        let blocked = JSON.parse(await env.AVAYE_KV.get("blocked") || "[]");
+        let blocked = JSON.parse(await env.AVAYE_YAGHIN_KV.get("blocked") || "[]");
         if (blocked.includes(phone)) {
           blocked = blocked.filter(p => p !== phone);
         } else {
           blocked.push(phone);
         }
-        await env.AVAYE_KV.put("blocked", JSON.stringify(blocked));
+        await env.AVAYE_YAGHIN_KV.put("blocked", JSON.stringify(blocked));
         return new Response(JSON.stringify({ success: true, blocked }), { headers: corsHeaders });
       }
 
