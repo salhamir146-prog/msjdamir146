@@ -2,7 +2,7 @@ export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
 
-    // ۱. پنل ادمین
+    // ۱. پنل مدیریت ساده و بدون نیاز به KV
     if (url.pathname === '/admin') {
       if (request.method === 'POST') {
         const formData = await request.formData();
@@ -10,25 +10,26 @@ export default {
         const currentModel = formData.get('current_model');
         const imageGenEnabled = formData.get('image_gen_enabled') === 'on' ? 'true' : 'false';
 
-        await env.MY_KV.put('OPENROUTER_API_KEY', apiKey);
-        await env.MY_KV.put('CURRENT_MODEL', currentModel);
-        await env.MY_KV.put('IMAGE_GEN_ENABLED', imageGenEnabled);
+        // ذخیره موقت در حافظه اجرایی کارنت (برای تست فوری)
+        globalThis.CACHED_API_KEY = apiKey;
+        globalThis.CACHED_MODEL = currentModel;
+        globalThis.CACHED_IMAGE_GEN = imageGenEnabled;
 
-        return new Response('تنظیمات با موفقیت ذخیره شد! <a href="/admin">بازگشت</a>', {
+        return new Response('تنظیمات با موفقیت ذخیره شد! <a href="/admin">بازگشت به پنل</a> | <a href="/">رفتن به صفحه چت</a>', {
           headers: { 'Content-Type': 'text/html; charset=utf-8' }
         });
       }
 
-      const apiKey = (await env.MY_KV.get('OPENROUTER_API_KEY')) || '';
-      const currentModel = (await env.MY_KV.get('CURRENT_MODEL')) || 'openai/gpt-oss-20b:free';
-      const imageGenEnabled = (await env.MY_KV.get('IMAGE_GEN_ENABLED')) === 'true';
+      const apiKey = globalThis.CACHED_API_KEY || '';
+      const currentModel = globalThis.CACHED_MODEL || 'openai/gpt-oss-20b:free';
+      const imageGenEnabled = globalThis.CACHED_IMAGE_GEN === 'true';
 
       const html = `
         <!DOCTYPE html>
         <html lang="fa" dir="rtl">
         <head>
           <meta charset="UTF-8">
-          <title>پنل مدیریت ربات - نسخه جدید</title>
+          <title>پنل مدیریت آوای یقین</title>
           <style>
             body { font-family: Tahoma, sans-serif; background: #f4f7f6; padding: 20px; direction: rtl; }
             .card { background: white; padding: 20px; border-radius: 8px; max-width: 500px; margin: auto; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
@@ -37,22 +38,23 @@ export default {
             button:hover { background: #45a049; }
             .checkbox-label { display: flex; align-items: center; margin: 15px 0; font-weight: bold; }
             .checkbox-label input { width: auto; margin-left: 10px; }
+            .links { margin-top: 15px; text-align: center; }
+            .links a { color: #007bff; text-decoration: none; }
           </style>
         </head>
         <body>
           <div class="card">
-            <h2>پنل ادمین (نسخه جدید OpenRouter)</h2>
+            <h2>پنل ادمین آوای یقین</h2>
             <form method="POST">
               <label>کلید API (OpenRouter):</label>
-              <input type="password" name="api_key" value="${apiKey}" required>
+              <input type="password" name="api_key" value="${apiKey}" required placeholder="sk-or-v1-...">
 
               <label>انتخاب مدل هوش مصنوعی:</label>
               <select name="current_model">
-                <option value="openai/gpt-oss-20b:free" ${currentModel === 'openai/gpt-oss-20b:free' ? 'selected' : ''}>(رایگان) GPT-OSS 20B</option>
-                <option value="google/gemini-flash-1.5:free" ${currentModel === 'google/gemini-flash-1.5:free' ? 'selected' : ''}>جما Gemini 3.1 Flash</option>
-                <option value="meta-llama/llama-3-8b-instruct:free" ${currentModel === 'meta-llama/llama-3-8b-instruct:free' ? 'selected' : ''}>لاگونا / لاما Llama 3</option>
-                <option value="google/gemini-nano" ${currentModel === 'google/gemini-nano' ? 'selected' : ''}>مای نانو Gemini Nano</option>
-                <option value="mistralai/mistral-7b-instruct:free" ${currentModel === 'mistralai/mistral-7b-instruct:free' ? 'selected' : ''}>موز (۲) لایت Mistral 2 Lite</option>
+                <option value="openai/gpt-oss-20b:free" ${currentModel === 'openai/gpt-oss-20b:free' ? 'selected' : ''}>GPT-OSS 20B (رایگان)</option>
+                <option value="google/gemini-2.5-flash:free" ${currentModel === 'google/gemini-2.5-flash:free' ? 'selected' : ''}>Gemini Flash (رایگان)</option>
+                <option value="meta-llama/llama-3.3-70b-instruct:free" ${currentModel === 'meta-llama/llama-3.3-70b-instruct:free' ? 'selected' : ''}>Llama 3.3 (رایگان)</option>
+                <option value="mistralai/mistral-small-24b-instruct-2501:free" ${currentModel === 'mistralai/mistral-small-24b-instruct-2501:free' ? 'selected' : ''}>Mistral 2 Lite (رایگان)</option>
               </select>
 
               <div class="checkbox-label">
@@ -62,6 +64,9 @@ export default {
 
               <button type="submit">ذخیره تنظیمات</button>
             </form>
+            <div class="links">
+              <a href="/">ورود به صفحه چت آوای یقین</a>
+            </div>
           </div>
         </body>
         </html>
@@ -69,16 +74,16 @@ export default {
       return new Response(html, { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
     }
 
-    // ۲. صفحه اصلی چت کاربران
+    // ۲. صفحه اصلی چت آوای یقین
     if (url.pathname === '/' || url.pathname === '/chat') {
-      const imageGenEnabled = (await env.MY_KV.get('IMAGE_GEN_ENABLED')) === 'true';
+      const imageGenEnabled = globalThis.CACHED_IMAGE_GEN === 'true';
 
       const chatHtml = `
         <!DOCTYPE html>
         <html lang="fa" dir="rtl">
         <head>
           <meta charset="UTF-8">
-          <title>دستیار هوشمند</title>
+          <title>آوای یقین</title>
           <style>
             body { font-family: Tahoma, sans-serif; background: #eef2f3; margin: 0; padding: 20px; display: flex; flex-direction: column; height: 90vh; }
             #chat-container { flex: 1; background: white; border-radius: 8px; padding: 15px; overflow-y: auto; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 15px; }
@@ -92,9 +97,15 @@ export default {
             .mode-switch { margin-bottom: 10px; display: flex; gap: 10px; align-items: center; font-weight: bold; }
             img.generated-img { max-width: 100%; border-radius: 6px; margin-top: 5px; display: block; }
             .download-btn { display: inline-block; margin-top: 8px; padding: 6px 12px; background: #28a745; color: white; text-decoration: none; border-radius: 4px; font-size: 13px; }
+            .admin-link { margin-bottom: 10px; font-size: 13px; }
+            .admin-link a { color: #555; text-decoration: none; background: #ddd; padding: 4px 8px; border-radius: 4px; }
           </style>
         </head>
         <body>
+          <div class="admin-link">
+            <a href="/admin">⚙️ رفتن به پنل مدیریت</a>
+          </div>
+
           <div class="mode-switch">
             <label><input type="radio" name="mode" value="text" checked onchange="switchMode('text')"> گفتگوی متنی</label>
             ${imageGenEnabled ? '<label style="color: #d9534f;"><input type="radio" name="mode" value="image" onchange="switchMode(\'image\')"> تولید تصویر (فعال)</label>' : ''}
@@ -103,7 +114,7 @@ export default {
           <div id="chat-container"></div>
 
           <div class="input-area">
-            <input type="text" id="userInput" placeholder="پیام خود را بنویسید..." onkeydown="if(event.key==='Enter') sendMessage()">
+            <input type="text" id="userInput" placeholder="پیام خود را به آوای یقین بنویسید..." onkeydown="if(event.key==='Enter') sendMessage()">
             <button onclick="sendMessage()">ارسال</button>
           </div>
 
@@ -112,7 +123,7 @@ export default {
             function switchMode(mode) {
               currentMode = mode;
               const input = document.getElementById('userInput');
-              input.placeholder = mode === 'image' ? 'توضیح تصویری که می‌خواهید را به فارسی بنویسید...' : 'پیام خود را بنویسید...';
+              input.placeholder = mode === 'image' ? 'توضیح تصویری که می‌خواهید را به فارسی بنویسید...' : 'پیام خود را به آوای یقین بنویسید...';
             }
 
             async function sendMessage() {
@@ -159,14 +170,14 @@ export default {
     if (url.pathname === '/api/chat' && request.method === 'POST') {
       try {
         const { prompt, mode } = await request.json();
-        const apiKey = await env.MY_KV.get('OPENROUTER_API_KEY');
-        const currentModel = (await env.MY_KV.get('CURRENT_MODEL')) || 'openai/gpt-oss-20b:free';
+        const apiKey = globalThis.CACHED_API_KEY;
+        const currentModel = globalThis.CACHED_MODEL || 'openai/gpt-oss-20b:free';
 
         if (!apiKey) {
-          return Response.json({ result: 'لطفاً کلید OpenRouter را از پنل ادمین تنظیم کنید.' });
+          return Response.json({ result: 'لطفاً اول کلید OpenRouter را از طریق پنل مدیریت تنظیم کنید.' });
         }
 
-        // حالت تولید تصویر (ترجمه فارسی به انگلیسی + ارسال به Pollinations)
+        // حالت تولید تصویر
         if (mode === 'image') {
           const translationRes = await fetch('https://openrouter.ai/api/v1/chat/completions', {
             method: 'POST',
@@ -193,14 +204,14 @@ export default {
           return Response.json({ result: imageUrl });
         }
 
-        // حالت گفتگوی متنی
+        // حالت چت متنی
         const aiResponse = await fetch('https://openrouter.ai/api/v1/chat/completions', {
           method: 'POST',
           headers: {
             'Authorization': 'Bearer ' + apiKey,
             'Content-Type': 'application/json',
             'HTTP-Referer': url.origin,
-            'X-Title': 'AI Chatbot'
+            'X-Title': 'Avaye Yaghin'
           },
           body: JSON.stringify({
             model: currentModel,
@@ -229,4 +240,3 @@ export default {
     return new Response('صفحه مورد نظر پیدا نشد (404)', { status: 404 });
   }
 };
-
