@@ -1,154 +1,230 @@
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const url = new URL(request.url);
-    const path = url.pathname;
 
-    const corsHeaders = {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type",
-    };
+    // ۱. پنل ادمین (مدیریت تنظیمات، مدل‌ها و دکمه تصویرساز)
+    if (url.pathname === '/admin') {
+      if (request.method === 'POST') {
+        const formData = await request.formData();
+        const apiKey = formData.get('api_key');
+        const currentModel = formData.get('current_model');
+        const imageGenEnabled = formData.get('image_gen_enabled') === 'on' ? 'true' : 'false';
 
-    if (request.method === "OPTIONS") {
-      return new Response(null, { headers: corsHeaders });
-    }
+        await env.MY_KV.put('OPENROUTER_API_KEY', apiKey);
+        await env.MY_KV.put('CURRENT_MODEL', currentModel);
+        await env.MY_KV.put('IMAGE_GEN_ENABLED', imageGenEnabled);
 
-    try {
-      // مقداردهی اولیه تنظیمات پیش‌فرض در صورت خالی بودن
-      let settings = JSON.parse(await env.AVAYE_YAGHIN_KV.get("settings") || JSON.stringify({
-        systemPrompt: "تو دستیار هوشمند و متخصص دینی سامانه آوای یقین هستی. پاسخ‌ها باید کاملاً مستند، دقیق و به زبان فارسی روان باشند.",
-        model: "llama-3.3-70b-versatile",
-        botActive: true,
-        welcomeMsg: "سلام! به سامانه جامع و هوشمند آوای یقین خوش آمدید. پرسش خود را وارد کنید...",
-        temperature: 0.7,
-        maxTokens: 1024,
-        adminNotes: "خوش آمدید، لطفاً امور مسجد را به دقت مدیریت کنید."
-      }));
-
-      // ۱. ثبت‌نام کاربر
-      if (path === "/api/register" && request.method === "POST") {
-        const { name, phone } = await request.json();
-        if (!name || !phone) return new Response(JSON.stringify({ error: "اطلاعات ناقص است" }), { status: 400, headers: corsHeaders });
-        
-        try {
-          let users = JSON.parse(await env.AVAYE_YAGHIN_KV.get("users") || "[]");
-          if (!users.some(u => u.phone === phone)) {
-            users.push({ name, phone, time: new Date().toLocaleString("fa-IR") });
-            await env.AVAYE_YAGHIN_KV.put("users", JSON.stringify(users));
-          }
-        } catch (e) {}
-
-        return new Response(JSON.stringify({ success: true, welcomeMsg: settings.welcomeMsg }), { headers: corsHeaders });
+        return new Response('تنظیمات با موفقیت ذخیره شد! <a href="/admin">بازگشت</a>', {
+          headers: { 'Content-Type': 'text/html; charset=utf-8' }
+        });
       }
 
-      // ۲. چت با هوش مصنوعی (با لحاظ کردن تنظیمات زنده ادمین)
-      if (path === "/api/chat" && request.method === "POST") {
-        if (!settings.botActive) {
-          return new Response(JSON.stringify({ reply: "سامانه موقتاً جهت به‌روزرسانی یا تعمیرات غیرفعال می‌باشد. لطفاً بعداً مراجعه فرمایید." }), { headers: corsHeaders });
+      const apiKey = (await env.MY_KV.get('OPENROUTER_API_KEY')) || '';
+      const currentModel = (await env.MY_KV.get('CURRENT_MODEL')) || 'openai/gpt-oss-20b';
+      const imageGenEnabled = (await env.MY_KV.get('IMAGE_GEN_ENABLED')) === 'true';
+
+      const html = `
+        <!DOCTYPE html>
+        <html lang="fa" dir="rtl">
+        <head>
+          <meta charset="UTF-8">
+          <title>پنل مدیریت ربات</title>
+          <style>
+            body { font-family: Tahoma, sans-serif; background: #f4f7f6; padding: 20px; direction: rtl; }
+            .card { background: white; padding: 20px; border-radius: 8px; max-width: 500px; margin: auto; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+            input, select { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+            button { background: #4CAF50; color: white; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; width: 100%; }
+            button:hover { background: #45a049; }
+            .checkbox-label { display: flex; align-items: center; margin: 15px 0; font-weight: bold; }
+            .checkbox-label input { width: auto; margin-left: 10px; }
+          </style>
+        </head>
+        <body>
+          <div class="card">
+            <h2>پنل ادمین ربات هوشمند</h2>
+            <form method="POST">
+              <label>کلید API (OpenRouter):</label>
+              <input type="password" name="api_key" value="${apiKey}" required>
+
+              <label>انتخاب مدل هوش مصنوعی:</label>
+              <select name="current_model">
+                <option value="openai/gpt-oss-20b" ${currentModel === 'openai/gpt-oss-20b' ? 'selected' : ''}>GPT-OSS 20B (رایگان)</option>
+                <option value="google/gemini-3.1-flash" ${currentModel === 'google/gemini-3.1-flash' ? 'selected' : ''}>Gemini 3.1 Flash</option>
+                <option value="meta-llama/llama-3" ${currentModel === 'meta-llama/llama-3' ? 'selected' : ''}>Llama 3</option>
+                <option value="google/gemini-nano" ${currentModel === 'google/gemini-nano' ? 'selected' : ''}>Gemini Nano</option>
+                <option value="mistralai/mistral-2-lite" ${currentModel === 'mistralai/mistral-2-lite' ? 'selected' : ''}>Mistral 2 Lite</option>
+              </select>
+
+              <div class="checkbox-label">
+                <input type="checkbox" name="image_gen_enabled" ${imageGenEnabled ? 'checked' : ''}>
+                فعال‌سازی قابلیت تولید تصویر برای کاربران
+              </div>
+
+              <button type="submit">ذخیره تنظیمات</button>
+            </form>
+          </div>
+        </body>
+        </html>
+      `;
+      return new Response(html, { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+    }
+
+    // ۲. صفحه چت کاربران
+    if (url.pathname === '/' || url.pathname === '/chat') {
+      const imageGenEnabled = (await env.MY_KV.get('IMAGE_GEN_ENABLED')) === 'true';
+
+      const chatHtml = `
+        <!DOCTYPE html>
+        <html lang="fa" dir="rtl">
+        <head>
+          <meta charset="UTF-8">
+          <title>دستیار هوشمند</title>
+          <style>
+            body { font-family: Tahoma, sans-serif; background: #eef2f3; margin: 0; padding: 20px; display: flex; flex-direction: column; height: 90vh; }
+            #chat-container { flex: 1; background: white; border-radius: 8px; padding: 15px; overflow-y: auto; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 15px; }
+            .message { margin: 10px 0; padding: 10px; border-radius: 6px; max-width: 75%; line-height: 1.5; word-wrap: break-word; }
+            .user { background: #dcf8c6; margin-right: auto; text-align: right; }
+            .bot { background: #f1f0f0; margin-left: auto; text-align: left; }
+            .input-area { display: flex; gap: 10px; }
+            input[type="text"] { flex: 1; padding: 12px; border: 1px solid #ccc; border-radius: 4px; }
+            button { padding: 12px 20px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+            button:hover { background: #0056b3; }
+            .mode-switch { margin-bottom: 10px; display: flex; gap: 10px; align-items: center; }
+            img.generated-img { max-width: 100%; border-radius: 6px; margin-top: 5px; display: block; }
+            .download-btn { display: inline-block; margin-top: 8px; padding: 6px 12px; background: #28a745; color: white; text-decoration: none; border-radius: 4px; font-size: 13px; }
+          </style>
+        </head>
+        <body>
+          <div class="mode-switch">
+            <label><input type="radio" name="mode" value="text" checked onchange="switchMode('text')"> گفتگوی متنی</label>
+            ${imageGenEnabled ? '<label><input type="radio" name="mode" value="image" onchange="switchMode(\'image\')"> تولید تصویر</label>' : ''}
+          </div>
+
+          <div id="chat-container"></div>
+
+          <div class="input-area">
+            <input type="text" id="userInput" placeholder="پیام خود را بنویسید..." onkeydown="if(event.key==='Enter') sendMessage()">
+            <button onclick="sendMessage()">ارسال</button>
+          </div>
+
+          <script>
+            let currentMode = 'text';
+            function switchMode(mode) {
+              currentMode = mode;
+              const input = document.getElementById('userInput');
+              input.placeholder = mode === 'image' ? 'توضیح تصویری که می‌خواهید را بنویسید (فارسی)...' : 'پیام خود را بنویسید...';
+            }
+
+            async function sendMessage() {
+              const input = document.getElementById('userInput');
+              const text = input.value.trim();
+              if (!text) return;
+
+              const container = document.getElementById('chat-container');
+              container.innerHTML += '<div class="message user">' + text + '</div>';
+              input.value = '';
+              container.scrollTop = container.scrollHeight;
+
+              const responseDiv = document.createElement('div');
+              responseDiv.className = 'message bot';
+              responseDiv.innerHTML = 'در حال پردازش...';
+              container.appendChild(responseDiv);
+
+              try {
+                const res = await fetch('/api', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ prompt: text, mode: currentMode })
+                });
+                const data = await res.json();
+                
+                if (currentMode === 'image') {
+                  responseDiv.innerHTML = 'تصویر شما آماده شد:<br><img src="' + data.result + '" class="generated-img"><br><a href="' + data.result + '" target="_blank" download="image.jpg" class="download-btn">دانلود تصویر</a>';
+                } else {
+                  responseDiv.innerHTML = data.result;
+                }
+              } catch (err) {
+                responseDiv.innerHTML = 'خطایی رخ داد!';
+              }
+              container.scrollTop = container.scrollHeight;
+            }
+          </script>
+        </body>
+        </html>
+      `;
+      return new Response(chatHtml, { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+    }
+
+    // ۳. پردازش درخواست‌های هوش مصنوعی و تصویرساز در بک‌اند
+    if (url.pathname === '/api' && request.method === 'POST') {
+      try {
+        const { prompt, mode } = await request.json();
+        const apiKey = await env.MY_KV.get('OPENROUTER_API_KEY');
+        const currentModel = (await env.MY_KV.get('CURRENT_MODEL')) || 'openai/gpt-oss-20b';
+
+        if (!apiKey) {
+          return Response.json({ result: 'لطفاً کلید OpenRouter را از پنل ادمین تنظیم کنید.' });
         }
 
-        const { message, user } = await request.json();
-        
-        // بررسی مسدود بودن
-        try {
-          const blocked = JSON.parse(await env.AVAYE_YAGHIN_KV.get("blocked") || "[]");
-          if (user && blocked.includes(user.phone)) {
-            return new Response(JSON.stringify({ reply: "حساب کاربری شما توسط مدیریت مسدود شده است." }), { headers: corsHeaders });
-          }
-        } catch (e) {}
+        // حالت تولید تصویر (ترجمه پرامپت فارسی به انگلیسی و استفاده از Pollinations)
+        if (mode === 'image') {
+          // ابتدا متن فارسی را با مدل زبانی به انگلیسی تبدیل می‌کنیم تا کیفیت تصویر بالا برود
+          const translationRes = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+              'Authorization': 'Bearer ' + apiKey,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              model: currentModel,
+              messages: [
+                { role: 'system', content: 'Translate the following Persian text into a detailed English prompt for an AI image generator. Output ONLY the English translation.' },
+                { role: 'user', content: prompt }
+              ]
+            })
+          });
 
-        // فراخوانی Groq با پارامترهای تنظیمی ادمین
-        const groqRes = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-          method: "POST",
+          const transData = await translationRes.json();
+          let englishPrompt = prompt; // پیش‌فرض در صورت خطا
+          if (transData.choices && transData.choices[0]) {
+            englishPrompt = transData.choices[0].message.content.trim();
+          }
+
+          // لینک نهایی Pollinations.ai برای تولید تصویر
+          const imageUrl = 'https://image.pollinations.ai/prompt/' + encodeURIComponent(englishPrompt);
+          return Response.json({ result: imageUrl });
+        }
+
+        // حالت چت و گفتگوی متنی عادی
+        const aiResponse = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+          method: 'POST',
           headers: {
-            "Authorization": `Bearer ${env.GROQ_API_KEY}`,
-            "Content-Type": "application/json"
+            'Authorization': 'Bearer ' + apiKey,
+            'Content-Type': 'application/json',
+            'HTTP-Referer': url.origin,
+            'X-Title': 'AI Chatbot'
           },
           body: JSON.stringify({
-            model: settings.model,
-            temperature: Number(settings.temperature),
-            max_tokens: Number(settings.maxTokens),
-            messages: [
-              { role: "system", content: settings.systemPrompt },
-              { role: "user", content: message }
-            ]
+            model: currentModel,
+            messages: [{ role: 'user', content: prompt }]
           })
         });
 
-        const groqData = await groqRes.json();
-        if (!groqRes.ok) {
-          return new Response(JSON.stringify({ error: groqData.error?.message || "خطا در ارتباط با هوش مصنوعی" }), { status: 500, headers: corsHeaders });
+        const aiData = await aiResponse.json();
+        let reply = 'پاسخی دریافت نشد.';
+        if (aiData.choices && aiData.choices[0]) {
+          reply = aiData.choices[0].message.content;
+        } else if (aiData.error) {
+          reply = 'خطا از سمت OpenRouter: ' + (aiData.error.message || JSON.stringify(aiData.error));
         }
-        
-        const reply = groqData.choices?.[0]?.message?.content || "پاسخی از سرور دریافت نشد.";
 
-        // ذخیره لاگ
-        try {
-          let logs = JSON.parse(await env.AVAYE_YAGHIN_KV.get("chat_logs") || "[]");
-          logs.unshift({
-            userName: user?.name || "مهمان",
-            userPhone: user?.phone || "نامشخص",
-            question: message,
-            reply: reply,
-            time: new Date().toLocaleString("fa-IR")
-          });
-          if (logs.length > 150) logs = logs.slice(0, 150);
-          await env.AVAYE_YAGHIN_KV.put("chat_logs", JSON.stringify(logs));
-        } catch (e) {}
+        return Response.json({ result: reply });
 
-        return new Response(JSON.stringify({ reply }), { headers: corsHeaders });
+      } catch (e) {
+        return Response.json({ result: 'خطای سیستمی رخ داد: ' + e.message });
       }
-
-      // ۳. دریافت داده‌های پنل ادمین
-      if (path === "/api/admin/data" && request.method === "GET") {
-        let users = [], logs = [], blocked = [], broadcasts = [];
-        try {
-          users = JSON.parse(await env.AVAYE_YAGHIN_KV.get("users") || "[]");
-          logs = JSON.parse(await env.AVAYE_YAGHIN_KV.get("chat_logs") || "[]");
-          blocked = JSON.parse(await env.AVAYE_YAGHIN_KV.get("blocked") || "[]");
-          broadcasts = JSON.parse(await env.AVAYE_YAGHIN_KV.get("broadcasts") || "[]");
-        } catch (e) {}
-        return new Response(JSON.stringify({ users, logs, blocked, broadcasts, settings }), { headers: corsHeaders });
-      }
-
-      // ۴. ذخیره تنظیمات ربات و هوش مصنوعی
-      if (path === "/api/admin/settings" && request.method === "POST") {
-        const newSettings = await request.json();
-        await env.AVAYE_YAGHIN_KV.put("settings", JSON.stringify(newSettings));
-        return new Response(JSON.stringify({ success: true }), { headers: corsHeaders });
-      }
-
-      // ۵. مسدودسازی کاربر
-      if (path === "/api/admin/block" && request.method === "POST") {
-        const { phone } = await request.json();
-        let blocked = JSON.parse(await env.AVAYE_YAGHIN_KV.get("blocked") || "[]");
-        if (blocked.includes(phone)) {
-          blocked = blocked.filter(p => p !== phone);
-        } else {
-          blocked.push(phone);
-        }
-        await env.AVAYE_YAGHIN_KV.put("blocked", JSON.stringify(blocked));
-        return new Response(JSON.stringify({ success: true, blocked }), { headers: corsHeaders });
-      }
-
-      // ۶. پاکسازی کل لاگ‌ها
-      if (path === "/api/admin/clear-logs" && request.method === "POST") {
-        await env.AVAYE_YAGHIN_KV.put("chat_logs", JSON.stringify([]));
-        return new Response(JSON.stringify({ success: true }), { headers: corsHeaders });
-      }
-
-      // ۷. ارسال اطلاعیه همگانی
-      if (path === "/api/admin/broadcast" && request.method === "POST") {
-        const { message } = await request.json();
-        let broadcasts = JSON.parse(await env.AVAYE_YAGHIN_KV.get("broadcasts") || "[]");
-        broadcasts.unshift({ message, time: new Date().toLocaleString("fa-IR") });
-        await env.AVAYE_YAGHIN_KV.put("broadcasts", JSON.stringify(broadcasts));
-        return new Response(JSON.stringify({ success: true }), { headers: corsHeaders });
-      }
-
-      return new Response("Not Found", { status: 404, headers: corsHeaders });
-    } catch (err) {
-      return new Response(JSON.stringify({ error: err.message }), { status: 500, headers: corsHeaders });
     }
+
+    return new Response('صفحه مورد نظر پیدا نشد', { status: 404 });
   }
 };
