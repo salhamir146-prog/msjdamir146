@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
         menuToggle.addEventListener("click", () => sidebar.classList.toggle("active"));
     }
 
-    // فرم ثبت‌نام و ارسال به ابری
+    // فرم ثبت‌نام و ارسال به سرور ابری
     const onboardingForm = document.getElementById("onboardingForm");
     if (onboardingForm) {
         onboardingForm.addEventListener("submit", async (e) => {
@@ -31,14 +31,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 currentUser = { name, phone };
                 localStorage.setItem("avaye_user", JSON.stringify(currentUser));
                 
-                // ارسال به سرور کلودفلر
                 try {
                     await fetch("/api/register", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify(currentUser)
                     });
-                } catch (err) {}
+                } catch (err) {
+                    console.error("خطا در ثبت‌نام ابری:", err);
+                }
 
                 document.getElementById("displayUserName").innerText = name;
                 document.getElementById("registrationModal").classList.add("hidden");
@@ -119,10 +120,15 @@ async function handleUserMessage() {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ message: text, user: currentUser })
         });
+        
+        if (!res.ok) {
+            throw new Error("خطا در پاسخ سرور");
+        }
+
         const data = await res.json();
         aiBubble.innerText = data.reply || "پاسخی دریافت نشد.";
     } catch (err) {
-        aiBubble.innerText = "خطا در ارتباط با سرور. لطفاً اتصال خود را بررسی کنید.";
+        aiBubble.innerText = "خطا در ارتباط با سرور ابری. لطفاً اتصال خود را بررسی کنید.";
     }
 }
 
