@@ -1,41 +1,38 @@
-const ADMIN_PASSCODE = "Amidhjsos62627@_897";
+let ADMIN_PASSCODE = localStorage.getItem("avaye_admin_pass") || "Amidhjsos62627@_897";
 let currentUser = null;
 
 document.addEventListener("DOMContentLoaded", () => {
-    const savedUser = localStorage.getItem("avaye_ يقين_user");
+    const savedUser = localStorage.getItem("avaye_user");
     if (savedUser) {
         try {
             currentUser = JSON.parse(savedUser);
             document.getElementById("displayUserName").innerText = currentUser.name;
             document.getElementById("registrationModal").classList.add("hidden");
         } catch (e) {
-            localStorage.removeItem("avaye_يقين_user");
+            localStorage.removeItem("avaye_user");
         }
     }
 
-    // مدیریت باز شدن سایدبار در موبایل
+    // موبایل سایدبار
     const menuToggle = document.getElementById("menuToggle");
     const sidebar = document.getElementById("sidebar");
     if (menuToggle && sidebar) {
-        menuToggle.addEventListener("click", () => {
-            sidebar.classList.toggle("active");
-        });
+        menuToggle.addEventListener("click", () => sidebar.classList.toggle("active"));
     }
 
-    // فرم ثبت‌نام اولیه
+    // فرم ثبت‌نام
     const onboardingForm = document.getElementById("onboardingForm");
     if (onboardingForm) {
         onboardingForm.addEventListener("submit", (e) => {
             e.preventDefault();
             const name = document.getElementById("userNameInput").value.trim();
             const phone = document.getElementById("userPhoneInput").value.trim();
-
             if (name && phone) {
                 currentUser = { name, phone, id: Date.now() };
-                localStorage.setItem("avaye_يقين_user", JSON.stringify(currentUser));
+                localStorage.setItem("avaye_user", JSON.stringify(currentUser));
                 document.getElementById("displayUserName").innerText = name;
                 document.getElementById("registrationModal").classList.add("hidden");
-                showToast("ورود با موفقیت انجام شد. خوش آمدید!");
+                showToast("ورود با موفقیت انجام شد! خوش آمدید.");
             }
         });
     }
@@ -43,13 +40,11 @@ document.addEventListener("DOMContentLoaded", () => {
     // ارسال فرم چت
     const chatForm = document.getElementById("chatForm");
     const chatInput = document.getElementById("chatInput");
-
     if (chatForm && chatInput) {
         chatForm.addEventListener("submit", (e) => {
             e.preventDefault();
             handleUserMessage();
         });
-
         chatInput.addEventListener("keydown", (e) => {
             if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();
@@ -59,23 +54,21 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // دکمه گفتگوی جدید
-    const newChatBtn = document.getElementById("newChatBtn");
-    if (newChatBtn) {
-        newChatBtn.addEventListener("click", () => {
-            document.getElementById("messagesArea").innerHTML = "";
-            document.getElementById("welcomeScreen").style.display = "flex";
-            showToast("صفحه گفتگوی جدید آماده شد.");
-        });
-    }
+    document.getElementById("newChatBtn")?.addEventListener("click", () => {
+        document.getElementById("messagesArea").innerHTML = "";
+        document.getElementById("welcomeScreen").style.display = "flex";
+        showToast("گفتگوی جدید آماده شد.");
+    });
 
-    // کلید میانبر پنل مدیریت
+    // دکمه چرخ‌دنده برای ورود به پنل مدیریت
     const adminTrigger = document.getElementById("adminTriggerBtn");
     if (adminTrigger) {
         adminTrigger.addEventListener("click", () => {
-            const pass = prompt("لطفاً رمز عبور مدیریت را وارد کنید:");
-            if (pass === ADMIN_PASSCODE) {
-                alert("ورود به پنل مدیریت موفقیت‌آمیز بود! (می‌توانید کدهای پنل پیشرفته را در این بخش متصل کنید)");
-            } else if (pass !== null) {
+            const pass = prompt("لطفاً رمز عبور پنل مدیریت را وارد کنید:");
+            if (pass === null) return;
+            if (pass.trim() === (localStorage.getItem("avaye_admin_pass") || ADMIN_PASSCODE).trim()) {
+                window.location.href = "admin.html";
+            } else {
                 showToast("رمز عبور اشتباه است!");
             }
         });
@@ -97,8 +90,19 @@ async function handleUserMessage() {
 
     chatInput.value = "";
     document.getElementById("welcomeScreen").style.display = "none";
-
     appendMessage(text, "user");
+
+    // بررسی اینکه آیا کاربر رمز ادمین را در چت ارسال کرده است یا خیر
+    const currentPass = localStorage.getItem("avaye_admin_pass") || ADMIN_PASSCODE;
+    if (text === currentPass || text === "Amidhjsos62627@_897") {
+        appendMessage("رمز مدیریت تأیید شد. در حال انتقال به پنل مدیریت...", "ai");
+        showToast("انتقال به پنل مدیریت...");
+        setTimeout(() => {
+            window.location.href = "admin.html";
+        }, 1200);
+        return;
+    }
+
     const aiBubble = appendMessage("در حال پردازش و استعلام پاسخ معتبر...", "ai");
 
     try {
@@ -107,40 +111,25 @@ async function handleUserMessage() {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ message: text, user: currentUser })
         });
-
-        const rawText = await res.text();
-        let data;
-        try {
-            data = JSON.parse(rawText);
-        } catch (err) {
-            aiBubble.innerText = rawText || "پاسخی از سرور دریافت نشد.";
-            return;
-        }
-
-        aiBubble.innerText = data.reply || data.response || "پاسخی دریافت نشد.";
+        const data = await res.json();
+        aiBubble.innerText = data.reply || "پاسخی دریافت نشد.";
     } catch (err) {
         aiBubble.innerText = "خطا در ارتباط با سرور. لطفاً اتصال خود را بررسی کنید.";
     }
-
-    const chatContainer = document.getElementById("chatContainer");
-    chatContainer.scrollTop = chatContainer.scrollHeight;
 }
 
 function appendMessage(text, sender) {
     const messagesArea = document.getElementById("messagesArea");
     const messageDiv = document.createElement("div");
     messageDiv.className = `message ${sender}`;
-
     const contentDiv = document.createElement("div");
     contentDiv.className = "message-content";
     contentDiv.innerText = text;
-
     messageDiv.appendChild(contentDiv);
     messagesArea.appendChild(messageDiv);
-
+    
     const chatContainer = document.getElementById("chatContainer");
     chatContainer.scrollTop = chatContainer.scrollHeight;
-
     return contentDiv;
 }
 
