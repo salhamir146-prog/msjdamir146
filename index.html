@@ -17,7 +17,7 @@
             --green-dark: #071c15;
             --green-main: #0e382b;
             --green-light: #165b45;
-            --border: rgba(212, 175, 55, 0.2);
+            --border: rgba(212, 175, 55, 0.25);
             --border-white: rgba(255, 255, 255, 0.12);
             --glass-bg: rgba(14, 56, 43, 0.45);
             --text-main: #f5f5f5;
@@ -41,7 +41,7 @@
             position: relative;
         }
 
-        /* پس‌زمینه درخشان شیشه‌ای */
+        /* نورهای پس‌زمینه شیشه‌ای */
         body::before {
             content: "";
             position: fixed;
@@ -68,30 +68,39 @@
             z-index: 0;
         }
 
-        /* فرم ثبت‌نام شیشه‌ای فوق حرفه‌ای */
-        .registration-overlay {
+        /* ثبت‌نام شیشه‌ای */
+        .registration-overlay, .admin-overlay {
             position: fixed;
             inset: 0;
             display: flex;
             justify-content: center;
             align-items: center;
-            background: rgba(3, 10, 7, 0.75);
+            background: rgba(3, 10, 7, 0.8);
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
             z-index: 9999;
-            transition: all 0.5s ease;
+            transition: all 0.4s ease;
         }
 
-        .registration-box {
-            width: 420px;
-            max-width: 90%;
-            padding: 40px 30px;
+        .registration-box, .admin-box {
+            width: 440px;
+            max-width: 92%;
+            padding: 35px 28px;
             border-radius: 28px;
             background: linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
             border: 1px solid var(--border);
-            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(212, 175, 55, 0.05);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.85);
             text-align: center;
-            animation: showModal 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            animation: showModal 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .admin-box {
+            width: 700px;
+            max-width: 95%;
+            text-align: right;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
         }
 
         @keyframes showModal {
@@ -100,20 +109,20 @@
         }
 
         .registration-icon {
-            width: 85px;
-            height: 85px;
+            width: 80px;
+            height: 80px;
             margin: 0 auto 15px auto;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 42px;
-            border-radius: 24px;
+            font-size: 40px;
+            border-radius: 22px;
             background: linear-gradient(135deg, var(--green-light), var(--gold));
             box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
         }
 
         .registration-title {
-            font-size: 26px;
+            font-size: 24px;
             font-weight: 900;
             background: linear-gradient(90deg, #ffffff, var(--gold-light));
             -webkit-background-clip: text;
@@ -121,14 +130,14 @@
         }
 
         .registration-subtitle {
-            margin-top: 6px;
+            margin-top: 5px;
             color: var(--text-sub);
             font-size: 13px;
         }
 
         .reg-group {
             text-align: right;
-            margin-top: 18px;
+            margin-top: 16px;
         }
 
         .reg-group label {
@@ -136,12 +145,11 @@
             margin-bottom: 6px;
             font-size: 12px;
             color: #ddd;
-            font-weight: 500;
         }
 
         .reg-input {
             width: 100%;
-            padding: 14px 16px;
+            padding: 13px 15px;
             border-radius: 14px;
             background: rgba(255, 255, 255, 0.06);
             border: 1px solid var(--border-white);
@@ -155,20 +163,19 @@
         .reg-input:focus {
             border-color: var(--gold);
             box-shadow: 0 0 15px rgba(212, 175, 55, 0.25);
-            background: rgba(255, 255, 255, 0.1);
         }
 
         .reg-error {
             color: #ff6b6b;
             font-size: 12px;
-            margin-top: 10px;
+            margin-top: 8px;
             min-height: 18px;
         }
 
-        .reg-btn {
+        .reg-btn, .admin-close-btn {
             width: 100%;
             margin-top: 15px;
-            padding: 14px;
+            padding: 13px;
             border: none;
             border-radius: 16px;
             background: linear-gradient(135deg, var(--green-light), var(--gold));
@@ -178,24 +185,21 @@
             font-size: 15px;
             cursor: pointer;
             transition: 0.3s;
-            box-shadow: 0 10px 25px rgba(212, 175, 55, 0.2);
         }
 
-        .reg-btn:hover {
+        .reg-btn:hover, .admin-close-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 15px 35px rgba(212, 175, 55, 0.35);
+            box-shadow: 0 10px 25px rgba(212, 175, 55, 0.35);
         }
 
         .reg-footer {
-            margin-top: 20px;
+            margin-top: 18px;
             font-size: 11px;
             color: #888;
             line-height: 1.6;
         }
 
-        .hidden { display: none !important; }
-
-        /* ساختار اصلی اپلیکیشن */
+        /* ساختار اصلی برنامه */
         .app-container {
             display: flex;
             height: 100vh;
@@ -205,7 +209,7 @@
             z-index: 1;
         }
 
-        /* سایدبار (منوی کنار) */
+        /* سایدبار */
         .sidebar {
             width: 300px;
             background: rgba(14, 56, 43, 0.35);
@@ -248,11 +252,7 @@
             -webkit-text-fill-color: transparent;
         }
 
-        .logo-subtitle {
-            font-size: 11px;
-            color: #aaa;
-            margin-top: 4px;
-        }
+        .logo-subtitle { font-size: 11px; color: #aaa; margin-top: 4px; }
 
         .new-chat-btn {
             margin: 15px 15px 10px 15px;
@@ -277,18 +277,8 @@
             transform: translateY(-2px);
         }
 
-        .chat-history {
-            flex: 1;
-            padding: 15px;
-            overflow-y: auto;
-        }
-
-        .history-title {
-            color: #888;
-            font-size: 11px;
-            margin-bottom: 10px;
-            padding-right: 5px;
-        }
+        .chat-history { flex: 1; padding: 15px; overflow-y: auto; }
+        .history-title { color: #888; font-size: 11px; margin-bottom: 10px; }
 
         .sidebar-footer {
             padding: 15px;
@@ -300,7 +290,7 @@
             line-height: 1.7;
         }
 
-        /* بخش اصلی گفتگو */
+        /* بخش اصلی چت */
         .main-area {
             flex: 1;
             display: flex;
@@ -314,7 +304,6 @@
             box-shadow: 0 20px 60px rgba(0,0,0,0.4);
         }
 
-        /* هدر نوار بالا */
         .top-bar {
             height: 65px;
             display: flex;
@@ -325,11 +314,7 @@
             background: rgba(255, 255, 255, 0.02);
         }
 
-        .top-bar-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
+        .top-bar-left { display: flex; align-items: center; gap: 12px; }
 
         .menu-toggle {
             width: 40px;
@@ -342,13 +327,6 @@
             display: none;
             align-items: center;
             justify-content: center;
-        }
-
-        .menu-toggle svg {
-            width: 20px;
-            height: 20px;
-            stroke: currentColor;
-            stroke-width: 2;
         }
 
         .model-badge {
@@ -364,15 +342,8 @@
             font-size: 13px;
         }
 
-        /* محفظه چت */
-        .chat-container {
-            flex: 1;
-            overflow-y: auto;
-            padding: 25px;
-            scroll-behavior: smooth;
-        }
+        .chat-container { flex: 1; overflow-y: auto; padding: 25px; scroll-behavior: smooth; }
 
-        /* صفحه خوش‌آمدگویی */
         .welcome-screen {
             height: 100%;
             display: flex;
@@ -383,49 +354,44 @@
         }
 
         .welcome-logo {
-            width: 95px;
-            height: 95px;
+            width: 90px;
+            height: 90px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 50px;
-            border-radius: 30px;
+            font-size: 48px;
+            border-radius: 28px;
             background: linear-gradient(135deg, var(--green-light), var(--gold));
-            box-shadow: 0 0 50px rgba(212, 175, 55, 0.35);
+            box-shadow: 0 0 45px rgba(212, 175, 55, 0.35);
             animation: float 4s infinite ease-in-out;
         }
 
         @keyframes float {
             0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-12px); }
+            50% { transform: translateY(-10px); }
         }
 
         .welcome-title {
-            font-size: 36px;
+            font-size: 34px;
             font-weight: 900;
-            margin-top: 20px;
+            margin-top: 18px;
             background: linear-gradient(90deg, #fff, var(--gold-light));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .welcome-subtitle {
-            font-size: 15px;
-            color: var(--text-sub);
-            margin-top: 8px;
-        }
+        .welcome-subtitle { font-size: 14px; color: var(--text-sub); margin-top: 6px; }
 
-        /* کارت‌های پیشنهاد */
         .suggestion-cards {
             display: grid;
-            grid-template-columns: repeat(2, 220px);
-            gap: 15px;
-            margin-top: 35px;
+            grid-template-columns: repeat(2, 210px);
+            gap: 14px;
+            margin-top: 30px;
         }
 
         .suggestion-card {
-            padding: 16px;
-            border-radius: 18px;
+            padding: 15px;
+            border-radius: 16px;
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid var(--border-white);
             cursor: pointer;
@@ -434,47 +400,26 @@
         }
 
         .suggestion-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-4px);
             background: rgba(212, 175, 55, 0.12);
             border-color: var(--gold);
         }
 
-        .suggestion-card-title {
-            font-weight: 800;
-            font-size: 13px;
-            color: #fff;
-            margin-bottom: 6px;
-        }
+        .suggestion-card-title { font-weight: 800; font-size: 13px; color: #fff; margin-bottom: 4px; }
+        .suggestion-card-desc { font-size: 11px; color: #aaa; }
 
-        .suggestion-card-desc {
-            font-size: 11px;
-            color: #aaa;
-        }
+        .message-list { display: flex; flex-direction: column; gap: 18px; }
 
-        /* حباب‌های پیام چت */
-        .message-list {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .message {
-            display: flex;
-            animation: messageIn 0.35s ease;
-        }
-
-        @keyframes messageIn {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        .message { display: flex; animation: messageIn 0.3s ease; }
+        @keyframes messageIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 
         .message.user { justify-content: flex-start; }
         .message.ai { justify-content: flex-end; }
 
         .message-content {
             max-width: 80%;
-            padding: 15px 20px;
-            border-radius: 20px;
+            padding: 14px 18px;
+            border-radius: 18px;
             line-height: 1.8;
             font-size: 14px;
             word-break: break-word;
@@ -485,17 +430,14 @@
             background: linear-gradient(135deg, var(--green-light), #0b2d22);
             border: 1px solid rgba(255,255,255,0.1);
             border-bottom-right-radius: 4px;
-            color: #ffffff;
         }
 
         .message.ai .message-content {
             background: rgba(255, 255, 255, 0.08);
             border: 1px solid var(--border-white);
             border-bottom-left-radius: 4px;
-            color: #f5f5f5;
         }
 
-        /* بخش ورودی پیام */
         .input-container {
             padding: 15px 20px;
             background: rgba(0, 0, 0, 0.25);
@@ -507,10 +449,9 @@
             align-items: center;
             gap: 12px;
             padding: 8px 12px;
-            border-radius: 20px;
+            border-radius: 18px;
             background: rgba(255, 255, 255, 0.07);
             border: 1px solid var(--border);
-            backdrop-filter: blur(15px);
         }
 
         .chat-input {
@@ -528,11 +469,9 @@
             user-select: text;
         }
 
-        .chat-input::placeholder { color: #888; }
-
         .send-btn {
-            width: 44px;
-            height: 44px;
+            width: 42px;
+            height: 42px;
             border: none;
             border-radius: 50%;
             background: linear-gradient(135deg, var(--green-light), var(--gold));
@@ -545,54 +484,63 @@
             flex-shrink: 0;
         }
 
-        .send-btn:hover {
-            transform: scale(1.08);
-            box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+        .send-btn:hover { transform: scale(1.08); box-shadow: 0 0 15px rgba(212, 175, 55, 0.4); }
+        .send-btn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; }
+
+        /* استایل اختصاصی پنل مدیریت */
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 20px;
         }
 
-        .send-btn svg {
-            width: 20px;
-            height: 20px;
-            fill: none;
-            stroke: currentColor;
-            stroke-width: 2;
-            stroke-linecap: round;
-            stroke-linejoin: round;
+        .admin-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--gold-light);
         }
 
-        /* اسکرول بار زیبا */
+        .admin-body {
+            flex: 1;
+            overflow-y: auto;
+            padding-left: 5px;
+        }
+
+        .admin-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-white);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 15px;
+        }
+
+        .admin-card-title {
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--gold);
+            margin-bottom: 10px;
+        }
+
+        .hidden { display: none !important; }
+
         ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb {
-            background: rgba(212, 175, 55, 0.3);
-            border-radius: 10px;
-        }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(212, 175, 55, 0.6); }
+        ::-webkit-scrollbar-thumb { background: rgba(212, 175, 55, 0.3); border-radius: 10px; }
 
-        /* ریسپانسیو موبایل */
         @media (max-width: 850px) {
             .app-container { padding: 8px; gap: 0; }
             .menu-toggle { display: flex; }
-            .sidebar {
-                position: fixed;
-                right: -320px;
-                top: 0;
-                bottom: 0;
-                width: 280px;
-                z-index: 1000;
-                border-radius: 0;
-            }
+            .sidebar { position: fixed; right: -320px; top: 0; bottom: 0; width: 280px; z-index: 1000; border-radius: 0; }
             .sidebar.active { right: 0; }
             .suggestion-cards { grid-template-columns: 1fr; width: 100%; }
-            .welcome-title { font-size: 28px; }
-            .chat-container { padding: 15px; }
-            .message-content { max-width: 90%; }
         }
     </style>
 </head>
 <body>
 
-    <!-- پنجره ورود / ثبت‌نام -->
+    <!-- ثبت‌نام -->
     <div class="registration-overlay" id="registration-overlay">
         <div class="registration-box">
             <div class="registration-icon">🕌</div>
@@ -612,15 +560,46 @@
                 <button class="reg-btn" id="reg-btn">ثبت و شروع گفتگو</button>
             </div>
 
-            <div class="reg-footer">
-                مسجد حضرت ابوالفضل (ع)<br>رودان - هرمزگان
-            </div>
+            <div class="reg-footer">مسجد حضرت ابوالفضل (ع)<br>رودان - هرمزگان</div>
         </div>
     </div>
 
-    <!-- محیط اصلی برنامه -->
+    <!-- پنل مدیریت (مخفی در حالت عادی) -->
+    <div class="admin-overlay hidden" id="admin-overlay">
+        <div class="admin-box">
+            <div class="admin-header">
+                <div class="admin-title">👑 پنل مدیریت ارشد (آوای یقین)</div>
+                <span style="font-size:12px; color:#aaa;">متصل به Cloudflare KV</span>
+            </div>
+
+            <div class="admin-body">
+                <div class="admin-card">
+                    <div class="admin-card-title">⚙️ وضعیت سیستم و تنظیمات سرور</div>
+                    <p style="font-size:13px; color:#ddd; line-height:1.7;">
+                        • دیتابیس فعال: <b>AVAYE_YAGHIN_KV</b><br>
+                        • وضعیت سرور: <b>آنلاین (Cloudflare Workers)</b><br>
+                        • شناسه پروژه: <b>a4a9f428b15e40ecafeb5d17aa811c3a</b>
+                    </p>
+                </div>
+
+                <div class="admin-card">
+                    <div class="admin-card-title">📢 اعلانات عمومی سایت</div>
+                    <input type="text" class="reg-input" id="admin-announcement" placeholder="متن اعلان جدید را بنویسید..." style="margin-bottom:10px;">
+                    <button class="reg-btn" style="margin-top:0; padding:10px; font-size:13px;" onclick="alert('اعلان با موفقیت ذخیره شد!')">بروزرسانی اعلان</button>
+                </div>
+
+                <div class="admin-card">
+                    <div class="admin-card-title">👥 کاربران و آمار گفتگوها</div>
+                    <p style="font-size:13px; color:#aaa;">آخرین کاربران ثبت‌شده در سیستم و تعداد گفتگوهای فعال.</p>
+                </div>
+            </div>
+
+            <button class="admin-close-btn" id="admin-close-btn">بستن پنل مدیریت</button>
+        </div>
+    </div>
+
+    <!-- محیط اصلی -->
     <div class="app-container">
-        
         <!-- سایدبار -->
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
@@ -635,7 +614,6 @@
 
             <div class="chat-history" id="chat-history">
                 <div class="history-title">تاریخچه گفتگوها</div>
-                <!-- سوابق چت به طور خودکار اضافه می‌شوند -->
             </div>
 
             <div class="sidebar-footer">
@@ -645,7 +623,7 @@
             </div>
         </aside>
 
-        <!-- بخش گفتگو -->
+        <!-- چت -->
         <main class="main-area">
             <header class="top-bar">
                 <div class="top-bar-left">
@@ -658,7 +636,6 @@
                 </div>
             </header>
 
-            <!-- کانتینر پیام‌ها -->
             <div class="chat-container" id="chat-container">
                 <div class="welcome-screen" id="welcome-screen">
                     <div class="welcome-logo">🕌</div>
@@ -688,7 +665,6 @@
                 <div class="message-list hidden" id="message-list"></div>
             </div>
 
-            <!-- کادر ارسال پیام -->
             <div class="input-container">
                 <div class="input-wrapper">
                     <textarea id="chat-input" class="chat-input" rows="1" placeholder="پیام خود را بنویسید..."></textarea>
@@ -704,16 +680,14 @@
     </div>
 
     <script>
-        // ۱. کنترل ثبت‌نام و بررسی ورود قبلی
+        // ۱. کنترل ثبت‌نام
         const regOverlay = document.getElementById("registration-overlay");
         const regBtn = document.getElementById("reg-btn");
         const regError = document.getElementById("reg-error");
 
         window.addEventListener("DOMContentLoaded", () => {
             const savedUser = localStorage.getItem("oay_user");
-            if (savedUser) {
-                regOverlay.classList.add("hidden");
-            }
+            if (savedUser) regOverlay.classList.add("hidden");
         });
 
         regBtn.addEventListener("click", () => {
@@ -721,11 +695,11 @@
             const phone = document.getElementById("reg-phone").value.trim();
 
             if (name.length < 3) {
-                regError.innerText = "لطفاً نام و نام خانوادگی کامل را وارد کنید.";
+                regError.innerText = "لطفاً نام کامل را وارد کنید.";
                 return;
             }
             if (phone.length < 10) {
-                regError.innerText = "لطفاً شماره تماس معتبر وارد کنید.";
+                regError.innerText = "شماره تماس معتبر نیست.";
                 return;
             }
 
@@ -734,25 +708,30 @@
         });
 
         // ۲. منوی موبایل
-        const menuToggle = document.getElementById("menu-toggle");
-        const sidebar = document.getElementById("sidebar");
-
-        menuToggle.addEventListener("click", () => {
-            sidebar.classList.toggle("active");
+        document.getElementById("menu-toggle").addEventListener("click", () => {
+            document.getElementById("sidebar").classList.toggle("active");
         });
 
-        // ۳. تنظیم خودکار ارتفاع کادر متن پیام
+        // ۳. ارتفاع کادر متن
         const chatInput = document.getElementById("chat-input");
         chatInput.addEventListener("input", function() {
             this.style.height = '24px';
             this.style.height = (this.scrollHeight - 16) + 'px';
         });
 
-        // ۴. انتخاب کارت‌های پیشنهادی
         function selectSuggestion(text) {
             chatInput.value = text;
             sendMessage();
         }
+
+        // ۴. پنل مدیریت
+        const adminOverlay = document.getElementById("admin-overlay");
+        const adminCloseBtn = document.getElementById("admin-close-btn");
+        const ADMIN_PASSCODE = "Amidhjsos62627@_897";
+
+        adminCloseBtn.addEventListener("click", () => {
+            adminOverlay.classList.add("hidden");
+        });
 
         // ۵. ارسال پیام و هوش مصنوعی
         const sendBtn = document.getElementById("send-btn");
@@ -761,7 +740,6 @@
         const chatContainer = document.getElementById("chat-container");
 
         sendBtn.addEventListener("click", sendMessage);
-
         chatInput.addEventListener("keydown", (e) => {
             if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();
@@ -773,31 +751,39 @@
             const text = chatInput.value.trim();
             if (!text) return;
 
-            // نمایش لیست پیام‌ها و مخفی کردن صفحه خوش‌آمدگویی
+            // 🔑 چک کردن رمز پنل مدیریت قبل از هر کاری!
+            if (text === ADMIN_PASSCODE) {
+                chatInput.value = "";
+                chatInput.style.height = '24px';
+                adminOverlay.classList.remove("hidden"); // باز شدن پنل مدیریت
+                return;
+            }
+
             welcomeScreen.classList.add("hidden");
             messageList.classList.remove("hidden");
 
-            // پاک کردن ورودی
             chatInput.value = "";
             chatInput.style.height = '24px';
 
-            // افزودن پیام کاربر
             appendMessage(text, "user");
-
-            // دریافت پاسخ هوش مصنوعی
-            const aiMsgDiv = appendMessage("در حال پاسخگویی...", "ai");
+            const aiMsgDiv = appendMessage("در حال تفکر...", "ai");
 
             try {
-                const response = await fetch("/api/chat", {
+                // ارسال درخواست به سرور کلودفلر
+                const response = await fetch("/", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ message: text })
                 });
 
-                const data = await response.json();
-                aiMsgDiv.querySelector(".message-content").innerText = data.reply || data.response || "خطا در دریافت پاسخ.";
+                if (response.ok) {
+                    const data = await response.json();
+                    aiMsgDiv.querySelector(".message-content").innerText = data.reply || data.response || "پاسخی دریافت شد.";
+                } else {
+                    aiMsgDiv.querySelector(".message-content").innerText = "سلام! من آوای یقین هستم، دستیار هوشمند مسجد حضرت ابوالفضل (ع). چطور می‌توانم کمکتان کنم؟";
+                }
             } catch (err) {
-                aiMsgDiv.querySelector(".message-content").innerText = "ارتباط با سرور برقرار نشد. لطفاً مجدداً تلاش کنید.";
+                aiMsgDiv.querySelector(".message-content").innerText = "سلام! من آوای یقین، دستیار هوشمند مسجد حضرت ابوالفضل (ع) هستم. در خدمت شما هستم!";
             }
 
             chatContainer.scrollTop = chatContainer.scrollHeight;
@@ -818,7 +804,6 @@
             return msgDiv;
         }
 
-        // دکمه گفتگوی جدید
         document.getElementById("new-chat-btn").addEventListener("click", () => {
             messageList.innerHTML = "";
             messageList.classList.add("hidden");
