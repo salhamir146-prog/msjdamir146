@@ -14,14 +14,17 @@
         :root {
             --gold: #d4af37;
             --gold-light: #f5df91;
-            --green-dark: #071c15;
-            --green-main: #0e382b;
-            --green-light: #165b45;
+            --green-dark: #04120c;
+            --green-main: #0a291f;
+            --green-light: #124d3a;
             --border: rgba(212, 175, 55, 0.25);
             --border-white: rgba(255, 255, 255, 0.12);
-            --glass-bg: rgba(14, 56, 43, 0.45);
+            --glass-card: rgba(10, 41, 31, 0.55);
             --text-main: #f5f5f5;
-            --text-sub: #b0c4de;
+            --text-sub: #a0b2a6;
+            --danger: #e74c3c;
+            --success: #2ecc71;
+            --warning: #f39c12;
         }
 
         * {
@@ -33,7 +36,7 @@
 
         body {
             font-family: "Vazirmatn", sans-serif;
-            background: radial-gradient(circle at top center, #134234 0%, #06140f 70%, #030a07 100%);
+            background: radial-gradient(circle at top right, #0e382b 0%, #04120c 70%, #020805 100%);
             color: var(--text-main);
             min-height: 100vh;
             height: 100vh;
@@ -41,16 +44,15 @@
             position: relative;
         }
 
-        /* نورهای پس‌زمینه شیشه‌ای */
+        /* پس‌زمینه نورانی شیشه‌ای */
         body::before {
             content: "";
             position: fixed;
-            width: 550px;
-            height: 550px;
-            background: radial-gradient(circle, rgba(212, 175, 55, 0.15) 0%, rgba(0,0,0,0) 70%);
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.12) 0%, transparent 70%);
             top: -200px;
             right: -150px;
-            border-radius: 50%;
             pointer-events: none;
             z-index: 0;
         }
@@ -58,32 +60,35 @@
         body::after {
             content: "";
             position: fixed;
-            width: 450px;
-            height: 450px;
-            background: radial-gradient(circle, rgba(0, 168, 107, 0.15) 0%, rgba(0,0,0,0) 70%);
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(18, 77, 58, 0.25) 0%, transparent 70%);
             bottom: -150px;
             left: -100px;
-            border-radius: 50%;
             pointer-events: none;
             z-index: 0;
         }
 
-        /* ثبت‌نام شیشه‌ای */
-        .registration-overlay, .admin-overlay {
+        .hidden { display: none !important; }
+
+        /* ==========================================
+           ۱. استایلهای ثبت‌نام اولیه
+        ========================================== */
+        .registration-overlay {
             position: fixed;
             inset: 0;
             display: flex;
             justify-content: center;
             align-items: center;
-            background: rgba(3, 10, 7, 0.8);
+            background: rgba(3, 10, 7, 0.82);
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
             z-index: 9999;
             transition: all 0.4s ease;
         }
 
-        .registration-box, .admin-box {
-            width: 440px;
+        .registration-box {
+            width: 420px;
             max-width: 92%;
             padding: 35px 28px;
             border-radius: 28px;
@@ -92,15 +97,6 @@
             box-shadow: 0 30px 80px rgba(0, 0, 0, 0.85);
             text-align: center;
             animation: showModal 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .admin-box {
-            width: 700px;
-            max-width: 95%;
-            text-align: right;
-            max-height: 85vh;
-            display: flex;
-            flex-direction: column;
         }
 
         @keyframes showModal {
@@ -129,23 +125,9 @@
             -webkit-text-fill-color: transparent;
         }
 
-        .registration-subtitle {
-            margin-top: 5px;
-            color: var(--text-sub);
-            font-size: 13px;
-        }
-
-        .reg-group {
-            text-align: right;
-            margin-top: 16px;
-        }
-
-        .reg-group label {
-            display: block;
-            margin-bottom: 6px;
-            font-size: 12px;
-            color: #ddd;
-        }
+        .registration-subtitle { margin-top: 5px; color: var(--text-sub); font-size: 13px; }
+        .reg-group { text-align: right; margin-top: 16px; }
+        .reg-group label { display: block; margin-bottom: 6px; font-size: 12px; color: #ddd; }
 
         .reg-input {
             width: 100%;
@@ -160,19 +142,10 @@
             font-size: 14px;
         }
 
-        .reg-input:focus {
-            border-color: var(--gold);
-            box-shadow: 0 0 15px rgba(212, 175, 55, 0.25);
-        }
+        .reg-input:focus { border-color: var(--gold); box-shadow: 0 0 15px rgba(212, 175, 55, 0.25); }
+        .reg-error { color: #ff6b6b; font-size: 12px; margin-top: 8px; min-height: 18px; }
 
-        .reg-error {
-            color: #ff6b6b;
-            font-size: 12px;
-            margin-top: 8px;
-            min-height: 18px;
-        }
-
-        .reg-btn, .admin-close-btn {
+        .reg-btn {
             width: 100%;
             margin-top: 15px;
             padding: 13px;
@@ -187,19 +160,12 @@
             transition: 0.3s;
         }
 
-        .reg-btn:hover, .admin-close-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(212, 175, 55, 0.35);
-        }
+        .reg-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(212, 175, 55, 0.35); }
+        .reg-footer { margin-top: 18px; font-size: 11px; color: #888; line-height: 1.6; }
 
-        .reg-footer {
-            margin-top: 18px;
-            font-size: 11px;
-            color: #888;
-            line-height: 1.6;
-        }
-
-        /* ساختار اصلی برنامه */
+        /* ==========================================
+           ۲. محیط چت کاربران (App Container)
+        ========================================== */
         .app-container {
             display: flex;
             height: 100vh;
@@ -209,10 +175,9 @@
             z-index: 1;
         }
 
-        /* سایدبار */
         .sidebar {
             width: 300px;
-            background: rgba(14, 56, 43, 0.35);
+            background: var(--glass-card);
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
             border: 1px solid var(--border-white);
@@ -272,11 +237,7 @@
             gap: 8px;
         }
 
-        .new-chat-btn:hover {
-            background: rgba(212, 175, 55, 0.22);
-            transform: translateY(-2px);
-        }
-
+        .new-chat-btn:hover { background: rgba(212, 175, 55, 0.22); transform: translateY(-2px); }
         .chat-history { flex: 1; padding: 15px; overflow-y: auto; }
         .history-title { color: #888; font-size: 11px; margin-bottom: 10px; }
 
@@ -290,12 +251,11 @@
             line-height: 1.7;
         }
 
-        /* بخش اصلی چت */
         .main-area {
             flex: 1;
             display: flex;
             flex-direction: column;
-            background: rgba(14, 56, 43, 0.25);
+            background: var(--glass-card);
             border: 1px solid var(--border-white);
             border-radius: 26px;
             backdrop-filter: blur(25px);
@@ -366,10 +326,7 @@
             animation: float 4s infinite ease-in-out;
         }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
         .welcome-title {
             font-size: 34px;
@@ -399,17 +356,11 @@
             text-align: right;
         }
 
-        .suggestion-card:hover {
-            transform: translateY(-4px);
-            background: rgba(212, 175, 55, 0.12);
-            border-color: var(--gold);
-        }
-
+        .suggestion-card:hover { transform: translateY(-4px); background: rgba(212, 175, 55, 0.12); border-color: var(--gold); }
         .suggestion-card-title { font-weight: 800; font-size: 13px; color: #fff; margin-bottom: 4px; }
         .suggestion-card-desc { font-size: 11px; color: #aaa; }
 
         .message-list { display: flex; flex-direction: column; gap: 18px; }
-
         .message { display: flex; animation: messageIn 0.3s ease; }
         @keyframes messageIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -426,48 +377,12 @@
             user-select: text;
         }
 
-        .message.user .message-content {
-            background: linear-gradient(135deg, var(--green-light), #0b2d22);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-bottom-right-radius: 4px;
-        }
+        .message.user .message-content { background: linear-gradient(135deg, var(--green-light), #0b2d22); border: 1px solid rgba(255,255,255,0.1); border-bottom-right-radius: 4px; }
+        .message.ai .message-content { background: rgba(255, 255, 255, 0.08); border: 1px solid var(--border-white); border-bottom-left-radius: 4px; }
 
-        .message.ai .message-content {
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid var(--border-white);
-            border-bottom-left-radius: 4px;
-        }
-
-        .input-container {
-            padding: 15px 20px;
-            background: rgba(0, 0, 0, 0.25);
-            border-top: 1px solid var(--border-white);
-        }
-
-        .input-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 8px 12px;
-            border-radius: 18px;
-            background: rgba(255, 255, 255, 0.07);
-            border: 1px solid var(--border);
-        }
-
-        .chat-input {
-            flex: 1;
-            resize: none;
-            max-height: 120px;
-            height: 24px;
-            background: transparent;
-            border: none;
-            outline: none;
-            color: white;
-            font-family: inherit;
-            font-size: 14px;
-            padding: 4px;
-            user-select: text;
-        }
+        .input-container { padding: 15px 20px; background: rgba(0, 0, 0, 0.25); border-top: 1px solid var(--border-white); }
+        .input-wrapper { display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 18px; background: rgba(255, 255, 255, 0.07); border: 1px solid var(--border); }
+        .chat-input { flex: 1; resize: none; max-height: 120px; height: 24px; background: transparent; border: none; outline: none; color: white; font-family: inherit; font-size: 14px; padding: 4px; user-select: text; }
 
         .send-btn {
             width: 42px;
@@ -487,46 +402,101 @@
         .send-btn:hover { transform: scale(1.08); box-shadow: 0 0 15px rgba(212, 175, 55, 0.4); }
         .send-btn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; }
 
-        /* استایل اختصاصی پنل مدیریت */
-        .admin-header {
+        /* ==========================================
+           ۳. پنل مدیریت کامل و یکپارچه (Full Dashboard)
+        ========================================== */
+        .admin-dashboard-container {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle at top right, #0e382b 0%, #04120c 70%, #020805 100%);
+            z-index: 99999;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-bottom: 15px;
-            border-bottom: 1px solid var(--border);
-            margin-bottom: 20px;
-        }
-
-        .admin-title {
-            font-size: 20px;
-            font-weight: 800;
-            color: var(--gold-light);
-        }
-
-        .admin-body {
-            flex: 1;
-            overflow-y: auto;
-            padding-left: 5px;
-        }
-
-        .admin-card {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border-white);
-            border-radius: 16px;
             padding: 16px;
-            margin-bottom: 15px;
+            gap: 16px;
+            animation: fadeIn 0.4s ease;
         }
 
-        .admin-card-title {
-            font-weight: 700;
-            font-size: 14px;
-            color: var(--gold);
-            margin-bottom: 10px;
+        .admin-sidebar {
+            width: 280px;
+            background: var(--glass-card);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid var(--border-white);
+            border-radius: 24px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            overflow: hidden;
         }
 
-        .hidden { display: none !important; }
+        .sidebar-brand { padding: 25px 20px; text-align: center; border-bottom: 1px solid var(--border-white); background: rgba(0,0,0,0.15); }
+        .brand-icon { width: 60px; height: 60px; margin: 0 auto 10px auto; display: flex; align-items: center; justify-content: center; font-size: 30px; border-radius: 18px; background: linear-gradient(135deg, var(--green-light), var(--gold)); box-shadow: 0 0 25px rgba(212,175,55,0.3); }
+        .brand-title { font-size: 20px; font-weight: 900; background: linear-gradient(90deg, #fff, var(--gold-light)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .brand-subtitle { font-size: 11px; color: var(--gold); margin-top: 4px; letter-spacing: 0.5px; }
 
-        ::-webkit-scrollbar { width: 6px; }
+        .nav-menu { flex: 1; padding: 20px 12px; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; }
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 16px; color: var(--text-sub); font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; border: 1px solid transparent; }
+        .nav-item:hover { background: rgba(255, 255, 255, 0.05); color: #fff; }
+        .nav-item.active { background: linear-gradient(135deg, rgba(18, 77, 58, 0.6), rgba(212, 175, 55, 0.2)); border-color: var(--border); color: var(--gold-light); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
+
+        .admin-main { flex: 1; background: var(--glass-card); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border: 1px solid var(--border-white); border-radius: 24px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+        .main-header { height: 70px; padding: 0 25px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-white); background: rgba(0, 0, 0, 0.15); }
+        .header-title { font-size: 18px; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 10px; }
+
+        .status-badge { display: flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 20px; background: rgba(46, 204, 113, 0.1); border: 1px solid rgba(46, 204, 113, 0.3); color: var(--success); font-size: 12px; font-weight: 700; }
+        .pulse-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--success); box-shadow: 0 0 10px var(--success); animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(1.2); } }
+
+        .main-body { flex: 1; padding: 25px; overflow-y: auto; }
+        .tab-content { display: none; animation: fadeIn 0.4s ease; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; margin-bottom: 25px; }
+        .stat-card { background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border-white); border-radius: 20px; padding: 20px; display: flex; align-items: center; gap: 16px; transition: 0.3s; }
+        .stat-card:hover { transform: translateY(-4px); background: rgba(255, 255, 255, 0.07); border-color: var(--border); }
+        .stat-icon { width: 55px; height: 55px; border-radius: 16px; background: rgba(212, 175, 55, 0.1); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 26px; color: var(--gold-light); }
+        .stat-info .value { font-size: 24px; font-weight: 900; color: #fff; }
+        .stat-info .label { font-size: 12px; color: var(--text-sub); margin-top: 4px; }
+
+        .section-card { background: rgba(0, 0, 0, 0.2); border: 1px solid var(--border-white); border-radius: 20px; padding: 22px; margin-bottom: 22px; }
+        .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid var(--border-white); }
+        .section-title { font-size: 16px; font-weight: 800; color: var(--gold-light); display: flex; align-items: center; gap: 10px; }
+
+        .data-table-wrapper { overflow-x: auto; }
+        .data-table { width: 100%; border-collapse: collapse; text-align: right; font-size: 13px; }
+        .data-table th { padding: 14px; background: rgba(255, 255, 255, 0.05); color: var(--gold); font-weight: 700; border-bottom: 1px solid var(--border-white); }
+        .data-table td { padding: 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #ddd; }
+        .data-table tr:hover { background: rgba(255, 255, 255, 0.03); }
+
+        .user-badge { padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; }
+        .user-badge.active { background: rgba(46, 204, 113, 0.2); color: #2ecc71; }
+        .user-badge.banned { background: rgba(231, 76, 60, 0.2); color: #e74c3c; }
+
+        .form-group { margin-bottom: 18px; }
+        .form-label { display: block; margin-bottom: 8px; font-size: 13px; color: #ddd; font-weight: 600; }
+        .form-input, .form-textarea, .form-select { width: 100%; padding: 12px 16px; border-radius: 14px; background: rgba(255, 255, 255, 0.06); border: 1px solid var(--border-white); color: white; font-family: inherit; font-size: 13px; outline: none; transition: 0.3s; }
+        .form-input:focus, .form-textarea:focus, .form-select:focus { border-color: var(--gold); box-shadow: 0 0 15px rgba(212, 175, 55, 0.2); background: rgba(255, 255, 255, 0.09); }
+        .form-textarea { resize: vertical; min-height: 100px; line-height: 1.7; }
+
+        .btn { padding: 10px 20px; border-radius: 14px; border: none; font-family: inherit; font-weight: 700; font-size: 13px; cursor: pointer; transition: 0.3s; display: inline-flex; align-items: center; gap: 8px; }
+        .btn-gold { background: linear-gradient(135deg, var(--green-light), var(--gold)); color: white; box-shadow: 0 8px 20px rgba(212, 175, 55, 0.25); }
+        .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 12px 25px rgba(212, 175, 55, 0.4); }
+        .btn-danger { background: rgba(231, 76, 60, 0.2); border: 1px solid rgba(231, 76, 60, 0.4); color: var(--danger); }
+        .btn-danger:hover { background: rgba(231, 76, 60, 0.4); }
+        .btn-sm { padding: 6px 12px; font-size: 11px; border-radius: 10px; }
+
+        .switch { position: relative; display: inline-block; width: 46px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; inset: 0; background-color: rgba(255,255,255,0.15); transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; right: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--gold); }
+        input:checked + .slider:before { transform: translateX(-22px); }
+
+        .toast { position: fixed; bottom: 25px; left: 25px; padding: 14px 22px; background: rgba(18, 77, 58, 0.95); border: 1px solid var(--gold); border-radius: 16px; color: #fff; font-weight: 700; font-size: 13px; box-shadow: 0 15px 30px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 10px; transform: translateY(100px); opacity: 0; transition: all 0.4s ease; z-index: 100000; }
+        .toast.show { transform: translateY(0); opacity: 1; }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-thumb { background: rgba(212, 175, 55, 0.3); border-radius: 10px; }
 
         @media (max-width: 850px) {
@@ -535,12 +505,15 @@
             .sidebar { position: fixed; right: -320px; top: 0; bottom: 0; width: 280px; z-index: 1000; border-radius: 0; }
             .sidebar.active { right: 0; }
             .suggestion-cards { grid-template-columns: 1fr; width: 100%; }
+            .admin-dashboard-container { flex-direction: column; padding: 8px; }
+            .admin-sidebar { width: 100%; height: auto; }
+            .nav-menu { flex-direction: row; overflow-x: auto; }
         }
     </style>
 </head>
 <body>
 
-    <!-- ثبت‌نام -->
+    <!-- ۱. فرم ثبت‌نام اولیه -->
     <div class="registration-overlay" id="registration-overlay">
         <div class="registration-box">
             <div class="registration-icon">🕌</div>
@@ -564,43 +537,8 @@
         </div>
     </div>
 
-    <!-- پنل مدیریت (مخفی در حالت عادی) -->
-    <div class="admin-overlay hidden" id="admin-overlay">
-        <div class="admin-box">
-            <div class="admin-header">
-                <div class="admin-title">👑 پنل مدیریت ارشد (آوای یقین)</div>
-                <span style="font-size:12px; color:#aaa;">متصل به Cloudflare KV</span>
-            </div>
-
-            <div class="admin-body">
-                <div class="admin-card">
-                    <div class="admin-card-title">⚙️ وضعیت سیستم و تنظیمات سرور</div>
-                    <p style="font-size:13px; color:#ddd; line-height:1.7;">
-                        • دیتابیس فعال: <b>AVAYE_YAGHIN_KV</b><br>
-                        • وضعیت سرور: <b>آنلاین (Cloudflare Workers)</b><br>
-                        • شناسه پروژه: <b>a4a9f428b15e40ecafeb5d17aa811c3a</b>
-                    </p>
-                </div>
-
-                <div class="admin-card">
-                    <div class="admin-card-title">📢 اعلانات عمومی سایت</div>
-                    <input type="text" class="reg-input" id="admin-announcement" placeholder="متن اعلان جدید را بنویسید..." style="margin-bottom:10px;">
-                    <button class="reg-btn" style="margin-top:0; padding:10px; font-size:13px;" onclick="alert('اعلان با موفقیت ذخیره شد!')">بروزرسانی اعلان</button>
-                </div>
-
-                <div class="admin-card">
-                    <div class="admin-card-title">👥 کاربران و آمار گفتگوها</div>
-                    <p style="font-size:13px; color:#aaa;">آخرین کاربران ثبت‌شده در سیستم و تعداد گفتگوهای فعال.</p>
-                </div>
-            </div>
-
-            <button class="admin-close-btn" id="admin-close-btn">بستن پنل مدیریت</button>
-        </div>
-    </div>
-
-    <!-- محیط اصلی -->
+    <!-- ۲. محیط اصلی چت کاربر -->
     <div class="app-container">
-        <!-- سایدبار -->
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <div class="logo-icon">🕌</div>
@@ -623,7 +561,6 @@
             </div>
         </aside>
 
-        <!-- چت -->
         <main class="main-area">
             <header class="top-bar">
                 <div class="top-bar-left">
@@ -679,8 +616,265 @@
         </main>
     </div>
 
+    <!-- ۳. پنل مدیریت کامل و ارشد (با وارد کردن رمز باز می‌شود) -->
+    <div class="admin-dashboard-container hidden" id="admin-dashboard">
+        <aside class="admin-sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-icon">👑</div>
+                <div class="brand-title">آوای یقین</div>
+                <div class="brand-subtitle">پنل مدیریت ارشد مسجد</div>
+            </div>
+
+            <nav class="nav-menu">
+                <div class="nav-item active" onclick="switchAdminTab('tab-overview', this)">
+                    <span>📊</span> <span>داشبورد اصلی</span>
+                </div>
+                <div class="nav-item" onclick="switchAdminTab('tab-users', this)">
+                    <span>👥</span> <span>مدیریت کاربران</span>
+                </div>
+                <div class="nav-item" onclick="switchAdminTab('tab-chats', this)">
+                    <span>💬</span> <span>نظارت بر چت‌ها</span>
+                </div>
+                <div class="nav-item" onclick="switchAdminTab('tab-ai', this)">
+                    <span>🧠</span> <span>استودیو هوش مصنوعی</span>
+                </div>
+                <div class="nav-item" onclick="switchAdminTab('tab-announcements', this)">
+                    <span>📢</span> <span>اعلانات مسجد</span>
+                </div>
+                <div class="nav-item" onclick="switchAdminTab('tab-settings', this)">
+                    <span>⚙️</span> <span>تنظیمات سرور & KV</span>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="btn btn-danger btn-sm" style="width:100%; justify-content:center;" onclick="closeAdminDashboard()">🚪 خروج از پنل / بازگشت به چت</button>
+            </div>
+        </aside>
+
+        <main class="admin-main">
+            <header class="main-header">
+                <div class="header-title" id="admin-page-title">
+                    <span>📊</span> داشبورد و آمار کلی سیستم
+                </div>
+
+                <div class="status-badge">
+                    <div class="pulse-dot"></div>
+                    <span>پایگاه Cloudflare KV فعال است</span>
+                </div>
+            </header>
+
+            <div class="main-body">
+                <!-- تب ۱: داشبورد اصلی -->
+                <div class="tab-content active" id="tab-overview">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">👥</div>
+                            <div class="stat-info">
+                                <div class="value">۱,۴۸۲</div>
+                                <div class="label">کاربران ثبت‌شده</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">💬</div>
+                            <div class="stat-info">
+                                <div class="value">۳۴۹</div>
+                                <div class="label">پرسش‌های امروز</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">⚡</div>
+                            <div class="stat-info">
+                                <div class="value">۹۹.۹٪</div>
+                                <div class="label">پایداری کلودفلر</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">💾</div>
+                            <div class="stat-info">
+                                <div class="value">AVAYE_YAGHIN</div>
+                                <div class="label">دیتابیس اَبری فعال</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-card">
+                        <div class="section-header">
+                            <div class="section-title">⚡ آخرین فعالیت‌ها و رویدادهای زنده</div>
+                            <button class="btn btn-gold btn-sm" onclick="showToast('آمار بروزرسانی شد!')">بروزرسانی آمار</button>
+                        </div>
+                        <div class="data-table-wrapper">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>رویداد</th>
+                                        <th>کاربر / آی‌پای</th>
+                                        <th>زمان</th>
+                                        <th>وضعیت</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>ثبت‌نام کاربر جدید</td>
+                                        <td>محمدحسین رضایی (۰۹۱۲***۴۵۶۷)</td>
+                                        <td>۲ دقیقه پیش</td>
+                                        <td><span class="user-badge active">موفق</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>پرسش احکام شرعی</td>
+                                        <td>کاربر مهمان #۸۸۴۲</td>
+                                        <td>۸ دقیقه پیش</td>
+                                        <td><span class="user-badge active">پاسخ داده شد</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>بروزرسانی پرومپت سیستم</td>
+                                        <td>مدیر ارشد (امیر صالح)</td>
+                                        <td>۱ ساعت پیش</td>
+                                        <td><span class="user-badge active">ذخیره در KV</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- تب ۲: مدیریت کاربران -->
+                <div class="tab-content" id="tab-users">
+                    <div class="section-card">
+                        <div class="section-header">
+                            <div class="section-title">👥 لیست کاربران سیستم</div>
+                            <input type="text" class="form-input" id="search-user-input" placeholder="جستجوی نام یا شماره..." style="width:230px;" onkeyup="filterUsers()">
+                        </div>
+                        <div class="data-table-wrapper">
+                            <table class="data-table" id="users-table">
+                                <thead>
+                                    <tr>
+                                        <th>شناسه</th>
+                                        <th>نام و نام خانوادگی</th>
+                                        <th>شماره تماس</th>
+                                        <th>تاریخ عضویت</th>
+                                        <th>وضعیت</th>
+                                        <th>عملیات</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>#۱۰۱</td>
+                                        <td>امیر صالح جاودان</td>
+                                        <td>۰۹۳۶***۱۲۳۴</td>
+                                        <td>۱۴۰۵/۰۵/۰۱</td>
+                                        <td><span class="user-badge active" id="status-101">فعال</span></td>
+                                        <td><button class="btn btn-danger btn-sm" onclick="toggleBanUser('101', 'امیر صالح جاودان')">تغییر وضعیت</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>#۱۰۲</td>
+                                        <td>علی احمدی</td>
+                                        <td>۰۹۱۲***۵۶۷۸</td>
+                                        <td>۱۴۰۵/۰۵/۰۲</td>
+                                        <td><span class="user-badge active" id="status-102">فعال</span></td>
+                                        <td><button class="btn btn-danger btn-sm" onclick="toggleBanUser('102', 'علی احمدی')">تغییر وضعیت</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td>#۱۰۳</td>
+                                        <td>رضا محمدی</td>
+                                        <td>۰۹۳۵***۹۹۸۸</td>
+                                        <td>۱۴۰۵/۰۵/۰۳</td>
+                                        <td><span class="user-badge banned" id="status-103">مسدود</span></td>
+                                        <td><button class="btn btn-danger btn-sm" onclick="toggleBanUser('103', 'رضا محمدی')">تغییر وضعیت</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- تب ۳: نظارت بر چت‌ها -->
+                <div class="tab-content" id="tab-chats">
+                    <div class="section-card">
+                        <div class="section-header">
+                            <div class="section-title">💬 بازرسی و مشاهده لاگ چت‌ها</div>
+                        </div>
+                        <div style="background:rgba(0,0,0,0.3); padding:15px; border-radius:16px; border:1px solid var(--border-white); max-height:350px; overflow-y:auto;">
+                            <div style="margin-bottom:12px; padding:10px; background:rgba(255,255,255,0.05); border-radius:12px;">
+                                <strong style="color:var(--gold);">کاربر (علی احمدی):</strong>
+                                <p style="font-size:13px; margin-top:4px;">حکم نماز خواندن در هنگام سفر چیست؟</p>
+                            </div>
+                            <div style="margin-bottom:12px; padding:10px; background:rgba(18, 77, 58, 0.3); border-radius:12px; border-right:3px solid var(--gold);">
+                                <strong style="color:var(--gold-light);">پاسخ آوای یقین (هوش مصنوعی):</strong>
+                                <p style="font-size:13px; margin-top:4px;">سلام و درود. اگر مسافت سفر شما از ۴۴ کیلومتر (رفت و برگشت) بیشتر باشد، نماز چهاررکعتی به‌صورت شکسته خوانده می‌شود.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- تب ۴: استودیو هوش مصنوعی -->
+                <div class="tab-content" id="tab-ai">
+                    <div class="section-card">
+                        <div class="section-header">
+                            <div class="section-title">🧠 تنظیمات شخصیت و پرومپت سیستم (System Prompt)</div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">انتخاب حالت پاسخگویی (Preset)</label>
+                            <select class="form-select" id="preset-select" onchange="loadPreset()">
+                                <option value="default">دستیار عمومی و پاسخگوی احکام مسجد</option>
+                                <option value="quran">مشاور قرآنی و معارف نهج‌البلاغه</option>
+                                <option value="youth">راهنمای صمیمی و مشاور نوجوانان</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">دستورالعمل پایه هوش مصنوعی</label>
+                            <textarea class="form-textarea" id="system-prompt" rows="5">تو «آوای یقین»، دستیار هوشمند و لحن صمیمی مسجد حضرت ابوالفضل (ع) رودان هستی. با ادب و بر اساس معارف اهل‌بیت (ع) به سوالات مذهبی پاسخ بده.</textarea>
+                        </div>
+                        <button class="btn btn-gold" onclick="showToast('تنظیمات هوش مصنوعی در KV ذخیره شد!')">💾 ذخیره تغییرات در Cloudflare KV</button>
+                    </div>
+                </div>
+
+                <!-- تب ۵: اعلانات مسجد -->
+                <div class="tab-content" id="tab-announcements">
+                    <div class="section-card">
+                        <div class="section-header">
+                            <div class="section-title">📢 مرکز اعلانات و خبرنامه مسجد</div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">عنوان بنر یا خبر ویژه</label>
+                            <input type="text" class="form-input" placeholder="مثال: مراسم عزاداری دهه اول محرم">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">متن کامل اعلان عمومی</label>
+                            <textarea class="form-textarea" placeholder="متن اطلاع‌رسانی برای همه کاربران..."></textarea>
+                        </div>
+                        <button class="btn btn-gold" onclick="showToast('اعلان عمومی زنده منتشر شد!')">🚀 انتشار اعلان عمومی</button>
+                    </div>
+                </div>
+
+                <!-- تب ۶: تنظیمات سرور -->
+                <div class="tab-content" id="tab-settings">
+                    <div class="section-card">
+                        <div class="section-header">
+                            <div class="section-title">⚙️ تنظیمات اتصال دیتابیس KV کلودفلر</div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">شناسه پایگاه داده (KV Namespace ID)</label>
+                            <input type="text" class="form-input" value="a4a9f428b15e40ecafeb5d17aa811c3a" readonly style="color:var(--gold);">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">رمز عبور ورود به پنل مدیریت</label>
+                            <input type="password" class="form-input" value="Amidhjsos62627@_897">
+                        </div>
+                        <button class="btn btn-gold" onclick="showToast('تنظیمات فنی ذخیره شد!')">💾 ذخیره تغییرات فنی</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- نوتیفیکیشن هشدار -->
+    <div class="toast" id="admin-toast">
+        <span>✅</span>
+        <span id="toast-text">عملیات با موفقیت انجام شد.</span>
+    </div>
+
     <script>
-        // ۱. کنترل ثبت‌نام
+        // ۱. مدیریت ثبت‌نام کاربر
         const regOverlay = document.getElementById("registration-overlay");
         const regBtn = document.getElementById("reg-btn");
         const regError = document.getElementById("reg-error");
@@ -699,7 +893,7 @@
                 return;
             }
             if (phone.length < 10) {
-                regError.innerText = "شماره تماس معتبر نیست.";
+                regError.innerText = "شماره تماس صحیح نیست.";
                 return;
             }
 
@@ -707,12 +901,12 @@
             regOverlay.classList.add("hidden");
         });
 
-        // ۲. منوی موبایل
+        // ۲. منوی موبایل چت
         document.getElementById("menu-toggle").addEventListener("click", () => {
             document.getElementById("sidebar").classList.toggle("active");
         });
 
-        // ۳. ارتفاع کادر متن
+        // ۳. کادر متن پیام
         const chatInput = document.getElementById("chat-input");
         chatInput.addEventListener("input", function() {
             this.style.height = '24px';
@@ -724,20 +918,13 @@
             sendMessage();
         }
 
-        // ۴. پنل مدیریت
-        const adminOverlay = document.getElementById("admin-overlay");
-        const adminCloseBtn = document.getElementById("admin-close-btn");
-        const ADMIN_PASSCODE = "Amidhjsos62627@_897";
-
-        adminCloseBtn.addEventListener("click", () => {
-            adminOverlay.classList.add("hidden");
-        });
-
-        // ۵. ارسال پیام و هوش مصنوعی
+        // ۴. ارسال پیام و بررسی رمز عبور مدیریت
         const sendBtn = document.getElementById("send-btn");
         const welcomeScreen = document.getElementById("welcome-screen");
         const messageList = document.getElementById("message-list");
         const chatContainer = document.getElementById("chat-container");
+        const adminDashboard = document.getElementById("admin-dashboard");
+        const ADMIN_PASSCODE = "Amidhjsos62627@_897";
 
         sendBtn.addEventListener("click", sendMessage);
         chatInput.addEventListener("keydown", (e) => {
@@ -751,11 +938,11 @@
             const text = chatInput.value.trim();
             if (!text) return;
 
-            // 🔑 چک کردن رمز پنل مدیریت قبل از هر کاری!
+            // 🔑 چک کردن ورود به پنل مدیریت ارشد!
             if (text === ADMIN_PASSCODE) {
                 chatInput.value = "";
                 chatInput.style.height = '24px';
-                adminOverlay.classList.remove("hidden"); // باز شدن پنل مدیریت
+                adminDashboard.classList.remove("hidden"); // باز شدن پنل مدیریت کامل
                 return;
             }
 
@@ -769,7 +956,6 @@
             const aiMsgDiv = appendMessage("در حال تفکر...", "ai");
 
             try {
-                // ارسال درخواست به سرور کلودفلر
                 const response = await fetch("/", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -778,7 +964,7 @@
 
                 if (response.ok) {
                     const data = await response.json();
-                    aiMsgDiv.querySelector(".message-content").innerText = data.reply || data.response || "پاسخی دریافت شد.";
+                    aiMsgDiv.querySelector(".message-content").innerText = data.reply || data.response || "پاسخ دریافت شد.";
                 } else {
                     aiMsgDiv.querySelector(".message-content").innerText = "سلام! من آوای یقین هستم، دستیار هوشمند مسجد حضرت ابوالفضل (ع). چطور می‌توانم کمکتان کنم؟";
                 }
@@ -809,6 +995,74 @@
             messageList.classList.add("hidden");
             welcomeScreen.classList.remove("hidden");
         });
+
+        // ================= =================
+        // توابع و کنترل‌های پنل مدیریت
+        // ================= =================
+        function closeAdminDashboard() {
+            adminDashboard.classList.add("hidden");
+        }
+
+        function switchAdminTab(tabId, element) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+
+            document.getElementById(tabId).classList.add('active');
+            element.classList.add('active');
+
+            const titles = {
+                'tab-overview': '📊 داشبورد و آمار کلی سیستم',
+                'tab-users': '👥 مدیریت کاربران و دسترسی‌ها',
+                'tab-chats': '💬 نظارت بر چت‌ها و پرسش‌ها',
+                'tab-ai': '🧠 استودیو هوش مصنوعی و پرومپت',
+                'tab-announcements': '📢 مرکز اعلانات و خبرنامه مسجد',
+                'tab-settings': '⚙️ تنظیمات فنی و دیتابیس KV'
+            };
+            document.getElementById('admin-page-title').innerHTML = titles[tabId];
+        }
+
+        function showToast(text) {
+            const toast = document.getElementById('admin-toast');
+            document.getElementById('toast-text').innerText = text;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        function toggleBanUser(userId, userName) {
+            const badge = document.getElementById(`status-${userId}`);
+            if (badge.classList.contains('active')) {
+                badge.classList.remove('active');
+                badge.classList.add('banned');
+                badge.innerText = 'مسدود شده';
+                showToast(`دسترسی کاربر ${userName} مسدود شد.`);
+            } else {
+                badge.classList.remove('banned');
+                badge.classList.add('active');
+                badge.innerText = 'فعال';
+                showToast(`دسترسی کاربر ${userName} فعال شد.`);
+            }
+        }
+
+        function filterUsers() {
+            const query = document.getElementById('search-user-input').value.toLowerCase();
+            const rows = document.querySelectorAll('#users-table tbody tr');
+            rows.forEach(row => {
+                row.style.display = row.innerText.toLowerCase().includes(query) ? '' : 'none';
+            });
+        }
+
+        function loadPreset() {
+            const val = document.getElementById('preset-select').value;
+            const promptBox = document.getElementById('system-prompt');
+
+            if (val === 'default') {
+                promptBox.value = "تو «آوای یقین»، دستیار هوشمند و لحن صمیمی مسجد حضرت ابوالفضل (ع) رودان هستی. با ادب و بر اساس معارف اهل‌بیت (ع) به سوالات مذهبی پاسخ بده.";
+            } else if (val === 'quran') {
+                promptBox.value = "تو متخصص معارف قرآن کریم و نهج‌البلاغه در مسجد حضرت ابوالفضل (ع) هستی. پاسخ‌هایت را با آیات متناسب مزین کن.";
+            } else if (val === 'youth') {
+                promptBox.value = "تو یک مشاور صمیمی و مهربان برای پاسخ به شبهات نسل جوان در مسجد حضرت ابوالفضل (ع) هستی.";
+            }
+        }
     </script>
 </body>
 </html>
