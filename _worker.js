@@ -2,7 +2,7 @@ export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
 
-    // ۱. پنل ادمین (مدیریت تنظیمات، مدل‌ها و دکمه تصویرساز)
+    // ۱. پنل ادمین
     if (url.pathname === '/admin') {
       if (request.method === 'POST') {
         const formData = await request.formData();
@@ -20,7 +20,7 @@ export default {
       }
 
       const apiKey = (await env.MY_KV.get('OPENROUTER_API_KEY')) || '';
-      const currentModel = (await env.MY_KV.get('CURRENT_MODEL')) || 'openai/gpt-oss-20b';
+      const currentModel = (await env.MY_KV.get('CURRENT_MODEL')) || 'openai/gpt-oss-20b:free';
       const imageGenEnabled = (await env.MY_KV.get('IMAGE_GEN_ENABLED')) === 'true';
 
       const html = `
@@ -48,11 +48,10 @@ export default {
 
               <label>انتخاب مدل هوش مصنوعی:</label>
               <select name="current_model">
-                <option value="openai/gpt-oss-20b" ${currentModel === 'openai/gpt-oss-20b' ? 'selected' : ''}>GPT-OSS 20B (رایگان)</option>
-                <option value="google/gemini-3.1-flash" ${currentModel === 'google/gemini-3.1-flash' ? 'selected' : ''}>Gemini 3.1 Flash</option>
-                <option value="meta-llama/llama-3" ${currentModel === 'meta-llama/llama-3' ? 'selected' : ''}>Llama 3</option>
-                <option value="google/gemini-nano" ${currentModel === 'google/gemini-nano' ? 'selected' : ''}>Gemini Nano</option>
-                <option value="mistralai/mistral-2-lite" ${currentModel === 'mistralai/mistral-2-lite' ? 'selected' : ''}>Mistral 2 Lite</option>
+                <option value="openai/gpt-oss-20b:free" ${currentModel === 'openai/gpt-oss-20b:free' ? 'selected' : ''}>GPT-OSS 20B (رایگان)</option>
+                <option value="google/gemini-2.5-flash:free" ${currentModel === 'google/gemini-2.5-flash:free' ? 'selected' : ''}>Gemini Flash (رایگان)</option>
+                <option value="meta-llama/llama-3.3-70b-instruct:free" ${currentModel === 'meta-llama/llama-3.3-70b-instruct:free' ? 'selected' : ''}>Llama 3.3 (رایگان)</option>
+                <option value="mistralai/mistral-small-24b-instruct-2501:free" ${currentModel === 'mistralai/mistral-small-24b-instruct-2501:free' ? 'selected' : ''}>Mistral 2 Lite (رایگان)</option>
               </select>
 
               <div class="checkbox-label">
@@ -69,7 +68,7 @@ export default {
       return new Response(html, { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
     }
 
-    // ۲. صفحه چت کاربران
+    // ۲. صفحه اصلی چت کاربران
     if (url.pathname === '/' || url.pathname === '/chat') {
       const imageGenEnabled = (await env.MY_KV.get('IMAGE_GEN_ENABLED')) === 'true';
 
@@ -144,7 +143,7 @@ export default {
                   responseDiv.innerHTML = data.result;
                 }
               } catch (err) {
-                responseDiv.innerHTML = 'خطایی رخ داد!';
+                responseDiv.innerHTML = 'خطا در ارتباط با سرور.';
               }
               container.scrollTop = container.scrollHeight;
             }
@@ -155,12 +154,12 @@ export default {
       return new Response(chatHtml, { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
     }
 
-    // ۳. پردازش درخواست‌های هوش مصنوعی و تصویرساز در بک‌اند
+    // ۳. اندپوینت پردازش ای‌پیز (مسیر دقیق /api)
     if (url.pathname === '/api' && request.method === 'POST') {
       try {
         const { prompt, mode } = await request.json();
         const apiKey = await env.MY_KV.get('OPENROUTER_API_KEY');
-        const currentModel = (await env.MY_KV.get('CURRENT_MODEL')) || 'openai/gpt-oss-20b';
+        const currentModel = (await env.MY_KV.get('CURRENT_MODEL')) || 'openai/gpt-oss-20b:free';
 
         if (!apiKey) {
           return Response.json({ result: 'لطفاً کلید OpenRouter را از پنل ادمین تنظیم کنید.' });
@@ -168,7 +167,6 @@ export default {
 
         // حالت تولید تصویر (ترجمه پرامپت فارسی به انگلیسی و استفاده از Pollinations)
         if (mode === 'image') {
-          // ابتدا متن فارسی را با مدل زبانی به انگلیسی تبدیل می‌کنیم تا کیفیت تصویر بالا برود
           const translationRes = await fetch('https://openrouter.ai/api/v1/chat/completions', {
             method: 'POST',
             headers: {
@@ -185,17 +183,16 @@ export default {
           });
 
           const transData = await translationRes.json();
-          let englishPrompt = prompt; // پیش‌فرض در صورت خطا
+          let englishPrompt = prompt;
           if (transData.choices && transData.choices[0]) {
             englishPrompt = transData.choices[0].message.content.trim();
           }
 
-          // لینک نهایی Pollinations.ai برای تولید تصویر
           const imageUrl = 'https://image.pollinations.ai/prompt/' + encodeURIComponent(englishPrompt);
           return Response.json({ result: imageUrl });
         }
 
-        // حالت چت و گفتگوی متنی عادی
+        // حالت چت متنی عادی با OpenRouter
         const aiResponse = await fetch('https://openrouter.ai/api/v1/chat/completions', {
           method: 'POST',
           headers: {
@@ -212,19 +209,22 @@ export default {
 
         const aiData = await aiResponse.json();
         let reply = 'پاسخی دریافت نشد.';
+        
         if (aiData.choices && aiData.choices[0]) {
           reply = aiData.choices[0].message.content;
         } else if (aiData.error) {
-          reply = 'خطا از سمت OpenRouter: ' + (aiData.error.message || JSON.stringify(aiData.error));
+          reply = 'خطای OpenRouter: ' + (aiData.error.message || JSON.stringify(aiData.error));
+        } else {
+          reply = 'پاسخ ناشناخته از سرور: ' + JSON.stringify(aiData);
         }
 
         return Response.json({ result: reply });
 
       } catch (e) {
-        return Response.json({ result: 'خطای سیستمی رخ داد: ' + e.message });
+        return Response.json({ result: 'خطای سیستمی: ' + e.message });
       }
     }
 
-    return new Response('صفحه مورد نظر پیدا نشد', { status: 404 });
+    return new Response('صفحه مورد نظر پیدا نشد (404)', { status: 404 });
   }
 };
