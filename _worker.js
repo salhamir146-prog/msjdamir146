@@ -2,7 +2,7 @@ export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
 
-    // ۱. پنل مدیریت ساده و بدون نیاز به KV
+    // ۱. پنل مدیریت بدون نیاز به KV
     if (url.pathname === '/admin') {
       if (request.method === 'POST') {
         const formData = await request.formData();
@@ -10,12 +10,11 @@ export default {
         const currentModel = formData.get('current_model');
         const imageGenEnabled = formData.get('image_gen_enabled') === 'on' ? 'true' : 'false';
 
-        // ذخیره موقت در حافظه اجرایی کارنت (برای تست فوری)
         globalThis.CACHED_API_KEY = apiKey;
         globalThis.CACHED_MODEL = currentModel;
         globalThis.CACHED_IMAGE_GEN = imageGenEnabled;
 
-        return new Response('تنظیمات با موفقیت ذخیره شد! <a href="/admin">بازگشت به پنل</a> | <a href="/">رفتن به صفحه چت</a>', {
+        return new Response('تنظیمات با موفقیت ذخیره شد! <a href="/admin">بازگشت</a> | <a href="/">رفتن به چت</a>', {
           headers: { 'Content-Type': 'text/html; charset=utf-8' }
         });
       }
@@ -74,7 +73,7 @@ export default {
       return new Response(html, { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
     }
 
-    // ۲. صفحه اصلی چت آوای یقین
+    // ۲. صفحه چت کاربران
     if (url.pathname === '/' || url.pathname === '/chat') {
       const imageGenEnabled = globalThis.CACHED_IMAGE_GEN === 'true';
 
@@ -103,7 +102,7 @@ export default {
         </head>
         <body>
           <div class="admin-link">
-            <a href="/admin">⚙️ رفتن به پنل مدیریت</a>
+            <a href="/admin">⚙️ پنل مدیریت</a>
           </div>
 
           <div class="mode-switch">
@@ -166,7 +165,7 @@ export default {
       return new Response(chatHtml, { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
     }
 
-    // ۳. مسیر پردازش درخواست‌ها
+    // ۳. پردازش ای‌پای API
     if (url.pathname === '/api/chat' && request.method === 'POST') {
       try {
         const { prompt, mode } = await request.json();
@@ -177,7 +176,6 @@ export default {
           return Response.json({ result: 'لطفاً اول کلید OpenRouter را از طریق پنل مدیریت تنظیم کنید.' });
         }
 
-        // حالت تولید تصویر
         if (mode === 'image') {
           const translationRes = await fetch('https://openrouter.ai/api/v1/chat/completions', {
             method: 'POST',
@@ -204,7 +202,6 @@ export default {
           return Response.json({ result: imageUrl });
         }
 
-        // حالت چت متنی
         const aiResponse = await fetch('https://openrouter.ai/api/v1/chat/completions', {
           method: 'POST',
           headers: {
