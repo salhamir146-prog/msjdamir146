@@ -130,7 +130,8 @@ export default {
               container.appendChild(responseDiv);
 
               try {
-                const res = await fetch('/api', {
+                // مسیر دقیق درخواست فیکس شد
+                const res = await fetch('/api/chat', {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify({ prompt: text, mode: currentMode })
@@ -154,8 +155,8 @@ export default {
       return new Response(chatHtml, { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
     }
 
-    // ۳. اندپوینت پردازش ای‌پیز (مسیر دقیق /api)
-    if (url.pathname === '/api' && request.method === 'POST') {
+    // ۳. مسیر دقیق پردازش درخواست‌ها که با فرانت‌اند مچ شد
+    if (url.pathname === '/api/chat' && request.method === 'POST') {
       try {
         const { prompt, mode } = await request.json();
         const apiKey = await env.MY_KV.get('OPENROUTER_API_KEY');
