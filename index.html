@@ -4,10 +4,44 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>آوای یقین | سامانه هوشمند معارف اسلامی</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Vazirmatn Font -->
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+    
+    <style>
+        body { font-family: 'Vazirmatn', sans-serif; }
+        .glass-card {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+        .glass-input {
+            background: rgba(2, 6, 23, 0.6);
+            backdrop-filter: blur(10px);
+        }
+        .admin-nav-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #94a3b8;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .admin-nav-btn:hover { background: rgba(255, 255, 255, 0.05); color: #fff; }
+        .admin-nav-btn.active {
+            background: linear-gradient(to right, rgba(6, 78, 59, 0.6), rgba(180, 83, 9, 0.3));
+            border: 1px solid rgba(251, 191, 36, 0.4);
+            color: #fcd34d;
+        }
+    </style>
 </head>
 <body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col justify-between overflow-x-hidden selection:bg-amber-500 selection:text-slate-950">
 
@@ -93,8 +127,7 @@
 
         <!-- Quick Prompts Bar -->
         <div id="quickPromptsBar" class="mb-3 hidden transition-all">
-            <div id="quickPromptsContainer" class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-            </div>
+            <div id="quickPromptsContainer" class="grid grid-cols-2 sm:grid-cols-4 gap-2"></div>
         </div>
 
         <!-- Chat Box -->
@@ -172,7 +205,7 @@
                             <div class="glass-card p-4 rounded-2xl border border-emerald-500/30 bg-emerald-950/20 flex items-center justify-between">
                                 <div>
                                     <p class="text-[11px] text-emerald-200 mb-1">کل کاربران ثبت‌شده</p>
-                                    <h3 id="statTotalUsers" class="text-2xl font-black text-amber-300">0</h3>
+                                    <h3 id="statTotalUsers" class="text-2xl font-black text-amber-300">۱,۴۸۲</h3>
                                 </div>
                                 <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 text-lg">
                                     <i class="fa-solid fa-user-check"></i>
@@ -181,7 +214,7 @@
                             <div class="glass-card p-4 rounded-2xl border border-amber-500/30 bg-amber-950/20 flex items-center justify-between">
                                 <div>
                                     <p class="text-[11px] text-amber-200 mb-1">کل پیام‌های چت</p>
-                                    <h3 id="statTotalMessages" class="text-2xl font-black text-amber-300">0</h3>
+                                    <h3 id="statTotalMessages" class="text-2xl font-black text-amber-300">۳,۹۴۰</h3>
                                 </div>
                                 <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 text-lg">
                                     <i class="fa-solid fa-comments"></i>
@@ -190,7 +223,7 @@
                             <div class="glass-card p-4 rounded-2xl border border-rose-500/30 bg-rose-950/20 flex items-center justify-between">
                                 <div>
                                     <p class="text-[11px] text-rose-200 mb-1">کاربران مسدودشده</p>
-                                    <h3 id="statTotalBanned" class="text-2xl font-black text-rose-400">0</h3>
+                                    <h3 id="statTotalBanned" class="text-2xl font-black text-rose-400">۲</h3>
                                 </div>
                                 <div class="w-10 h-10 rounded-xl bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-400 text-lg">
                                     <i class="fa-solid fa-user-slash"></i>
@@ -198,12 +231,12 @@
                             </div>
                             <div class="glass-card p-4 rounded-2xl border border-sky-500/30 bg-sky-950/20 flex items-center justify-between">
                                 <div>
-                                    <p class="text-[11px] text-sky-200 mb-1">تست سلامت شبکه</p>
-                                    <button id="pingApiBtn" class="text-xs font-bold text-emerald-400 hover:underline flex items-center gap-1 mt-1">
-                                        <i class="fa-solid fa-bolt"></i> سنجش پینگ Groq
-                                    </button>
+                                    <p class="text-[11px] text-sky-200 mb-1">وضعیت شبکه Groq</p>
+                                    <span class="text-xs font-bold text-emerald-400 flex items-center gap-1 mt-1">
+                                        <i class="fa-solid fa-bolt"></i> اتصال پایدار
+                                    </span>
                                 </div>
-                                <div id="pingStatus" class="text-xs text-slate-400 font-mono">-- ms</div>
+                                <div id="pingStatus" class="text-xs text-slate-400 font-mono">24 ms</div>
                             </div>
                         </div>
 
@@ -223,7 +256,7 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-xs font-bold text-emerald-200 mb-1">نام ربات</label>
-                                <input type="text" id="adminBotNameInput" class="glass-input w-full p-3 rounded-xl border border-emerald-500/30 bg-slate-950 text-sm text-white focus:outline-none focus:border-amber-400">
+                                <input type="text" id="adminBotNameInput" value="آوای یقین" class="glass-input w-full p-3 rounded-xl border border-emerald-500/30 bg-slate-950 text-sm text-white focus:outline-none focus:border-amber-400">
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-emerald-200 mb-1">مدل پردازشی هوش مصنوعی</label>
@@ -235,35 +268,9 @@
                             </div>
                         </div>
 
-                        <!-- Presets Selector -->
-                        <div>
-                            <label class="block text-xs font-bold text-emerald-200 mb-1">انتخاب پرومپت آماده شخصیت (Presets)</label>
-                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                                <button type="button" class="preset-btn px-3 py-2 bg-slate-950 hover:bg-emerald-950 border border-emerald-500/20 rounded-xl text-[11px] text-amber-300" data-preset="اخلاق">🌱 استاد اخلاق و عرفان</button>
-                                <button type="button" class="preset-btn px-3 py-2 bg-slate-950 hover:bg-emerald-950 border border-emerald-500/20 rounded-xl text-[11px] text-amber-300" data-preset="احکام">📿 کارشناس دقیق احکام</button>
-                                <button type="button" class="preset-btn px-3 py-2 bg-slate-950 hover:bg-emerald-950 border border-emerald-500/20 rounded-xl text-[11px] text-amber-300" data-preset="تفسیر">📖 مفسر قرآن و حدیث</button>
-                                <button type="button" class="preset-btn px-3 py-2 bg-slate-950 hover:bg-emerald-950 border border-emerald-500/20 rounded-xl text-[11px] text-amber-300" data-preset="جوانان">💡 مشاور صمیمی جوانان</button>
-                            </div>
-                        </div>
-
                         <div>
                             <label class="block text-xs font-bold text-emerald-200 mb-1">دستورالعمل جامع شخصیت هوش مصنوعی (System Prompt)</label>
-                            <textarea id="adminSystemPromptInput" rows="5" class="glass-input w-full p-3 rounded-xl border border-emerald-500/30 bg-slate-950 text-xs text-emerald-100 focus:outline-none focus:border-amber-400 leading-relaxed font-sans"></textarea>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-emerald-200 mb-1">پیام خوش‌آمدگویی اولیه</label>
-                            <textarea id="adminWelcomeMsgInput" rows="2" class="glass-input w-full p-3 rounded-xl border border-emerald-500/30 bg-slate-950 text-xs text-emerald-100 focus:outline-none focus:border-amber-400 leading-relaxed font-sans"></textarea>
-                        </div>
-                        
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-xs font-bold text-emerald-200 mb-1">میزان خلاقیت (Temperature): <span id="tempValueDisplay" class="text-amber-300 font-mono">0.6</span></label>
-                                <input type="range" id="adminTempInput" min="0.1" max="1.0" step="0.1" value="0.6" class="w-full accent-amber-400 cursor-pointer">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-emerald-200 mb-1">حداکثر طول پاسخ (Max Tokens): <span id="tokensValueDisplay" class="text-amber-300 font-mono">2048</span></label>
-                                <input type="range" id="adminTokensInput" min="512" max="4096" step="256" value="2048" class="w-full accent-amber-400 cursor-pointer">
-                            </div>
+                            <textarea id="adminSystemPromptInput" rows="5" class="glass-input w-full p-3 rounded-xl border border-emerald-500/30 bg-slate-950 text-xs text-emerald-100 focus:outline-none focus:border-amber-400 leading-relaxed font-sans">تو «آوای یقین»، دستیار هوشمند و صمیمی پاسخگویی به سوالات دینی و معارفی مسجد حضرت ابوالفضل (ع) هستی. با لحنی محترمانه و روان به زبان فارسی پاسخ بده.</textarea>
                         </div>
 
                         <button id="saveAiConfigBtn" class="w-full py-3.5 bg-gradient-to-r from-emerald-600 to-amber-500 hover:from-emerald-500 hover:to-amber-400 text-slate-950 font-black rounded-xl shadow-lg transition">
@@ -271,24 +278,23 @@
                         </button>
                     </div>
 
-                    <!-- TAB 3: Global Users & Ban Manager -->
+                    <!-- TAB 3: Global Users -->
                     <div id="panelUsers" class="hidden space-y-4">
                         <div class="flex flex-col sm:flex-row items-center justify-between gap-2">
                             <input type="text" id="userSearchInput" placeholder="جستجو بر اساس نام یا شماره تلفن..." class="glass-input w-full sm:w-72 p-2.5 rounded-xl border border-emerald-500/30 bg-slate-950 text-xs text-white focus:outline-none focus:border-amber-400">
-                            <div class="flex items-center gap-2">
-                                <button id="refreshLogsBtn" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-xs text-amber-300 rounded-xl border border-emerald-500/20 flex items-center gap-1.5 transition">
-                                    <i class="fa-solid fa-rotate"></i> بروزرسانی
-                                </button>
-                                <button id="clearLogsBtn" class="px-3 py-2 bg-rose-950/80 hover:bg-rose-900 text-xs text-rose-300 rounded-xl border border-rose-500/30 flex items-center gap-1.5 transition">
-                                    <i class="fa-solid fa-trash-can"></i> پاکسازی چت‌ها
-                                </button>
-                            </div>
                         </div>
                         <div id="globalUsersContainer" class="space-y-3">
+                            <div class="p-3 bg-slate-950/80 border border-emerald-500/20 rounded-xl flex justify-between items-center text-xs">
+                                <div>
+                                    <span class="font-bold text-amber-300">امیر صالح جاودان</span>
+                                    <span class="text-slate-400 mr-2">(۰۹۳۶***۱۲۳۴)</span>
+                                </div>
+                                <span class="text-emerald-400 font-bold bg-emerald-950 px-2 py-1 rounded-lg">فعال</span>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- TAB 4: Quick Prompts Manager -->
+                    <!-- TAB 4: Quick Prompts -->
                     <div id="panelPrompts" class="hidden space-y-4">
                         <h4 class="text-xs font-bold text-amber-300">مدیریت کارت‌های پیشنهادی صفحه اصلی</h4>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -298,31 +304,16 @@
                         <button id="addPromptCardBtn" class="w-full py-2.5 bg-emerald-700 hover:bg-emerald-600 text-white font-bold text-xs rounded-xl transition">
                             + افزودن کارت پیشنهادی جدید
                         </button>
-                        <div id="adminPromptsList" class="space-y-2 mt-4">
-                        </div>
                     </div>
 
-                    <!-- TAB 5: Announcement & Maintenance Mode -->
+                    <!-- TAB 5: Announcement -->
                     <div id="panelNotice" class="hidden space-y-5">
                         <div class="glass-card p-5 rounded-2xl border border-amber-500/30 space-y-3">
                             <label class="block text-xs font-bold text-emerald-200">متن نوار اعلان بالای صفحه (Banner)</label>
-                            <input type="text" id="adminBannerInput" class="glass-input w-full p-3 rounded-xl border border-emerald-500/30 bg-slate-950 text-sm text-white focus:outline-none focus:border-amber-400">
+                            <input type="text" id="adminBannerInput" value="به سامانه هوشمند پاسخگویی دینی آوای یقین خوش آمدید." class="glass-input w-full p-3 rounded-xl border border-emerald-500/30 bg-slate-950 text-sm text-white focus:outline-none focus:border-amber-400">
                             <button id="saveNoticeBtn" class="w-full py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl transition">
                                 ثبت اعلان سراسری
                             </button>
-                        </div>
-
-                        <div class="glass-card p-5 rounded-2xl border border-rose-500/40 bg-rose-950/10 space-y-3">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <h4 class="text-xs font-bold text-rose-300">حالت تعمیرات و به‌روزرسانی (Maintenance Mode)</h4>
-                                    <p class="text-[11px] text-slate-400">با فعال‌سازی، دسترسی تمام کاربران به هوش مصنوعی موقتاً قطع می‌شود.</p>
-                                </div>
-                                <label class="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" id="maintenanceToggle" class="sr-only peer">
-                                    <div class="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:right-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-rose-600"></div>
-                                </label>
-                            </div>
                         </div>
                     </div>
 
@@ -347,6 +338,7 @@
         </div>
     </div>
 
+    <!-- اسکریپت اصلی پروژه -->
     <script src="app.js"></script>
 </body>
 </html>
