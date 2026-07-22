@@ -156,3 +156,20 @@ function showToast(message) {
     container.appendChild(toast);
     setTimeout(() => toast.remove(), 3200);
 }
+// حل قطعی باگ منوی موبایل (امیرصالح)
+document.addEventListener("DOMContentLoaded", function () {
+    const menuBtn = document.getElementById("customMenuBtn") || document.getElementById("menuToggle");
+    const sidebar = document.getElementById("sidebar");
+
+    if (menuBtn && sidebar) {
+        // حذف تمام رویدادهای قبلی که باعث تاری می‌شدن
+        const newMenuBtn = menuBtn.cloneNode(true);
+        menuBtn.parentNode.replaceChild(newMenuBtn, menuBtn);
+
+        newMenuBtn.addEventListener("click", function (e) {
+            e.stopPropagation();
+            e.preventDefault();
+            sidebar.classList.toggle("mobile-open");
+        });
+    }
+});
