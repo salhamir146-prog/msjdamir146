@@ -28,7 +28,7 @@ export default {
         <html lang="fa" dir="rtl">
         <head>
           <meta charset="UTF-8">
-          <title>پنل مدیریت ربات</title>
+          <title>پنل مدیریت ربات - نسخه جدید</title>
           <style>
             body { font-family: Tahoma, sans-serif; background: #f4f7f6; padding: 20px; direction: rtl; }
             .card { background: white; padding: 20px; border-radius: 8px; max-width: 500px; margin: auto; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
@@ -41,22 +41,23 @@ export default {
         </head>
         <body>
           <div class="card">
-            <h2>پنل ادمین ربات هوشمند</h2>
+            <h2>پنل ادمین (نسخه جدید OpenRouter)</h2>
             <form method="POST">
               <label>کلید API (OpenRouter):</label>
               <input type="password" name="api_key" value="${apiKey}" required>
 
               <label>انتخاب مدل هوش مصنوعی:</label>
               <select name="current_model">
-                <option value="openai/gpt-oss-20b:free" ${currentModel === 'openai/gpt-oss-20b:free' ? 'selected' : ''}>GPT-OSS 20B (رایگان)</option>
-                <option value="google/gemini-2.5-flash:free" ${currentModel === 'google/gemini-2.5-flash:free' ? 'selected' : ''}>Gemini Flash (رایگان)</option>
-                <option value="meta-llama/llama-3.3-70b-instruct:free" ${currentModel === 'meta-llama/llama-3.3-70b-instruct:free' ? 'selected' : ''}>Llama 3.3 (رایگان)</option>
-                <option value="mistralai/mistral-small-24b-instruct-2501:free" ${currentModel === 'mistralai/mistral-small-24b-instruct-2501:free' ? 'selected' : ''}>Mistral 2 Lite (رایگان)</option>
+                <option value="openai/gpt-oss-20b:free" ${currentModel === 'openai/gpt-oss-20b:free' ? 'selected' : ''}>(رایگان) GPT-OSS 20B</option>
+                <option value="google/gemini-flash-1.5:free" ${currentModel === 'google/gemini-flash-1.5:free' ? 'selected' : ''}>جما Gemini 3.1 Flash</option>
+                <option value="meta-llama/llama-3-8b-instruct:free" ${currentModel === 'meta-llama/llama-3-8b-instruct:free' ? 'selected' : ''}>لاگونا / لاما Llama 3</option>
+                <option value="google/gemini-nano" ${currentModel === 'google/gemini-nano' ? 'selected' : ''}>مای نانو Gemini Nano</option>
+                <option value="mistralai/mistral-7b-instruct:free" ${currentModel === 'mistralai/mistral-7b-instruct:free' ? 'selected' : ''}>موز (۲) لایت Mistral 2 Lite</option>
               </select>
 
               <div class="checkbox-label">
                 <input type="checkbox" name="image_gen_enabled" ${imageGenEnabled ? 'checked' : ''}>
-                فعال‌سازی قابلیت تولید تصویر برای کاربران
+                فعال‌سازی دکمه تولید تصویر برای کاربران
               </div>
 
               <button type="submit">ذخیره تنظیمات</button>
@@ -88,7 +89,7 @@ export default {
             input[type="text"] { flex: 1; padding: 12px; border: 1px solid #ccc; border-radius: 4px; }
             button { padding: 12px 20px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
             button:hover { background: #0056b3; }
-            .mode-switch { margin-bottom: 10px; display: flex; gap: 10px; align-items: center; }
+            .mode-switch { margin-bottom: 10px; display: flex; gap: 10px; align-items: center; font-weight: bold; }
             img.generated-img { max-width: 100%; border-radius: 6px; margin-top: 5px; display: block; }
             .download-btn { display: inline-block; margin-top: 8px; padding: 6px 12px; background: #28a745; color: white; text-decoration: none; border-radius: 4px; font-size: 13px; }
           </style>
@@ -96,7 +97,7 @@ export default {
         <body>
           <div class="mode-switch">
             <label><input type="radio" name="mode" value="text" checked onchange="switchMode('text')"> گفتگوی متنی</label>
-            ${imageGenEnabled ? '<label><input type="radio" name="mode" value="image" onchange="switchMode(\'image\')"> تولید تصویر</label>' : ''}
+            ${imageGenEnabled ? '<label style="color: #d9534f;"><input type="radio" name="mode" value="image" onchange="switchMode(\'image\')"> تولید تصویر (فعال)</label>' : ''}
           </div>
 
           <div id="chat-container"></div>
@@ -111,7 +112,7 @@ export default {
             function switchMode(mode) {
               currentMode = mode;
               const input = document.getElementById('userInput');
-              input.placeholder = mode === 'image' ? 'توضیح تصویری که می‌خواهید را بنویسید (فارسی)...' : 'پیام خود را بنویسید...';
+              input.placeholder = mode === 'image' ? 'توضیح تصویری که می‌خواهید را به فارسی بنویسید...' : 'پیام خود را بنویسید...';
             }
 
             async function sendMessage() {
@@ -126,11 +127,10 @@ export default {
 
               const responseDiv = document.createElement('div');
               responseDiv.className = 'message bot';
-              responseDiv.innerHTML = 'در حال پردازش...';
+              responseDiv.innerHTML = currentMode === 'image' ? 'در حال ترجمه پرامپت و ساخت تصویر...' : 'در حال پردازش...';
               container.appendChild(responseDiv);
 
               try {
-                // مسیر دقیق درخواست فیکس شد
                 const res = await fetch('/api/chat', {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
@@ -139,7 +139,7 @@ export default {
                 const data = await res.json();
                 
                 if (currentMode === 'image') {
-                  responseDiv.innerHTML = 'تصویر شما آماده شد:<br><img src="' + data.result + '" class="generated-img"><br><a href="' + data.result + '" target="_blank" download="image.jpg" class="download-btn">دانلود تصویر</a>';
+                  responseDiv.innerHTML = 'تصویر شما آماده شد:<br><img src="' + data.result + '" class="generated-img"><br><a href="' + data.result + '" target="_blank" download="image.jpg" class="download-btn">📥 دانلود تصویر</a>';
                 } else {
                   responseDiv.innerHTML = data.result;
                 }
@@ -155,7 +155,7 @@ export default {
       return new Response(chatHtml, { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
     }
 
-    // ۳. مسیر دقیق پردازش درخواست‌ها که با فرانت‌اند مچ شد
+    // ۳. مسیر پردازش درخواست‌ها
     if (url.pathname === '/api/chat' && request.method === 'POST') {
       try {
         const { prompt, mode } = await request.json();
@@ -166,7 +166,7 @@ export default {
           return Response.json({ result: 'لطفاً کلید OpenRouter را از پنل ادمین تنظیم کنید.' });
         }
 
-        // حالت تولید تصویر (ترجمه پرامپت فارسی به انگلیسی و استفاده از Pollinations)
+        // حالت تولید تصویر (ترجمه فارسی به انگلیسی + ارسال به Pollinations)
         if (mode === 'image') {
           const translationRes = await fetch('https://openrouter.ai/api/v1/chat/completions', {
             method: 'POST',
@@ -193,7 +193,7 @@ export default {
           return Response.json({ result: imageUrl });
         }
 
-        // حالت چت متنی عادی با OpenRouter
+        // حالت گفتگوی متنی
         const aiResponse = await fetch('https://openrouter.ai/api/v1/chat/completions', {
           method: 'POST',
           headers: {
