@@ -1,0 +1,15 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "msjdamir146",
+  "compatibility_date": "2026-07-22",
+  "main": "_worker.js",
+  "assets": {
+    "directory": "."
+  },
+  "observability": {
+    "enabled": true
+  },
+  "compatibility_flags": [
+    "nodejs_compat"
+  ]
+}
