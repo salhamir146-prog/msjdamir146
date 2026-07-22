@@ -3,30 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>آوای یقین | هوش مصنوعی پاسخگو به سوالات دینی</title>
-    <!-- Tailwind CSS CDN -->
+    <title>آوای یقین | سامانه هوشمند معارف اسلامی</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Vazirmatn Font -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col justify-between overflow-x-hidden selection:bg-amber-500 selection:text-slate-950">
 
-    <!-- Background Pattern & Lighting -->
-    <div class="fixed inset-0 bg-islamic-pattern opacity-10 pointer-events-none z-0"></div>
-    <div class="fixed -top-40 -right-40 w-96 h-96 bg-emerald-600/30 rounded-full blur-[128px] pointer-events-none"></div>
-    <div class="fixed -bottom-40 -left-40 w-96 h-96 bg-amber-500/20 rounded-full blur-[128px] pointer-events-none"></div>
+    <!-- Toast Notification Container -->
+    <div id="toastContainer" class="fixed top-5 left-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
-    <!-- 1. Onboarding Modal (درخواست نام و شماره تلفن) -->
-    <div id="onboardingModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
-        <div class="glass-card w-full max-w-md p-8 rounded-3xl border border-emerald-500/30 shadow-2xl relative overflow-hidden">
+    <!-- Background Ambient Lighting -->
+    <div class="fixed inset-0 bg-islamic-pattern opacity-20 pointer-events-none z-0"></div>
+    <div class="fixed -top-40 -right-40 w-[500px] h-[500px] bg-emerald-600/25 rounded-full blur-[160px] pointer-events-none animate-pulse"></div>
+    <div class="fixed -bottom-40 -left-40 w-[500px] h-[500px] bg-amber-500/20 rounded-full blur-[160px] pointer-events-none animate-pulse"></div>
+
+    <!-- Global Notice Banner -->
+    <div id="globalBanner" class="relative z-20 bg-gradient-to-r from-emerald-950 via-slate-900 to-emerald-950 border-b border-amber-500/30 py-2 px-4 text-center text-xs text-amber-300 font-medium flex items-center justify-center gap-2 shadow-lg">
+        <i class="fa-solid fa-bullhorn text-amber-400 animate-bounce"></i>
+        <span id="bannerText">به سامانه هوشمند پاسخگویی دینی آوای یقین خوش آمدید.</span>
+    </div>
+
+    <!-- Onboarding Modal -->
+    <div id="onboardingModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-2xl">
+        <div class="glass-card w-full max-w-md p-8 rounded-3xl border border-emerald-500/40 shadow-2xl relative overflow-hidden">
             <div class="text-center mb-6">
-                <div class="w-20 h-20 mx-auto mb-4 rounded-2xl bg-gradient-to-tr from-emerald-800 to-emerald-600 flex items-center justify-center shadow-lg border border-amber-400/40">
-                    <i class="fa-solid font-bold fa-mosque text-3xl text-amber-300"></i>
+                <div class="w-20 h-20 mx-auto mb-4 rounded-2xl bg-gradient-to-tr from-emerald-800 to-emerald-600 flex items-center justify-center shadow-xl border border-amber-400/50">
+                    <i class="fa-solid fa-mosque text-3xl text-amber-300"></i>
                 </div>
-                <h2 class="text-2xl font-black text-amber-300 mb-1">به «آوای یقین» خوش آمدید</h2>
+                <h2 class="text-2xl font-black text-amber-300 mb-1">ورود به آوای یقین</h2>
                 <p class="text-xs text-slate-300">دستیار هوشمند پاسخگویی به سوالات دینی و معارفی</p>
             </div>
             
@@ -35,132 +41,307 @@
                     <label class="block text-xs text-emerald-200 mb-1 font-medium">نام و نام خانوادگی</label>
                     <div class="relative">
                         <i class="fa-regular fa-user absolute right-3 top-3.5 text-slate-400 text-sm"></i>
-                        <input type="text" id="userName" required placeholder="مثال: علی محمدی" class="glass-input w-full pr-10 pl-4 py-3 rounded-xl border border-emerald-500/20 bg-slate-900/50 text-sm focus:outline-none focus:border-amber-400 text-white placeholder-slate-500">
+                        <input type="text" id="userName" required placeholder="مثال: امیر صالح" class="glass-input w-full pr-10 pl-4 py-3 rounded-xl border border-emerald-500/30 bg-slate-900/60 text-sm focus:outline-none focus:border-amber-400 text-white placeholder-slate-500">
                     </div>
                 </div>
                 <div>
                     <label class="block text-xs text-emerald-200 mb-1 font-medium">شماره همراه</label>
                     <div class="relative">
                         <i class="fa-solid fa-mobile-screen absolute right-3 top-3.5 text-slate-400 text-sm"></i>
-                        <input type="tel" id="userPhone" required placeholder="09123456789" dir="ltr" class="glass-input w-full pr-10 pl-4 py-3 rounded-xl border border-emerald-500/20 bg-slate-900/50 text-sm focus:outline-none focus:border-amber-400 text-white placeholder-slate-500 text-right">
+                        <input type="tel" id="userPhone" required placeholder="09123456789" dir="ltr" class="glass-input w-full pr-10 pl-4 py-3 rounded-xl border border-emerald-500/30 bg-slate-900/60 text-sm focus:outline-none focus:border-amber-400 text-white placeholder-slate-500 text-right">
                     </div>
                 </div>
-                <button type="submit" class="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-bold shadow-lg shadow-emerald-900/40 border border-amber-400/30 transition duration-300 flex items-center justify-center gap-2 mt-2">
-                    <span>ورود به آوای یقین</span>
-                    <i class="fa-solid fa-arrow-left text-amber-300 text-sm"></i>
+                <button type="submit" class="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-emerald-600 to-amber-500 hover:from-emerald-500 hover:to-amber-400 text-slate-950 font-black shadow-lg shadow-emerald-950/50 border border-amber-400/40 transition duration-300 flex items-center justify-center gap-2">
+                    <span>ورود به سامانه</span>
+                    <i class="fa-solid fa-arrow-left text-emerald-950 text-sm"></i>
                 </button>
             </form>
         </div>
     </div>
 
     <!-- Main Chat App Interface -->
-    <div id="mainApp" class="relative z-10 flex flex-col h-screen max-w-5xl mx-auto w-full px-2 sm:px-4 py-3 hidden">
+    <div id="mainApp" class="relative z-10 flex flex-col h-[calc(100vh-37px)] max-w-6xl mx-auto w-full px-2 sm:px-4 py-3 hidden">
         <!-- Header -->
-        <header class="glass-card rounded-2xl p-4 mb-3 border border-emerald-500/20 flex items-center justify-between shadow-xl">
+        <header class="glass-card rounded-2xl p-4 mb-3 border border-emerald-500/30 flex items-center justify-between shadow-xl">
             <div class="flex items-center gap-3">
-                <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-emerald-800 to-emerald-600 flex items-center justify-center border border-amber-400/30 shadow-md">
+                <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-emerald-800 to-emerald-600 flex items-center justify-center border border-amber-400/40 shadow-md">
                     <i class="fa-solid fa-kaaba text-amber-300 text-xl"></i>
                 </div>
                 <div>
                     <h1 id="headerBotName" class="font-black text-amber-300 text-lg sm:text-xl">آوای یقین</h1>
-                    <span class="text-[11px] text-emerald-300/80 flex items-center gap-1.5">
+                    <span class="text-[11px] text-emerald-300/90 flex items-center gap-1.5">
                         <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                        پاسخگوی هوشمند سوالات دینی
+                        پاسخگوی آنلاین و هوشمند دینی
                     </span>
                 </div>
             </div>
             
             <div class="flex items-center gap-2">
-                <button id="newChatBtn" title="گفتگوی جدید" class="p-2.5 rounded-xl bg-slate-900/60 hover:bg-emerald-900/40 border border-emerald-500/20 text-emerald-300 transition">
+                <button id="quickPromptsBtn" title="سوالات پیشنهادی" class="px-3 py-2 rounded-xl bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-500/30 text-emerald-300 text-xs font-medium flex items-center gap-1.5 transition">
+                    <i class="fa-solid fa-lightbulb text-amber-400"></i>
+                    <span class="hidden sm:inline">پیشنهادات</span>
+                </button>
+                <button id="newChatBtn" title="گفتگوی جدید" class="p-2.5 rounded-xl bg-slate-900/80 hover:bg-emerald-900/40 border border-emerald-500/30 text-emerald-300 transition">
                     <i class="fa-solid fa-plus text-sm"></i>
                 </button>
-                <div id="userBadge" class="hidden sm:flex items-center gap-2 bg-slate-900/60 border border-emerald-500/20 px-3 py-1.5 rounded-xl text-xs text-slate-300">
+                <div id="userBadge" class="hidden sm:flex items-center gap-2 bg-slate-900/80 border border-emerald-500/30 px-3 py-1.5 rounded-xl text-xs text-slate-300">
                     <i class="fa-regular fa-circle-user text-amber-300"></i>
                     <span id="displayUserName">کاربر</span>
                 </div>
             </div>
         </header>
 
-        <!-- Chat Messages Container -->
-        <main id="chatBox" class="flex-1 glass-card rounded-2xl p-4 sm:p-6 border border-emerald-500/20 overflow-y-auto space-y-4 shadow-inner mb-3">
-            <!-- Messages will be appended dynamically here -->
+        <!-- Quick Prompts Bar -->
+        <div id="quickPromptsBar" class="mb-3 hidden transition-all">
+            <div id="quickPromptsContainer" class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            </div>
+        </div>
+
+        <!-- Chat Box -->
+        <main id="chatBox" class="flex-1 glass-card rounded-2xl p-4 sm:p-6 border border-emerald-500/30 overflow-y-auto space-y-4 shadow-inner mb-3">
         </main>
 
         <!-- Input Box -->
         <footer class="relative">
-            <form id="chatForm" class="glass-card rounded-2xl p-2 border border-emerald-500/30 flex items-center gap-2 shadow-2xl bg-slate-950/70">
-                <textarea id="chatInput" rows="1" placeholder="سوال دینی یا معارفی خود را بنویسید..." class="flex-1 bg-transparent border-none text-white text-sm px-3 py-2.5 focus:outline-none resize-none max-h-32 placeholder-slate-400 font-sans"></textarea>
-                <button type="submit" id="sendBtn" class="w-11 h-11 rounded-xl bg-gradient-to-tr from-emerald-600 to-amber-500 hover:from-emerald-500 hover:to-amber-400 text-slate-950 font-bold flex items-center justify-center shadow-lg transition duration-200 shrink-0">
+            <form id="chatForm" class="glass-card rounded-2xl p-2 border border-emerald-500/40 flex items-center gap-2 shadow-2xl bg-slate-950/85">
+                <textarea id="chatInput" rows="1" placeholder="سوال دینی یا معارفی خود را بنویسید..." class="flex-1 bg-transparent border-none text-white text-sm px-3 py-2.5 focus:outline-none resize-none max-h-32 placeholder-slate-400 font-sans leading-relaxed"></textarea>
+                <button type="submit" id="sendBtn" class="w-11 h-11 rounded-xl bg-gradient-to-tr from-emerald-600 to-amber-500 hover:from-emerald-500 hover:to-amber-400 text-slate-950 font-black flex items-center justify-center shadow-lg transition duration-200 shrink-0">
                     <i class="fa-solid fa-paper-plane text-emerald-950"></i>
                 </button>
             </form>
-            <p class="text-[10px] text-center text-slate-300 mt-2">طراحی‌شده برای پاسخگویی مستند و محترمانه به پرسش‌های دینی</p>
+            <p class="text-[10px] text-center text-slate-400 mt-2">طراحی‌شده برای پاسخگویی مستند و معتبر به پرسش‌های دینی و معارفی</p>
         </footer>
     </div>
 
-    <!-- 2. Admin Panel Modal -->
-    <div id="adminModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-lg hidden">
-        <div class="glass-card w-full max-w-3xl max-h-[90vh] rounded-3xl border border-amber-400/40 shadow-2xl flex flex-col overflow-hidden bg-slate-900/90">
+    <!-- Mega Ultra Admin Dashboard Modal -->
+    <div id="adminModal" class="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-slate-950/95 backdrop-blur-2xl hidden">
+        <div class="glass-card w-full max-w-6xl h-[94vh] rounded-3xl border border-amber-400/50 shadow-2xl flex flex-col overflow-hidden bg-slate-900/95">
+            
             <!-- Admin Header -->
-            <div class="p-5 bg-gradient-to-r from-emerald-900/80 to-slate-900 border-b border-amber-400/20 flex items-center justify-between">
+            <div class="p-4 sm:p-5 bg-gradient-to-r from-emerald-950 via-slate-900 to-emerald-950 border-b border-amber-400/30 flex items-center justify-between shrink-0">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-amber-400/10 border border-amber-400/30 flex items-center justify-center">
-                        <i class="fa-solid fa-sliders text-amber-300 text-lg"></i>
+                    <div class="w-11 h-11 rounded-xl bg-amber-400/10 border border-amber-400/40 flex items-center justify-center shadow-md">
+                        <i class="fa-solid fa-sliders text-amber-300 text-xl"></i>
                     </div>
                     <div>
-                        <h2 class="text-lg font-bold text-amber-300">پنل مدیریت هوشمند آوای یقین</h2>
-                        <p class="text-xs text-emerald-200">مدیریت پیکربندی، شخصیت هوش مصنوعی و گفتگوها</p>
+                        <h2 class="text-base sm:text-lg font-black text-amber-300">پنل مدیریت مرکزی آوای یقین</h2>
+                        <p class="text-[11px] text-emerald-200">مدیریت دیتابیس ابری، مسدودی، هوش مصنوعی و چت‌های آنلاین</p>
                     </div>
                 </div>
-                <button id="closeAdminBtn" class="w-8 h-8 rounded-lg bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center">
-                    <i class="fa-solid fa-xmark"></i>
+                <button id="closeAdminBtn" class="w-9 h-9 rounded-xl bg-slate-800/80 hover:bg-rose-900/50 border border-slate-700 text-slate-300 hover:text-white flex items-center justify-center transition">
+                    <i class="fa-solid fa-xmark text-base"></i>
                 </button>
             </div>
 
-            <!-- Admin Body Tabs -->
-            <div class="flex border-b border-emerald-500/20 bg-slate-950/50">
-                <button id="tabSettingsBtn" class="flex-1 py-3 px-4 text-xs font-bold text-amber-300 border-b-2 border-amber-400 flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-gear"></i>
-                    تنظیمات ربات
-                </button>
-                <button id="tabUsersBtn" class="flex-1 py-3 px-4 text-xs font-bold text-slate-400 border-b-2 border-transparent flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-users"></i>
-                    کاربران و چت‌ها
-                </button>
-            </div>
-
-            <!-- Admin Content Container -->
-            <div class="p-6 overflow-y-auto flex-1 space-y-5">
-                <!-- Tab 1: Settings -->
-                <div id="tabSettings" class="space-y-4">
-                    <div>
-                        <label class="block text-xs font-medium text-emerald-200 mb-1">نام ربات</label>
-                        <input type="text" id="adminBotName" class="glass-input w-full p-3 rounded-xl border border-emerald-500/20 bg-slate-950 text-sm text-white focus:outline-none focus:border-amber-400">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-emerald-200 mb-1">دستورالعمل و شخصیت هوش مصنوعی (System Prompt)</label>
-                        <textarea id="adminSystemPrompt" rows="5" class="glass-input w-full p-3 rounded-xl border border-emerald-500/20 bg-slate-950 text-xs text-emerald-100 focus:outline-none focus:border-amber-400 leading-relaxed font-sans"></textarea>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-emerald-200 mb-1">پیام خوش‌آمدگویی اولیه</label>
-                        <textarea id="adminWelcomeMsg" rows="3" class="glass-input w-full p-3 rounded-xl border border-emerald-500/20 bg-slate-950 text-xs text-emerald-100 focus:outline-none focus:border-amber-400 leading-relaxed font-sans"></textarea>
-                    </div>
-                    <button id="saveSettingsBtn" class="w-full py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl shadow-lg transition">
-                        ذخیره تغییرات پنل مدیریت
+            <!-- Admin Body Grid -->
+            <div class="flex flex-col sm:flex-row flex-1 overflow-hidden">
+                <!-- Navigation Sidebar -->
+                <div class="w-full sm:w-64 bg-slate-950/90 border-b sm:border-b-0 sm:border-l border-emerald-500/20 p-2 sm:p-4 flex sm:flex-col gap-1.5 shrink-0 overflow-x-auto">
+                    <button id="adminTabStats" class="admin-nav-btn active">
+                        <i class="fa-solid fa-chart-line text-amber-400"></i>
+                        <span>داشبورد و آنالیز</span>
+                    </button>
+                    <button id="adminTabAi" class="admin-nav-btn">
+                        <i class="fa-solid fa-brain text-emerald-400"></i>
+                        <span>تنظیمات هوش مصنوعی</span>
+                    </button>
+                    <button id="adminTabUsers" class="admin-nav-btn">
+                        <i class="fa-solid fa-users text-sky-400"></i>
+                        <span>کاربران و چت‌ها</span>
+                    </button>
+                    <button id="adminTabPrompts" class="admin-nav-btn">
+                        <i class="fa-solid fa-list-check text-purple-400"></i>
+                        <span>کارت‌های پیشنهادی</span>
+                    </button>
+                    <button id="adminTabNotice" class="admin-nav-btn">
+                        <i class="fa-solid fa-bullhorn text-yellow-400"></i>
+                        <span>اعلامیه و تعمیرات</span>
+                    </button>
+                    <button id="adminTabSecurity" class="admin-nav-btn">
+                        <i class="fa-solid fa-shield-halved text-rose-400"></i>
+                        <span>امنیت و رمز عبور</span>
                     </button>
                 </div>
 
-                <!-- Tab 2: Users & Chats -->
-                <div id="tabUsers" class="hidden space-y-4">
-                    <div class="flex items-center justify-between">
-                        <span class="text-xs text-slate-300">لیست کاربران ثبت‌نام‌شده:</span>
-                        <button id="refreshLogsBtn" class="text-xs text-amber-300 hover:underline flex items-center gap-1">
-                            <i class="fa-solid fa-arrows-rotate"></i> بروزرسانی
+                <!-- Tab Content Area -->
+                <div class="flex-1 p-4 sm:p-6 overflow-y-auto space-y-6 bg-slate-900/50">
+                    
+                    <!-- TAB 1: Dashboard & Analytics -->
+                    <div id="panelStats" class="space-y-5">
+                        <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                            <div class="glass-card p-4 rounded-2xl border border-emerald-500/30 bg-emerald-950/20 flex items-center justify-between">
+                                <div>
+                                    <p class="text-[11px] text-emerald-200 mb-1">کل کاربران ثبت‌شده</p>
+                                    <h3 id="statTotalUsers" class="text-2xl font-black text-amber-300">0</h3>
+                                </div>
+                                <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 text-lg">
+                                    <i class="fa-solid fa-user-check"></i>
+                                </div>
+                            </div>
+                            <div class="glass-card p-4 rounded-2xl border border-amber-500/30 bg-amber-950/20 flex items-center justify-between">
+                                <div>
+                                    <p class="text-[11px] text-amber-200 mb-1">کل پیام‌های چت</p>
+                                    <h3 id="statTotalMessages" class="text-2xl font-black text-amber-300">0</h3>
+                                </div>
+                                <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 text-lg">
+                                    <i class="fa-solid fa-comments"></i>
+                                </div>
+                            </div>
+                            <div class="glass-card p-4 rounded-2xl border border-rose-500/30 bg-rose-950/20 flex items-center justify-between">
+                                <div>
+                                    <p class="text-[11px] text-rose-200 mb-1">کاربران مسدودشده</p>
+                                    <h3 id="statTotalBanned" class="text-2xl font-black text-rose-400">0</h3>
+                                </div>
+                                <div class="w-10 h-10 rounded-xl bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-400 text-lg">
+                                    <i class="fa-solid fa-user-slash"></i>
+                                </div>
+                            </div>
+                            <div class="glass-card p-4 rounded-2xl border border-sky-500/30 bg-sky-950/20 flex items-center justify-between">
+                                <div>
+                                    <p class="text-[11px] text-sky-200 mb-1">تست سلامت شبکه</p>
+                                    <button id="pingApiBtn" class="text-xs font-bold text-emerald-400 hover:underline flex items-center gap-1 mt-1">
+                                        <i class="fa-solid fa-bolt"></i> سنجش پینگ Groq
+                                    </button>
+                                </div>
+                                <div id="pingStatus" class="text-xs text-slate-400 font-mono">-- ms</div>
+                            </div>
+                        </div>
+
+                        <div class="glass-card p-5 rounded-2xl border border-emerald-500/20 flex items-center justify-between flex-wrap gap-3">
+                            <div>
+                                <h4 class="text-sm font-bold text-amber-300 mb-1">دانلود فایل خروجی دیتابیس (Backup)</h4>
+                                <p class="text-xs text-slate-300">دریافت نسخه بک‌آپ کامل کاربران و گفتگوها در قالب فایل JSON</p>
+                            </div>
+                            <button id="exportDatabaseBtn" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow-md transition flex items-center gap-2">
+                                <i class="fa-solid fa-file-export"></i> دانلود فایل خروجی (JSON)
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- TAB 2: Advanced AI Customization -->
+                    <div id="panelAi" class="hidden space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-emerald-200 mb-1">نام ربات</label>
+                                <input type="text" id="adminBotNameInput" class="glass-input w-full p-3 rounded-xl border border-emerald-500/30 bg-slate-950 text-sm text-white focus:outline-none focus:border-amber-400">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-emerald-200 mb-1">مدل پردازشی هوش مصنوعی</label>
+                                <select id="adminAiModelInput" class="glass-input w-full p-3 rounded-xl border border-emerald-500/30 bg-slate-950 text-xs text-white focus:outline-none focus:border-amber-400">
+                                    <option value="llama-3.3-70b-versatile">Llama 3.3 70B Versatile (پیشنهادی - بسیار هوشمند)</option>
+                                    <option value="llama3-8b-8192">Llama 3 8B (سریع)</option>
+                                    <option value="mixtral-8x7b-32768">Mixtral 8x7B (دقت بالا)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Presets Selector -->
+                        <div>
+                            <label class="block text-xs font-bold text-emerald-200 mb-1">انتخاب پرومپت آماده شخصیت (Presets)</label>
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                                <button type="button" class="preset-btn px-3 py-2 bg-slate-950 hover:bg-emerald-950 border border-emerald-500/20 rounded-xl text-[11px] text-amber-300" data-preset="اخلاق">🌱 استاد اخلاق و عرفان</button>
+                                <button type="button" class="preset-btn px-3 py-2 bg-slate-950 hover:bg-emerald-950 border border-emerald-500/20 rounded-xl text-[11px] text-amber-300" data-preset="احکام">📿 کارشناس دقیق احکام</button>
+                                <button type="button" class="preset-btn px-3 py-2 bg-slate-950 hover:bg-emerald-950 border border-emerald-500/20 rounded-xl text-[11px] text-amber-300" data-preset="تفسیر">📖 مفسر قرآن و حدیث</button>
+                                <button type="button" class="preset-btn px-3 py-2 bg-slate-950 hover:bg-emerald-950 border border-emerald-500/20 rounded-xl text-[11px] text-amber-300" data-preset="جوانان">💡 مشاور صمیمی جوانان</button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-emerald-200 mb-1">دستورالعمل جامع شخصیت هوش مصنوعی (System Prompt)</label>
+                            <textarea id="adminSystemPromptInput" rows="5" class="glass-input w-full p-3 rounded-xl border border-emerald-500/30 bg-slate-950 text-xs text-emerald-100 focus:outline-none focus:border-amber-400 leading-relaxed font-sans"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-emerald-200 mb-1">پیام خوش‌آمدگویی اولیه</label>
+                            <textarea id="adminWelcomeMsgInput" rows="2" class="glass-input w-full p-3 rounded-xl border border-emerald-500/30 bg-slate-950 text-xs text-emerald-100 focus:outline-none focus:border-amber-400 leading-relaxed font-sans"></textarea>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-emerald-200 mb-1">میزان خلاقیت (Temperature): <span id="tempValueDisplay" class="text-amber-300 font-mono">0.6</span></label>
+                                <input type="range" id="adminTempInput" min="0.1" max="1.0" step="0.1" value="0.6" class="w-full accent-amber-400 cursor-pointer">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-emerald-200 mb-1">حداکثر طول پاسخ (Max Tokens): <span id="tokensValueDisplay" class="text-amber-300 font-mono">2048</span></label>
+                                <input type="range" id="adminTokensInput" min="512" max="4096" step="256" value="2048" class="w-full accent-amber-400 cursor-pointer">
+                            </div>
+                        </div>
+
+                        <button id="saveAiConfigBtn" class="w-full py-3.5 bg-gradient-to-r from-emerald-600 to-amber-500 hover:from-emerald-500 hover:to-amber-400 text-slate-950 font-black rounded-xl shadow-lg transition">
+                            ذخیره و اعمال سراسری در دیتابیس
                         </button>
                     </div>
-                    <div id="usersListContainer" class="space-y-3">
-                        <!-- User list dynamically populates here -->
+
+                    <!-- TAB 3: Global Users & Ban Manager -->
+                    <div id="panelUsers" class="hidden space-y-4">
+                        <div class="flex flex-col sm:flex-row items-center justify-between gap-2">
+                            <input type="text" id="userSearchInput" placeholder="جستجو بر اساس نام یا شماره تلفن..." class="glass-input w-full sm:w-72 p-2.5 rounded-xl border border-emerald-500/30 bg-slate-950 text-xs text-white focus:outline-none focus:border-amber-400">
+                            <div class="flex items-center gap-2">
+                                <button id="refreshLogsBtn" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-xs text-amber-300 rounded-xl border border-emerald-500/20 flex items-center gap-1.5 transition">
+                                    <i class="fa-solid fa-rotate"></i> بروزرسانی
+                                </button>
+                                <button id="clearLogsBtn" class="px-3 py-2 bg-rose-950/80 hover:bg-rose-900 text-xs text-rose-300 rounded-xl border border-rose-500/30 flex items-center gap-1.5 transition">
+                                    <i class="fa-solid fa-trash-can"></i> پاکسازی چت‌ها
+                                </button>
+                            </div>
+                        </div>
+                        <div id="globalUsersContainer" class="space-y-3">
+                        </div>
                     </div>
+
+                    <!-- TAB 4: Quick Prompts Manager -->
+                    <div id="panelPrompts" class="hidden space-y-4">
+                        <h4 class="text-xs font-bold text-amber-300">مدیریت کارت‌های پیشنهادی صفحه اصلی</h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <input type="text" id="newPromptTitle" placeholder="عنوان (مثلا: 📿 احکام شرعی)" class="glass-input p-3 rounded-xl border border-emerald-500/30 bg-slate-950 text-xs text-white focus:outline-none focus:border-amber-400">
+                            <input type="text" id="newPromptDesc" placeholder="متن پرسش..." class="glass-input p-3 rounded-xl border border-emerald-500/30 bg-slate-950 text-xs text-white focus:outline-none focus:border-amber-400">
+                        </div>
+                        <button id="addPromptCardBtn" class="w-full py-2.5 bg-emerald-700 hover:bg-emerald-600 text-white font-bold text-xs rounded-xl transition">
+                            + افزودن کارت پیشنهادی جدید
+                        </button>
+                        <div id="adminPromptsList" class="space-y-2 mt-4">
+                        </div>
+                    </div>
+
+                    <!-- TAB 5: Announcement & Maintenance Mode -->
+                    <div id="panelNotice" class="hidden space-y-5">
+                        <div class="glass-card p-5 rounded-2xl border border-amber-500/30 space-y-3">
+                            <label class="block text-xs font-bold text-emerald-200">متن نوار اعلان بالای صفحه (Banner)</label>
+                            <input type="text" id="adminBannerInput" class="glass-input w-full p-3 rounded-xl border border-emerald-500/30 bg-slate-950 text-sm text-white focus:outline-none focus:border-amber-400">
+                            <button id="saveNoticeBtn" class="w-full py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl transition">
+                                ثبت اعلان سراسری
+                            </button>
+                        </div>
+
+                        <div class="glass-card p-5 rounded-2xl border border-rose-500/40 bg-rose-950/10 space-y-3">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h4 class="text-xs font-bold text-rose-300">حالت تعمیرات و به‌روزرسانی (Maintenance Mode)</h4>
+                                    <p class="text-[11px] text-slate-400">با فعال‌سازی، دسترسی تمام کاربران به هوش مصنوعی موقتاً قطع می‌شود.</p>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" id="maintenanceToggle" class="sr-only peer">
+                                    <div class="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:right-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-rose-600"></div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TAB 6: Security -->
+                    <div id="panelSecurity" class="hidden space-y-4">
+                        <div class="glass-card p-5 rounded-2xl border border-rose-500/30 bg-rose-950/10 space-y-4">
+                            <h4 class="text-xs font-bold text-rose-300 flex items-center gap-2">
+                                <i class="fa-solid fa-key"></i> تغییر رمز عبور ورود به پنل مدیریت
+                            </h4>
+                            <div>
+                                <label class="block text-xs font-bold text-emerald-200 mb-1">رمز عبور جدید</label>
+                                <input type="text" id="adminNewPasscode" placeholder="رمز عبور جدید را وارد کنید..." class="glass-input w-full p-3 rounded-xl border border-rose-500/30 bg-slate-950 text-sm text-white focus:outline-none focus:border-amber-400">
+                            </div>
+                            <button id="savePasscodeBtn" class="w-full py-3 bg-rose-600 hover:bg-rose-500 text-white font-black rounded-xl shadow-lg transition">
+                                تغییر رمز عبور مدیریت
+                            </button>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
