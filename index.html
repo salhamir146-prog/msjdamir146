@@ -76,7 +76,7 @@
         .app-container { display: flex; height: 100vh; padding: 20px; gap: 20px; position: relative; z-index: 10; }
 
         .sidebar {
-            width: 330px; background: rgba(11, 40, 31, 0.98);
+            width: 330px; background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(35px); border: 1px solid var(--border);
             border-radius: 32px; display: flex; flex-direction: column; overflow: hidden;
             box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35); transition: transform 0.35s ease;
@@ -168,33 +168,31 @@
         }
         @keyframes fadeInOut { 0%{opacity:0;transform:translateY(-20px)} 15%{opacity:1;transform:translateY(0)} 85%{opacity:1;transform:translateY(0)} 100%{opacity:0;transform:translateY(-20px)} }
 
-        /* لایه تاریک پشت منو با اولویت پایین‌تر */
-        .sidebar-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(6px);
-            z-index: 900; display: none; opacity: 0; transition: opacity 0.3s ease;
-        }
-        .sidebar-overlay.active { display: block; opacity: 1; }
-
-        /* تنظیمات موبایل بی‌نقص و مطمئن برای سایدبار */
+        /* حل مشکل موبایل بدون لایه تاری نابجا */
         @media(max-width: 900px) {
             .app-container { padding: 10px; }
+            
+            /* سایدبار روی موبایل */
             .sidebar { 
                 position: fixed !important; 
                 right: 0 !important; 
                 top: 0 !important; 
                 bottom: 0 !important; 
                 height: 100vh !important;
-                width: 300px !important;
-                z-index: 1000 !important; 
-                transform: translateX(100%) !important; 
+                width: 290px !important;
+                z-index: 99999 !important; 
+                transform: translateX(110%) !important; 
                 border-radius: 24px 0 0 24px !important; 
-                background: #08241a !important;
-                box-shadow: -10px 0 40px rgba(0,0,0,0.9) !important;
-                display: flex !important;
+                background: #0b3325 !important;
+                box-shadow: -10px 0 50px rgba(0,0,0,0.95) !important;
+                transition: transform 0.3s ease-in-out !important;
             }
-            .sidebar.active { 
+            
+            /* وقتی باز میشه */
+            .sidebar.mobile-open { 
                 transform: translateX(0) !important; 
             }
+            
             .suggestion-cards { grid-template-columns: 1fr; }
         }
     </style>
@@ -202,9 +200,6 @@
 <body>
 
     <div id="toastContainer"></div>
-
-    <!-- لایه تاریک پشت منو -->
-    <div id="sidebarOverlay" class="sidebar-overlay" onclick="closeMobileSidebar()"></div>
 
     <div id="registrationModal" class="registration-overlay">
         <div class="registration-box">
@@ -231,8 +226,8 @@
     <div class="app-container">
         <aside id="sidebar" class="sidebar">
             <div class="sidebar-header">
-                <!-- دکمه بستن در موبایل -->
-                <button onclick="closeMobileSidebar()" class="md:hidden absolute left-4 top-4 text-slate-300 hover:text-white text-xl p-2 cursor-pointer">
+                <!-- دکمه بستن (ضربدر) -->
+                <button onclick="closeSidebarDirectly()" class="sm:hidden absolute left-4 top-4 text-slate-300 hover:text-white text-2xl p-2 cursor-pointer z-50">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
                 <div class="logo-icon"><i class="fa-solid fa-kaaba text-amber-300"></i></div>
@@ -257,11 +252,11 @@
         <main class="main-area">
             <header class="top-bar">
                 <div class="flex items-center gap-3">
-                    <button id="menuToggle" onclick="toggleMobileSidebar()" class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 text-white flex md:hidden items-center justify-center cursor-pointer">
-                        <i class="fa-solid fa-bars"></i>
+                    <button type="button" id="customMenuBtn" onclick="openSidebarDirectly()" class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 text-white flex sm:hidden items-center justify-center cursor-pointer z-40">
+                        <i class="fa-solid fa-bars text-lg"></i>
                     </button>
                 </div>
-                <div class="text-xs text-emerald-300 font-medium hidden md:block">
+                <div class="text-xs text-emerald-300 font-medium hidden sm:block">
                     <i class="fa-solid fa-circle text-[7px] text-emerald-400 animate-pulse ml-1"></i>
                     پاسخگویی آنلاین و هوشمند
                 </div>
@@ -297,23 +292,19 @@
         </main>
     </div>
 
-    <!-- اسکریپت استاندارد باز و بسته شدن -->
+    <!-- اسکریپت ایزوله و مستقل برای باز و بسته شدن سایدبار در موبایل -->
     <script>
-        function toggleMobileSidebar() {
+        function openSidebarDirectly() {
             const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('sidebarOverlay');
-            if (sidebar && overlay) {
-                sidebar.classList.toggle('active');
-                overlay.classList.toggle('active');
+            if (sidebar) {
+                sidebar.classList.add('mobile-open');
             }
         }
 
-        function closeMobileSidebar() {
+        function closeSidebarDirectly() {
             const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('sidebarOverlay');
-            if (sidebar && overlay) {
-                sidebar.classList.remove('active');
-                overlay.classList.remove('active');
+            if (sidebar) {
+                sidebar.classList.remove('mobile-open');
             }
         }
     </script>
