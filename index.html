@@ -76,10 +76,10 @@
         .app-container { display: flex; height: 100vh; padding: 20px; gap: 20px; position: relative; z-index: 10; }
 
         .sidebar {
-            width: 330px; background: rgba(11, 40, 31, 0.95);
+            width: 330px; background: rgba(11, 40, 31, 0.98);
             backdrop-filter: blur(35px); border: 1px solid var(--border);
             border-radius: 32px; display: flex; flex-direction: column; overflow: hidden;
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35); transition: transform 0.35s ease;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35); transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .sidebar-header { padding: 28px 20px; text-align: center; border-bottom: 1px solid rgba(255, 255, 255, 0.06); position: relative; }
@@ -171,18 +171,29 @@
         /* لایه تاری پشت منو */
         .sidebar-overlay {
             position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px);
-            z-index: 1000; display: none; opacity: 0; transition: opacity 0.3s ease;
+            z-index: 998; display: none; opacity: 0; transition: opacity 0.3s ease;
         }
         .sidebar-overlay.active { display: block; opacity: 1; }
 
+        /* استایل مخصوص موبایل */
         @media(max-width: 900px) {
             .app-container { padding: 10px; }
             .sidebar { 
-                position: fixed; right: 0; top: 0; bottom: 0; 
-                transform: translateX(100%); z-index: 1001; 
-                width: 290px; border-radius: 24px 0 0 24px; 
+                position: fixed !important; 
+                right: 0 !important; 
+                top: 0 !important; 
+                bottom: 0 !important; 
+                height: 100vh !important;
+                width: 300px !important;
+                z-index: 9999 !important; 
+                transform: translateX(100%); 
+                border-radius: 24px 0 0 24px; 
+                background: #09261c !important;
+                box-shadow: -10px 0 40px rgba(0,0,0,0.8);
             }
-            .sidebar.active { transform: translateX(0); }
+            .sidebar.active { 
+                transform: translateX(0) !important; 
+            }
             .suggestion-cards { grid-template-columns: 1fr; }
         }
     </style>
@@ -191,7 +202,7 @@
 
     <div id="toastContainer"></div>
 
-    <!-- لایه تاریک شیشه‌ای پشت منو -->
+    <!-- لایه تاریک پشت منو -->
     <div id="sidebarOverlay" class="sidebar-overlay" onclick="closeMobileSidebar()"></div>
 
     <div id="registrationModal" class="registration-overlay">
@@ -220,7 +231,7 @@
         <aside id="sidebar" class="sidebar">
             <div class="sidebar-header">
                 <!-- دکمه بستن در موبایل -->
-                <button onclick="closeMobileSidebar()" class="sm:hidden absolute left-4 top-4 text-slate-400 hover:text-white text-xl p-2">
+                <button onclick="closeMobileSidebar()" class="sm:hidden absolute left-4 top-4 text-slate-300 hover:text-white text-xl p-2 cursor-pointer">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
                 <div class="logo-icon"><i class="fa-solid fa-kaaba text-amber-300"></i></div>
@@ -285,19 +296,24 @@
         </main>
     </div>
 
+    <!-- اسکریپت کنترل سایدبار بدون باگ -->
     <script>
         function toggleMobileSidebar() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('sidebarOverlay');
-            sidebar.classList.toggle('active');
-            overlay.classList.toggle('active');
+            if (sidebar && overlay) {
+                sidebar.classList.toggle('active');
+                overlay.classList.toggle('active');
+            }
         }
 
         function closeMobileSidebar() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('sidebarOverlay');
-            sidebar.classList.remove('active');
-            overlay.classList.remove('active');
+            if (sidebar && overlay) {
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+            }
         }
     </script>
     <script src="app.js"></script>
