@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>پنل مدیریت مرکزی | آوای یقین</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        :root {
+            --gold: #d4af37;
+            --gold-light: #f5df91;
+            --green: #0b3d2e;
+            --green-light: #145c43;
+            --border: rgba(255, 255, 255, 0.12);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: "Vazirmatn", sans-serif;
+            background: radial-gradient(circle at top, #113628, #040d0a 80%);
+            color: #f5f5f5; min-height: 100vh; display: flex; flex-direction: column;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(25px); border: 1px solid var(--border);
+        }
+        .admin-input {
+            width: 100%; padding: 15px 18px; border-radius: 16px;
+            background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white; font-family: inherit; outline: none; transition: 0.3s;
+        }
+        .admin-input:focus { border-color: var(--gold); box-shadow: 0 0 20px rgba(212, 175, 55, 0.2); }
+        .admin-nav-btn {
+            display: flex; align-items: center; gap: 12px; width: 100%; padding: 14px 18px;
+            border-radius: 14px; font-size: 13.5px; font-weight: 700; color: #94a3b8; transition: 0.25s; cursor: pointer;
+        }
+        .admin-nav-btn:hover { background: rgba(255,255,255,0.06); color: white; }
+        .admin-nav-btn.active {
+            background: linear-gradient(to right, rgba(6, 78, 59, 0.85), rgba(180, 83, 9, 0.35));
+            border: 1px solid rgba(251, 191, 36, 0.45); color: #fcd34d;
+        }
+        #toastContainer { position: fixed; top: 20px; left: 20px; z-index: 20000; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+        .toast {
+            background: rgba(11, 61, 46, 0.95); border: 1px solid var(--gold); color: var(--gold-light);
+            padding: 12px 22px; border-radius: 16px; font-size: 13px; font-weight: 700;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); animation: fadeInOut 3.2s forwards;
+        }
+        @keyframes fadeInOut { 0%{opacity:0;transform:translateY(-20px)} 15%{opacity:1;transform:translateY(0)} 85%{opacity:1;transform:translateY(0)} 100%{opacity:0;transform:translateY(-20px)} }
+    </style>
+</head>
+<body>
+
+    <div id="toastContainer"></div>
+
+    <!-- هدر بالای پنل -->
+    <header class="p-5 bg-slate-950/90 border-b border-amber-400/30 flex items-center justify-between px-8 shadow-xl">
+        <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-2xl bg-amber-400/10 border border-amber-400/40 flex items-center justify-center text-amber-300 text-xl">
+                <i class="fa-solid fa-sliders"></i>
+            </div>
+            <div>
+                <h1 class="font-black text-amber-300 text-lg">پنل مدیریت مرکزی آوای یقین</h1>
+                <p class="text-xs text-emerald-200">کنترل کامل پایگاه داده، امنیت، کاربران و هوش مصنوعی</p>
+            </div>
+        </div>
+        <a href="index.html" class="px-5 py-2.5 rounded-xl bg-slate-800 text-slate-200 hover:bg-emerald-800 hover:text-white transition text-xs font-bold flex items-center gap-2">
+            <i class="fa-solid fa-arrow-right"></i>
+            <span>بازگشت به صفحه چت</span>
+        </a>
+    </header>
+
+    <!-- محتوای اصلی پنل با تب‌بندی کامل -->
+    <div class="flex flex-col sm:flex-row flex-1 p-6 gap-6 max-w-[1400px] mx-auto w-full">
+        <!-- منوی سایدبار پنل -->
+        <div class="w-full sm:w-72 bg-slate-950/80 glass-panel rounded-3xl p-4 flex sm:flex-col gap-2 shrink-0 h-fit">
+            <button id="adminTabStats" class="admin-nav-btn active"><i class="fa-solid fa-chart-line text-amber-400"></i><span>داشبورد و آمار کلی</span></button>
+            <button id="adminTabAi" class="admin-nav-btn"><i class="fa-solid fa-brain text-emerald-400"></i><span>تنظیمات هوش مصنوعی</span></button>
+            <button id="adminTabUsers" class="admin-nav-btn"><i class="fa-solid fa-users text-sky-400"></i><span>مدیریت کاربران ثبت‌نامی</span></button>
+            <button id="adminTabNotice" class="admin-nav-btn"><i class="fa-solid fa-bullhorn text-yellow-400"></i><span>اعلامیه و اطلاعیه‌ها</span></button>
+            <button id="adminTabDatabase" class="admin-nav-btn"><i class="fa-solid fa-database text-purple-400"></i><span>مدیریت دیتابیس ابری</span></button>
+            <button id="adminTabSecurity" class="admin-nav-btn"><i class="fa-solid fa-shield-halved text-rose-400"></i><span>امنیت و تغییر رمز عبور</span></button>
+        </div>
+
+        <!-- محتوای تب‌ها -->
+        <div class="flex-1 glass-panel rounded-3xl p-6 space-y-6 text-right">
+            <!-- تب آمار -->
+            <div id="panelStats" class="space-y-6">
+                <h3 class="text-base font-bold text-amber-300 border-b border-white/10 pb-3">آمار و وضعیت کلی سامانه</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+                    <div class="glass-panel p-5 rounded-2xl border border-emerald-500/30 flex items-center justify-between">
+                        <div><p class="text-xs text-emerald-200 mb-1 font-medium">کل کاربران سامانه</p><h3 id="statTotalUsers" class="text-3xl font-black text-amber-300">1</h3></div>
+                        <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 text-xl"><i class="fa-solid fa-user-check"></i></div>
+                    </div>
+                    <div class="glass-panel p-5 rounded-2xl border border-amber-500/30 flex items-center justify-between">
+                        <div><p class="text-xs text-amber-200 mb-1 font-medium">مجموع پرسش و پاسخ‌ها</p><h3 id="statTotalMessages" class="text-3xl font-black text-amber-300">14</h3></div>
+                        <div class="w-12 h-12 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-400 text-xl"><i class="fa-solid fa-comments"></i></div>
+                    </div>
+                    <div class="glass-panel p-5 rounded-2xl border border-rose-500/30 flex items-center justify-between">
+                        <div><p class="text-xs text-rose-200 mb-1 font-medium">وضعیت سرور Groq</p><button id="pingApiBtn" class="text-xs font-bold text-emerald-400 hover:underline mt-1 block">تست پینگ سرور</button></div>
+                        <div id="pingStatus" class="text-xs text-slate-400 font-mono">-- ms</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- تب هوش مصنوعی -->
+            <div id="panelAi" class="hidden space-y-5">
+                <h3 class="text-base font-bold text-amber-300 border-b border-white/10 pb-3">تنظیمات مدل هوش مصنوعی</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <div>
+                        <label class="block text-xs font-bold text-emerald-200 mb-2">نام نمایشی ربات</label>
+                        <input type="text" id="adminBotNameInput" class="admin-input text-xs" value="آوای یقین">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-emerald-200 mb-2">مدل پردازشگر</label>
+                        <select id="adminAiModelInput" class="admin-input text-xs bg-slate-950">
+                            <option value="llama-3.3-70b-versatile">Llama 3.3 70B Versatile (قدرتمندترین)</option>
+                            <option value="llama3-8b-8192">Llama 3 8B (سرعت بالا)</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-emerald-200 mb-2">پرومپت سیستم (دستورالعمل جامع)</label>
+                    <textarea id="adminSystemPromptInput" rows="4" class="admin-input text-xs leading-relaxed font-sans">تو دستیار هوشمند و متخصص دینی سامانه آوای یقین هستی.</textarea>
+                </div>
+                <button id="saveAiConfigBtn" class="py-3 px-6 bg-gradient-to-r from-emerald-600 to-amber-500 text-slate-950 font-black rounded-xl text-xs cursor-pointer shadow-lg">ذخیره تنظیمات هوش مصنوعی</button>
+            </div>
+
+            <!-- تب کاربران -->
+            <div id="panelUsers" class="hidden space-y-4">
+                <div class="flex justify-between items-center border-b border-white/10 pb-3">
+                    <h3 class="text-base font-bold text-amber-300">لیست کاربران فعال</h3>
+                    <button id="refreshUsersBtn" class="px-3.5 py-2 bg-slate-800 text-xs text-amber-300 rounded-xl"><i class="fa-solid fa-rotate"></i> بروزرسانی</button>
+                </div>
+                <div id="globalUsersContainer" class="space-y-2 text-xs">
+                    <!-- به صورت داینامیک لود می‌شود -->
+                </div>
+            </div>
+
+            <!-- تب اعلامیه -->
+            <div id="panelNotice" class="hidden space-y-4">
+                <h3 class="text-base font-bold text-amber-300 border-b border-white/10 pb-3">مدیریت اطلاعیه‌ها</h3>
+                <div class="space-y-3">
+                    <label class="block text-xs font-bold text-emerald-200">متن نوار اطلاعیه سراسری بالای صفحه</label>
+                    <input type="text" id="adminBannerInput" class="admin-input text-xs" value="به سامانه هوشمند پاسخگویی دینی آوای یقین خوش آمدید.">
+                    <button id="saveNoticeBtn" class="px-5 py-2.5 bg-amber-500 text-slate-950 font-bold rounded-xl text-xs cursor-pointer">ثبت اطلاعیه</button>
+                </div>
+            </div>
+
+            <!-- تب دیتابیس ابری -->
+            <div id="panelDatabase" class="hidden space-y-4">
+                <h3 class="text-base font-bold text-amber-300 border-b border-white/10 pb-3">مدیریت دیتابیس و حافظه</h3>
+                <p class="text-xs text-slate-300">امکان پاکسازی اطلاعات کش و حافظه موقت محلی مرورگر.</p>
+                <button onclick="localStorage.clear(); alert('حافظه کش پاک شد.'); location.reload();" class="py-2.5 px-4 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-xl text-xs cursor-pointer">پاکسازی کامل حافظه کش</button>
+            </div>
+
+            <!-- تب امنیت و رمز عبور -->
+            <div id="panelSecurity" class="hidden space-y-4">
+                <h3 class="text-base font-bold text-amber-300 border-b border-white/10 pb-3">امنیت و تغییر رمز عبور مدیریت</h3>
+                <div class="glass-panel p-5 rounded-2xl border border-rose-500/30 space-y-4 max-w-md">
+                    <label class="block text-xs font-bold text-rose-300">رمز عبور جدید پنل مدیریت</label>
+                    <input type="text" id="adminNewPasscode" placeholder="حداقل ۶ کاراکتر وارد کنید..." class="admin-input text-xs">
+                    <button id="savePasscodeBtn" class="py-3 px-5 bg-rose-600 hover:bg-rose-500 text-white font-bold rounded-xl text-xs cursor-pointer">بروزرسانی رمز مدیریت</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const tabs = ['Stats', 'Ai', 'Users', 'Notice', 'Database', 'Security'];
+            tabs.forEach(tab => {
+                const btn = document.getElementById(`adminTab${tab}`);
+                const panel = document.getElementById(`panel${tab}`);
+                if (btn && panel) {
+                    btn.addEventListener("click", () => {
+                        tabs.forEach(t => {
+                            document.getElementById(`adminTab${t}`)?.classList.remove("active");
+                            document.getElementById(`panel${t}`)?.classList.add("hidden");
+                        });
+                        btn.classList.add("active");
+                        panel.classList.remove("hidden");
+                    });
+                }
+            });
+
+            // بارگذاری لیست کاربران در پنل
+            const userContainer = document.getElementById("globalUsersContainer");
+            const savedUser = localStorage.getItem("avaye_user");
+            if (savedUser && userContainer) {
+                const u = JSON.parse(savedUser);
+                userContainer.innerHTML = `<div class="p-3 bg-white/5 rounded-xl flex justify-between items-center"><span>نام: <b>${u.name}</b> | موبایل: ${u.phone}</span><span class="text-emerald-400 font-bold">فعال</span></div>`;
+            }
+
+            // تغییر رمز عبور مدیریت
+            document.getElementById("savePasscodeBtn")?.addEventListener("click", () => {
+                const newPass = document.getElementById("adminNewPasscode").value.trim();
+                if (newPass.length >= 6) {
+                    localStorage.setItem("avaye_admin_pass", newPass);
+                    showToast("رمز عبور مدیریت با موفقیت تغییر کرد!");
+                    document.getElementById("adminNewPasscode").value = "";
+                } else {
+                    showToast("رمز عبور باید حداقل ۶ کاراکتر باشد.");
+                }
+            });
+        });
+
+        function showToast(message) {
+            const container = document.getElementById("toastContainer");
+            if (!container) return;
+            const toast = document.createElement("div");
+            toast.className = "toast";
+            toast.innerText = message;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 3200);
+        }
+    </script>
+</body>
+</html>
