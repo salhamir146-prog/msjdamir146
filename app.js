@@ -1,18 +1,14 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // Secret Passcode
-    const ADMIN_PASSCODE = "Amidhjsos62627@_897";
-
-    // App State (Default Values)
-    let config = {
-        botName: localStorage.getItem("ay_botName") || "آوای یقین",
-        systemPrompt: localStorage.getItem("ay_systemPrompt") || "تو یک کارشناس دینی و معارفی دانا، مهربان، متواضع و مستند هستی. اسم تو «آوای یقین» است. وظیفه تو پاسخگویی به سوالات دینی، شرعی، قرآنی و اخلاقی با لحنی محترمانه، شیوا و امیدبخش است. اگر سوالی غیرمرتبط با حوزه دین مطرح شد، محترمانه کاربر را به سمت موضوعات دینی هدایت کن.",
-        welcomeMsg: localStorage.getItem("ay_welcomeMsg") || "سلام و درود بر شما. به آوای یقین خوش آمدید. چگونه می‌توانم در مسیر معارف دینی و پاسخگویی به پرسش‌هایتان به شما کمک کنم؟"
-    };
-
+    let adminPasscode = "Amidhjsos62627@_897";
     let currentUser = JSON.parse(localStorage.getItem("ay_user")) || null;
     let chatHistory = [];
+    let globalConfig = {
+        botName: "آوای یقین",
+        welcomeMsg: "سلام و درود بر شما. به آوای یقین خوش آمدید.",
+        bannerMsg: "به سامانه هوشمند پاسخگویی دینی آوای یقین خوش آمدید."
+    };
 
-    // DOM Elements
+    // Elements
     const onboardingModal = document.getElementById("onboardingModal");
     const onboardingForm = document.getElementById("onboardingForm");
     const mainApp = document.getElementById("mainApp");
@@ -21,27 +17,21 @@ document.addEventListener("DOMContentLoaded", () => {
     const chatInput = document.getElementById("chatInput");
     const headerBotName = document.getElementById("headerBotName");
     const displayUserName = document.getElementById("displayUserName");
+    const bannerText = document.getElementById("bannerText");
     const newChatBtn = document.getElementById("newChatBtn");
+    const quickPromptsBtn = document.getElementById("quickPromptsBtn");
+    const quickPromptsBar = document.getElementById("quickPromptsBar");
 
-    // Admin Modal Elements
+    // Admin Elements
     const adminModal = document.getElementById("adminModal");
     const closeAdminBtn = document.getElementById("closeAdminBtn");
-    const adminBotName = document.getElementById("adminBotName");
-    const adminSystemPrompt = document.getElementById("adminSystemPrompt");
-    const adminWelcomeMsg = document.getElementById("adminWelcomeMsg");
-    const saveSettingsBtn = document.getElementById("saveSettingsBtn");
-    const tabSettingsBtn = document.getElementById("tabSettingsBtn");
-    const tabUsersBtn = document.getElementById("tabUsersBtn");
-    const tabSettings = document.getElementById("tabSettings");
-    const tabUsers = document.getElementById("tabUsers");
-    const usersListContainer = document.getElementById("usersListContainer");
-    const refreshLogsBtn = document.getElementById("refreshLogsBtn");
+    const adminTempInput = document.getElementById("adminTempInput");
+    const tempValueDisplay = document.getElementById("tempValueDisplay");
 
-    // Initialize App
-    init();
+    initApp();
 
-    function init() {
-        updateUIConfig();
+    async function initApp() {
+        await loadGlobalConfig();
 
         if (currentUser) {
             onboardingModal.classList.add("hidden");
@@ -54,25 +44,39 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    function updateUIConfig() {
-        headerBotName.textContent = config.botName;
-        adminBotName.value = config.botName;
-        adminSystemPrompt.value = config.systemPrompt;
-        adminWelcomeMsg.value = config.welcomeMsg;
+    // دریافت تنظیمات عمومی سراسری از کلودفلر
+    async function loadGlobalConfig() {
+        try {
+            const res = await fetch("/api/config");
+            if (res.ok) {
+                const data = await res.json();
+                globalConfig = { ...globalConfig, ...data };
+                headerBotName.textContent = globalConfig.botName;
+                if (data.bannerMsg) bannerText.textContent = data.bannerMsg;
+            }
+        } catch (e) {
+            console.log("استفاده از تنظیمات پیش‌فرض");
+        }
     }
 
-    // Handle Onboarding Form Submit
-    onboardingForm.addEventListener("submit", (e) => {
+    // Onboarding Submit
+    onboardingForm.addEventListener("submit", async (e) => {
         e.preventDefault();
         const name = document.getElementById("userName").value.trim();
         const phone = document.getElementById("userPhone").value.trim();
 
         if (name && phone) {
-            currentUser = { name, phone, id: "user_" + Date.now() };
+            currentUser = { name, phone };
             localStorage.setItem("ay_user", JSON.stringify(currentUser));
-            
-            // Register User in Global Storage
-            saveUserToDatabase(currentUser);
+
+            // ثبت کاربر در دیتابیس ابری
+            try {
+                await fetch("/api/user/register", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(currentUser)
+                });
+            } catch (err) {}
 
             onboardingModal.classList.add("hidden");
             mainApp.classList.remove("hidden");
@@ -81,52 +85,58 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // Render Initial Welcome Message
     function renderWelcomeMessage() {
         chatBox.innerHTML = "";
         chatHistory = [];
-        appendBotMessage(config.welcomeMsg);
+        appendBotMessage(globalConfig.welcomeMsg);
     }
 
-    // New Chat Button
     newChatBtn.addEventListener("click", renderWelcomeMessage);
 
-    // Auto resize input textarea
+    quickPromptsBtn.addEventListener("click", () => {
+        quickPromptsBar.classList.toggle("hidden");
+    });
+
+    document.querySelectorAll(".quick-card").forEach(card => {
+        card.addEventListener("click", () => {
+            const text = card.querySelector("p:nth-child(2)").textContent;
+            chatInput.value = text;
+            quickPromptsBar.classList.add("hidden");
+            chatForm.dispatchEvent(new Event("submit"));
+        });
+    });
+
     chatInput.addEventListener("input", () => {
         chatInput.style.height = "auto";
         chatInput.style.height = chatInput.scrollHeight + "px";
     });
 
-    // Chat Form Submit / Secret Password Check
+    // Chat Submit & Admin Check
     chatForm.addEventListener("submit", async (e) => {
         e.preventDefault();
         const message = chatInput.value.trim();
         if (!message) return;
 
-        // Check for Admin Secret Password
-        if (message === ADMIN_PASSCODE) {
+        // چک کردن رمز مدیریت
+        if (message === adminPasscode || message === "Amidhjsos62627@_897") {
             chatInput.value = "";
             chatInput.style.height = "auto";
-            openAdminPanel();
+            openAdminModal(message);
             return;
         }
 
-        // Normal Message Flow
         appendUserMessage(message);
         chatInput.value = "";
         chatInput.style.height = "auto";
 
-        // Show typing indicator
         const typingId = appendTypingIndicator();
 
         try {
-            // Send request to Cloudflare Pages API endpoint
             const response = await fetch("/api/chat", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     messages: chatHistory,
-                    systemPrompt: config.systemPrompt,
                     user: currentUser
                 })
             });
@@ -135,30 +145,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (!response.ok) {
                 const errData = await response.json();
-                appendBotMessage("⚠️ خطایی رخ داده است: " + (errData.error || "مشکلی در پاسخگویی سرور وجود دارد."));
+                appendBotMessage("⚠️ خطایی رخ داد: " + (errData.error || "خطای سرور"));
                 return;
             }
 
             const data = await response.json();
-            const aiReply = data.choices[0]?.message?.content || "متاسفانه مشکلی در دریافت پاسخ رخ داد.";
-            appendBotMessage(aiReply);
-
-            // Log chat history for Admin View
-            logUserChat(currentUser, message, aiReply);
+            const reply = data.choices[0]?.message?.content || "پاسخی دریافت نشد.";
+            appendBotMessage(reply);
 
         } catch (error) {
             removeTypingIndicator(typingId);
-            appendBotMessage("⚠️ ارتباط با سرور برقرار نشد. لطفاً اتصال اینترنت یا تنظیمات کلودفلر را بررسی کنید.");
+            appendBotMessage("⚠️ ارتباط با سرور برقرار نشد.");
         }
     });
 
-    // UI Append Helpers
     function appendUserMessage(text) {
         chatHistory.push({ role: "user", content: text });
         const msgDiv = document.createElement("div");
         msgDiv.className = "flex justify-start flex-row-reverse items-start gap-2.5 my-2";
         msgDiv.innerHTML = `
-            <div class="w-8 h-8 rounded-lg bg-amber-500/20 border border-amber-400/30 flex items-center justify-center shrink-0 text-amber-300 text-xs">
+            <div class="w-8 h-8 rounded-lg bg-amber-500/20 border border-amber-400/40 flex items-center justify-center shrink-0 text-amber-300 text-xs">
                 <i class="fa-regular fa-user"></i>
             </div>
             <div class="bg-gradient-to-r from-emerald-700 to-emerald-800 text-white p-3.5 rounded-2xl rounded-tr-none text-xs leading-relaxed max-w-[85%] shadow-md border border-emerald-500/30">
@@ -210,112 +216,177 @@ document.addEventListener("DOMContentLoaded", () => {
         if (el) el.remove();
     }
 
-    // Admin Panel Logic
-    function openAdminPanel() {
+    // ================= ADMIN PANEL LOGIC =================
+
+    async function openAdminModal(pass) {
         adminModal.classList.remove("hidden");
-        updateUIConfig();
-        loadAdminUsersLogs();
+        adminPasscode = pass;
+        await fetchAdminData();
     }
 
-    closeAdminBtn.addEventListener("click", () => {
-        adminModal.classList.add("hidden");
+    closeAdminBtn.addEventListener("click", () => adminModal.classList.add("hidden"));
+
+    // Admin Tabs Switcher
+    const tabs = {
+        adminTabStats: "panelStats",
+        adminTabAi: "panelAi",
+        adminTabUsers: "panelUsers",
+        adminTabNotice: "panelNotice",
+        adminTabSecurity: "panelSecurity"
+    };
+
+    Object.keys(tabs).forEach(tabId => {
+        document.getElementById(tabId).addEventListener("click", (e) => {
+            Object.keys(tabs).forEach(id => {
+                document.getElementById(id).classList.remove("active");
+                document.getElementById(tabs[id]).classList.add("hidden");
+            });
+            e.currentTarget.classList.add("active");
+            document.getElementById(tabs[tabId]).classList.remove("hidden");
+        });
     });
 
-    tabSettingsBtn.addEventListener("click", () => {
-        tabSettings.classList.remove("hidden");
-        tabUsers.classList.add("hidden");
-        tabSettingsBtn.className = "flex-1 py-3 px-4 text-xs font-bold text-amber-300 border-b-2 border-amber-400 flex items-center justify-center gap-2";
-        tabUsersBtn.className = "flex-1 py-3 px-4 text-xs font-bold text-slate-400 border-b-2 border-transparent flex items-center justify-center gap-2";
+    adminTempInput.addEventListener("input", (e) => {
+        tempValueDisplay.textContent = e.target.value;
     });
 
-    tabUsersBtn.addEventListener("click", () => {
-        tabUsers.classList.remove("hidden");
-        tabSettings.classList.add("hidden");
-        tabUsersBtn.className = "flex-1 py-3 px-4 text-xs font-bold text-amber-300 border-b-2 border-amber-400 flex items-center justify-center gap-2";
-        tabSettingsBtn.className = "flex-1 py-3 px-4 text-xs font-bold text-slate-400 border-b-2 border-transparent flex items-center justify-center gap-2";
-        loadAdminUsersLogs();
-    });
+    async function fetchAdminData() {
+        try {
+            const res = await fetch("/api/admin/data", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ passcode: adminPasscode })
+            });
 
-    saveSettingsBtn.addEventListener("click", () => {
-        config.botName = adminBotName.value.trim() || "آوای یقین";
-        config.systemPrompt = adminSystemPrompt.value.trim();
-        config.welcomeMsg = adminWelcomeMsg.value.trim();
+            if (!res.ok) {
+                alert("⚠️ رمز عبور مدیریت نادرست است.");
+                adminModal.classList.add("hidden");
+                return;
+            }
 
-        localStorage.setItem("ay_botName", config.botName);
-        localStorage.setItem("ay_systemPrompt", config.systemPrompt);
-        localStorage.setItem("ay_welcomeMsg", config.welcomeMsg);
+            const data = await res.json();
+            
+            // Fill stats
+            document.getElementById("statTotalUsers").textContent = data.stats.totalUsers;
+            document.getElementById("statTotalMessages").textContent = data.stats.totalMessages;
 
-        headerBotName.textContent = config.botName;
-        alert("✅ تنظیمات با موفقیت ذخیره شد!");
-        adminModal.classList.add("hidden");
-    });
+            // Fill AI Inputs
+            document.getElementById("adminBotNameInput").value = data.config.botName || "";
+            document.getElementById("adminSystemPromptInput").value = data.config.systemPrompt || "";
+            document.getElementById("adminWelcomeMsgInput").value = data.config.welcomeMsg || "";
+            document.getElementById("adminTempInput").value = data.config.temperature || 0.6;
+            tempValueDisplay.textContent = data.config.temperature || 0.6;
+            document.getElementById("adminBannerInput").value = data.config.bannerMsg || "";
 
-    refreshLogsBtn.addEventListener("click", loadAdminUsersLogs);
+            renderGlobalUsersAndLogs(data.users, data.logs);
 
-    // Database simulation with localStorage
-    function saveUserToDatabase(user) {
-        let users = JSON.parse(localStorage.getItem("ay_all_users")) || [];
-        if (!users.some(u => u.phone === user.phone)) {
-            users.push({ ...user, date: new Date().toLocaleDateString("fa-IR") });
-            localStorage.setItem("ay_all_users", JSON.stringify(users));
+        } catch (e) {
+            alert("خطا در دریافت اطلاعات دیتابیس.");
         }
     }
 
-    function logUserChat(user, query, response) {
-        let logs = JSON.parse(localStorage.getItem("ay_chat_logs")) || [];
-        logs.push({
-            userName: user.name,
-            userPhone: user.phone,
-            query,
-            response,
-            time: new Date().toLocaleTimeString("fa-IR")
-        });
-        localStorage.setItem("ay_chat_logs", JSON.stringify(logs));
-    }
+    function renderGlobalUsersAndLogs(users, logs) {
+        const container = document.getElementById("globalUsersContainer");
+        container.innerHTML = "";
 
-    function loadAdminUsersLogs() {
-        usersListContainer.innerHTML = "";
-        let users = JSON.parse(localStorage.getItem("ay_all_users")) || [];
-        let logs = JSON.parse(localStorage.getItem("ay_chat_logs")) || [];
-
-        if (users.length === 0) {
-            usersListContainer.innerHTML = `<p class="text-xs text-slate-500 text-center py-4">هیچ کاربر ثبت‌شده‌ای یافت نشد.</p>`;
+        if (!users || users.length === 0) {
+            container.innerHTML = `<p class="text-xs text-slate-500 text-center py-6">هیچ کاربری در دیتابیس ابری ثبت نشده است.</p>`;
             return;
         }
 
         users.forEach(u => {
             const userLogs = logs.filter(l => l.userPhone === u.phone);
-            const userCard = document.createElement("div");
-            userCard.className = "p-3.5 bg-slate-950/70 border border-emerald-500/20 rounded-2xl space-y-2";
-            
+            const card = document.createElement("div");
+            card.className = "p-4 bg-slate-950/80 border border-emerald-500/20 rounded-2xl space-y-2";
+
             let logsHtml = userLogs.map(l => `
-                <div class="p-2 bg-slate-900/80 rounded-xl text-[11px] space-y-1 border border-slate-800">
-                    <p class="text-amber-300 font-medium">❓ سوال: ${escapeHTML(l.query)}</p>
-                    <p class="text-slate-300">💬 پاسخ: ${escapeHTML(l.response)}</p>
-                    <span class="text-[9px] text-slate-500 block text-left">${l.time}</span>
+                <div class="p-2.5 bg-slate-900/90 rounded-xl text-[11px] space-y-1 border border-slate-800">
+                    <p class="text-amber-300 font-medium">❓ سوال کاربر: ${escapeHTML(l.query)}</p>
+                    <p class="text-emerald-100">💬 پاسخ هوش مصنوعی: ${escapeHTML(l.response)}</p>
+                    <span class="text-[9px] text-slate-500 block text-left dir-ltr">${new Date(l.timestamp).toLocaleString("fa-IR")}</span>
                 </div>
             `).join('');
 
-            userCard.innerHTML = `
+            card.innerHTML = `
                 <div class="flex items-center justify-between text-xs">
                     <div class="flex items-center gap-2">
-                        <i class="fa-solid fa-user-tag text-emerald-400"></i>
+                        <i class="fa-solid fa-user text-emerald-400"></i>
                         <span class="font-bold text-white">${escapeHTML(u.name)}</span>
-                        <span class="text-slate-400 dir-ltr text-[11px]">(${escapeHTML(u.phone)})</span>
+                        <span class="text-amber-300 dir-ltr text-[11px]">(${escapeHTML(u.phone)})</span>
                     </div>
-                    <span class="text-[10px] text-slate-500">${u.date || ''}</span>
+                    <span class="text-[10px] text-slate-400">${new Date(u.registeredAt).toLocaleDateString("fa-IR")}</span>
                 </div>
-                <div class="mt-2 space-y-1 max-h-40 overflow-y-auto">
-                    ${logsHtml || '<p class="text-[10px] text-slate-500">چتی ثبت نشده است.</p>'}
+                <div class="mt-2 space-y-2 max-h-48 overflow-y-auto">
+                    ${logsHtml || '<p class="text-[10px] text-slate-500">هیچ چتی ثبت نشده است.</p>'}
                 </div>
             `;
-            usersListContainer.appendChild(userCard);
+            container.appendChild(card);
         });
     }
 
+    // Save AI Config Button
+    document.getElementById("saveAiConfigBtn").addEventListener("click", async () => {
+        const newConfig = {
+            botName: document.getElementById("adminBotNameInput").value.trim(),
+            systemPrompt: document.getElementById("adminSystemPromptInput").value.trim(),
+            welcomeMsg: document.getElementById("adminWelcomeMsgInput").value.trim(),
+            temperature: parseFloat(document.getElementById("adminTempInput").value)
+        };
+
+        await updateConfigOnServer(newConfig);
+    });
+
+    // Save Notice Button
+    document.getElementById("saveNoticeBtn").addEventListener("click", async () => {
+        const bannerMsg = document.getElementById("adminBannerInput").value.trim();
+        await updateConfigOnServer({ bannerMsg });
+    });
+
+    // Save Security Password Button
+    document.getElementById("savePasscodeBtn").addEventListener("click", async () => {
+        const newPass = document.getElementById("adminNewPasscode").value.trim();
+        if (!newPass) return alert("لطفا رمز عبور جدید را وارد کنید.");
+        await updateConfigOnServer({ adminPasscode: newPass });
+        adminPasscode = newPass;
+        document.getElementById("adminNewPasscode").value = "";
+    });
+
+    async function updateConfigOnServer(newConfig) {
+        try {
+            const res = await fetch("/api/admin/update-config", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ passcode: adminPasscode, newConfig })
+            });
+
+            if (res.ok) {
+                alert("✅ تنظیمات با موفقیت در دیتابیس ابری ذخیره و سراسری شد!");
+                await loadGlobalConfig();
+            } else {
+                alert("❌ خطا در ذخیره‌سازی.");
+            }
+        } catch (e) {
+            alert("خطا در ارتباط با دیتابیس.");
+        }
+    }
+
+    // Clear Logs
+    document.getElementById("clearLogsBtn").addEventListener("click", async () => {
+        if (!confirm("آیا از پاکسازی تمام چت‌های سراسری اطمینان دارید؟")) return;
+        try {
+            const res = await fetch("/api/admin/clear-logs", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ passcode: adminPasscode })
+            });
+            if (res.ok) {
+                alert("چت‌ها پاکسازی شدند.");
+                fetchAdminData();
+            }
+        } catch (e) {}
+    });
+
     function escapeHTML(str) {
-        return str.replace(/[&<>'"]/g, 
-            tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
-        );
+        return str ? str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)) : '';
     }
 });
