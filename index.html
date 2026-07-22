@@ -56,7 +56,7 @@
             position: fixed; inset: 0;
             display: flex; justify-content: center; align-items: center;
             background: rgba(0, 0, 0, 0.82); backdrop-filter: blur(30px);
-            z-index: 9999; padding: 20px;
+            z-index: 99999; padding: 20px;
         }
 
         .registration-box {
@@ -79,7 +79,7 @@
             width: 330px; background: rgba(11, 40, 31, 0.98);
             backdrop-filter: blur(35px); border: 1px solid var(--border);
             border-radius: 32px; display: flex; flex-direction: column; overflow: hidden;
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35); transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35); transition: transform 0.35s ease;
         }
 
         .sidebar-header { padding: 28px 20px; text-align: center; border-bottom: 1px solid rgba(255, 255, 255, 0.06); position: relative; }
@@ -168,14 +168,14 @@
         }
         @keyframes fadeInOut { 0%{opacity:0;transform:translateY(-20px)} 15%{opacity:1;transform:translateY(0)} 85%{opacity:1;transform:translateY(0)} 100%{opacity:0;transform:translateY(-20px)} }
 
-        /* لایه تاری پشت منو */
+        /* لایه تاری پشت منوی موبایل */
         .sidebar-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px);
+            position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(6px);
             z-index: 998; display: none; opacity: 0; transition: opacity 0.3s ease;
         }
-        .sidebar-overlay.active { display: block; opacity: 1; }
+        .sidebar-overlay.show { display: block; opacity: 1; }
 
-        /* استایل مخصوص موبایل */
+        /* استایل اختصاصی و اصلاح‌شده موبایل برای منو */
         @media(max-width: 900px) {
             .app-container { padding: 10px; }
             .sidebar { 
@@ -185,13 +185,15 @@
                 bottom: 0 !important; 
                 height: 100vh !important;
                 width: 300px !important;
-                z-index: 9999 !important; 
-                transform: translateX(100%); 
-                border-radius: 24px 0 0 24px; 
+                z-index: 999 !important; 
+                transform: translateX(105%); 
+                border-radius: 24px 0 0 24px !important; 
                 background: #09261c !important;
-                box-shadow: -10px 0 40px rgba(0,0,0,0.8);
+                box-shadow: -10px 0 40px rgba(0,0,0,0.9) !important;
+                display: flex !important;
+                visibility: visible !important;
             }
-            .sidebar.active { 
+            .sidebar.show { 
                 transform: translateX(0) !important; 
             }
             .suggestion-cards { grid-template-columns: 1fr; }
@@ -296,14 +298,14 @@
         </main>
     </div>
 
-    <!-- اسکریپت کنترل سایدبار بدون باگ -->
+    <!-- اسکریپت باز و بسته کردن بدون باگ سایدبار -->
     <script>
         function toggleMobileSidebar() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('sidebarOverlay');
             if (sidebar && overlay) {
-                sidebar.classList.toggle('active');
-                overlay.classList.toggle('active');
+                sidebar.classList.toggle('show');
+                overlay.classList.toggle('show');
             }
         }
 
@@ -311,8 +313,8 @@
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('sidebarOverlay');
             if (sidebar && overlay) {
-                sidebar.classList.remove('active');
-                overlay.classList.remove('active');
+                sidebar.classList.remove('show');
+                overlay.classList.remove('show');
             }
         }
     </script>
